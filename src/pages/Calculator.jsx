@@ -230,20 +230,68 @@ export default function Calculator() {
   }, []);
 
   const updateMutation = useMutation({
-    mutationFn: (data) => {
-      if (!data || !data.id) return Promise.reject(new Error("No project ID to update."));
+    mutationFn: async (data) => {
+      if (!data || !data.id) {
+        console.error('[Calculator] Update failed: No project ID');
+        return Promise.reject(new Error("No project ID to update."));
+      }
+      
       setSaveStatus('saving');
-      const { id, ...dataToSave } = data;
-      return base44.entities.Project.update(id, dataToSave);
+      console.log('[Calculator] Saving project:', data.id);
+      console.log('[Calculator] Project data to save:', {
+        name: data.name,
+        hasResults: !!data.results,
+        hasAiSummary: !!data.ai_summary,
+        hasSensitivityData: !!data.sensitivity_data,
+        hasPropertyData: !!data.property_data, // Corrected from cost_data
+        hasFinancingData: !!data.financing_data, // Corrected from revenue_data
+        hasProjectInfoData: !!data.project_info_data
+      });
+      
+      const { id, created_by, created_date, updated_date, ...dataToSave } = data;
+      
+      try {
+        const result = await base44.entities.Project.update(id, dataToSave);
+        console.log('[Calculator] Save successful:', result.id);
+        return result;
+      } catch (error) {
+        console.error('[Calculator] Save failed:', error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (savedProject) => {
+      console.log('[Calculator] onSuccess called');
       setSaveStatus('saved');
       setIsDirty(false);
       queryClient.invalidateQueries({ queryKey: ['userProjects'] });
-      // CRITICAL: Do NOT update projectData here. The local projectData state is the source of truth for the UI
-      // and should not be overwritten by the server's response if the user has made further changes locally.
+      
+      // IMPORTANT: Update projectData with saved data to ensure UI is in sync
+      // Preserve local state for results, ai_summary, sensitivity_data if they were updated locally after the save began
+      setProjectData(prev => {
+        if (!prev) return savedProject; // Should not happen for an update
+        return {
+          ...prev,
+          ...savedProject,
+          // Preserve local state that might have changed during save, if they are newer
+          results: prev.results || savedProject.results,
+          ai_summary: prev.ai_summary || savedProject.ai_summary,
+          sensitivity_data: prev.sensitivity_data || savedProject.sensitivity_data
+        };
+      });
     },
-    onError: () => setSaveStatus('unsaved'),
+    onError: (error) => {
+      console.error('[Calculator] onError called:', error);
+      setSaveStatus('unsaved');
+      // Show error to user
+      const errorMessages = {
+        sk: 'Nepodarilo sa uložiť projekt. Skúste to prosím znova.',
+        en: 'Failed to save project. Please try again.',
+        pl: 'Nie udało się zapisać projektu. Spróbuj ponownie.',
+        hu: 'Nem sikerült menteni a projektet. Próbáld újra.',
+        de: 'Projekt konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.'
+      };
+      alert(errorMessages[language] || errorMessages.en);
+    },
   });
 
   const createMutation = useMutation({
@@ -891,6 +939,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         if (!projectData || !countryPresets) return;
         
         setIsCalculating(true);
+        console.log('[Calculator] Starting calculation for project:', projectData.id);
         
         try {
             const preset = countryPresets.find(p => p.country_code === projectData.country);
@@ -914,19 +963,38 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                     throw new Error("Unknown calculator type");
             }
             
+            console.log('[Calculator] Calculation complete, results:', {
+                hasKpis: !!calculatedResults?.kpis,
+                kpisCount: calculatedResults?.kpis ? Object.keys(calculatedResults.kpis).length : 0
+            });
+            
             setResults(calculatedResults);
             
             // Update local projectData state to store calculation results
-            setProjectData(prev => ({
-                ...prev,
-                results: calculatedResults
-            }));
-            // Mark as dirty and unsaved, as these results should be saved with the project
+            setProjectData(prev => {
+                const updated = {
+                    ...prev,
+                    results: calculatedResults
+                };
+                console.log('[Calculator] Updated projectData with results');
+                return updated;
+            });
+            
+            // Mark as dirty and unsaved
             setIsDirty(true);
             setSaveStatus('unsaved');
+            console.log('[Calculator] Marked as dirty and unsaved');
             
         } catch (error) {
-            console.error("Calculation error:", error);
+            console.error("[Calculator] Calculation error:", error);
+            const errorMessages = {
+                sk: 'Chyba pri výpočte. Skontrolujte prosím všetky vstupné údaje.',
+                en: 'Calculation error. Please check all input data.',
+                pl: 'Błąd obliczeniowy. Sprawdź wszystkie dane wejściowe.',
+                hu: 'Számítási hiba. Ellenőrizze az összes bemeneti adatot.',
+                de: 'Berechnungsfehler. Bitte überprüfen Sie alle Eingabedaten.'
+            };
+            alert(errorMessages[language] || errorMessages.en);
         } finally {
             setIsCalculating(false);
         }
@@ -938,8 +1006,18 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
 
   // MANUAL SAVE ONLY - called when user clicks Save button
   const handleManualSave = useCallback(() => {
+    console.log('[Calculator] handleManualSave called', {
+      hasProjectData: !!projectData,
+      projectId: projectData?.id,
+      isDirty: isDirty,
+      saveStatus: saveStatus
+    });
+    
     if (projectData && projectData.id && isDirty) {
+      console.log('[Calculator] Triggering save mutation');
       updateMutation.mutate(projectData);
+    } else {
+      console.log('[Calculator] Save skipped - conditions not met');
     }
   }, [projectData, isDirty, updateMutation]);
 
