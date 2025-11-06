@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -25,17 +26,26 @@ export default function CostInputs({ data, projectData, language, onChange }) {
       greenery_terrain_unit: "Zeleň na teréne",
       greenery_structure_unit: "Zeleň na konštrukcii",
       engineering_networks: "Inžinierske siete (4% z 2.1-2.5)",
-      additional_costs: "Dodatočné náklady (percentá z realizácie)",
-      project_management: "Riadenie projektu (3,5%)",
-      site_equipment: "Zariadenie staveniska (3%)",
-      project_activity: "Projektová činnosť (3,5%)",
-      engineering_activity: "Inžinierska činnosť (1%)",
-      technical_supervision: "Technický dozor (1,5%)",
+      additional_costs: "Dodatočné náklady",
+      additional_costs_subtitle: "(percentá z realizácie)",
+      project_management: "Riadenie projektu",
+      project_management_default: "(3,5%)",
+      site_equipment: "Zariadenie staveniska",
+      site_equipment_default: "(3%)",
+      project_activity: "Projektová činnosť",
+      project_activity_default: "(3,5%)",
+      engineering_activity: "Inžinierska činnosť",
+      engineering_activity_default: "(1%)",
+      technical_supervision: "Technický dozor",
+      technical_supervision_default: "(1,5%)",
       other_services: "Ostatné služby",
-      legal_services: "Právne služby (0,5% z realizácie)",
+      legal_services: "Právne služby",
+      legal_services_default: "(0,5% z realizácie)",
       development_fee: "Developerská provízia",
-      other_fees: "Ostatné poplatky (1% z 2.1-2.6)",
-      reserve: "Rezerva (5% z realizácie)",
+      other_fees: "Ostatné poplatky",
+      other_fees_default: "(1% z 2.1-2.6)",
+      reserve: "Rezerva",
+      reserve_default: "(5% z realizácie)",
       result: "Výsledok",
       mode_auto: "Auto",
       mode_manual: "Manual",
@@ -57,17 +67,26 @@ export default function CostInputs({ data, projectData, language, onChange }) {
       greenery_terrain_unit: "Greenery on Terrain",
       greenery_structure_unit: "Greenery on Structure",
       engineering_networks: "Engineering Networks (4% of 2.1-2.5)",
-      additional_costs: "Additional Costs (% of implementation)",
-      project_management: "Project Management (3.5%)",
-      site_equipment: "Site Equipment (3%)",
-      project_activity: "Project Activity (3.5%)",
-      engineering_activity: "Engineering Activity (1%)",
-      technical_supervision: "Technical Supervision (1.5%)",
+      additional_costs: "Additional Costs",
+      additional_costs_subtitle: "(% of implementation)",
+      project_management: "Project Management",
+      project_management_default: "(3.5%)",
+      site_equipment: "Site Equipment",
+      site_equipment_default: "(3%)",
+      project_activity: "Project Activity",
+      project_activity_default: "(3.5%)",
+      engineering_activity: "Engineering Activity",
+      engineering_activity_default: "(1%)",
+      technical_supervision: "Technical Supervision",
+      technical_supervision_default: "(1.5%)",
       other_services: "Other Services",
-      legal_services: "Legal Services (0.5% of implementation)",
+      legal_services: "Legal Services",
+      legal_services_default: "(0.5% of implementation)",
       development_fee: "Development Fee",
-      other_fees: "Other Fees (1% of 2.1-2.6)",
-      reserve: "Reserve (5% of implementation)",
+      other_fees: "Other Fees",
+      other_fees_default: "(1% of 2.1-2.6)",
+      reserve: "Reserve",
+      reserve_default: "(5% of implementation)",
       result: "Result",
       mode_auto: "Auto",
       mode_manual: "Manual",
@@ -89,17 +108,26 @@ export default function CostInputs({ data, projectData, language, onChange }) {
       greenery_terrain_unit: "Zieleń na gruncie",
       greenery_structure_unit: "Zieleń na konstrukcji",
       engineering_networks: "Sieci inżynieryjne (4% z 2.1-2.5)",
-      additional_costs: "Koszty dodatkowe (% z realizacji)",
-      project_management: "Zarządzanie projektem (3,5%)",
-      site_equipment: "Wyposażenie placu budowy (3%)",
-      project_activity: "Działalność projektowa (3,5%)",
-      engineering_activity: "Działalność inżynieryjna (1%)",
-      technical_supervision: "Nadzór techniczny (1,5%)",
+      additional_costs: "Koszty dodatkowe",
+      additional_costs_subtitle: "(% z realizacji)",
+      project_management: "Zarządzanie projektem",
+      project_management_default: "(3,5%)",
+      site_equipment: "Wyposażenie placu budowy",
+      site_equipment_default: "(3%)",
+      project_activity: "Działalność projektowa",
+      project_activity_default: "(3,5%)",
+      engineering_activity: "Działalność inżynieryjna",
+      engineering_activity_default: "(1%)",
+      technical_supervision: "Nadzór techniczny",
+      technical_supervision_default: "(1,5%)",
       other_services: "Inne usługi",
-      legal_services: "Usługi prawne (0,5% z realizacji)",
+      legal_services: "Usługi prawne",
+      legal_services_default: "(0,5% z realizacji)",
       development_fee: "Prowizja deweloperska",
-      other_fees: "Inne opłaty (1% z 2.1-2.6)",
-      reserve: "Rezerwa (5% z realizacji)",
+      other_fees: "Inne opłaty",
+      other_fees_default: "(1% z 2.1-2.6)",
+      reserve: "Rezerwa",
+      reserve_default: "(5% z realizacji)",
       result: "Wynik",
       mode_auto: "Auto",
       mode_manual: "Manual",
@@ -121,17 +149,26 @@ export default function CostInputs({ data, projectData, language, onChange }) {
       greenery_terrain_unit: "Zöldterület terepen",
       greenery_structure_unit: "Zöldterület szerkezeten",
       engineering_networks: "Mérnöki hálózatok (4% 2.1-2.5-ből)",
-      additional_costs: "További költségek (% megvalósításból)",
-      project_management: "Projektmenedzsment (3,5%)",
-      site_equipment: "Építési terület felszerelése (3%)",
-      project_activity: "Projekttevékenység (3,5%)",
-      engineering_activity: "Mérnöki tevékenység (1%)",
-      technical_supervision: "Műszaki felügyelet (1,5%)",
+      additional_costs: "További költségek",
+      additional_costs_subtitle: "(% megvalósításból)",
+      project_management: "Projektmenedzsment",
+      project_management_default: "(3,5%)",
+      site_equipment: "Építési terület felszerelése",
+      site_equipment_default: "(3%)",
+      project_activity: "Projekttevékenység",
+      project_activity_default: "(3,5%)",
+      engineering_activity: "Mérnöki tevékenység",
+      engineering_activity_default: "(1%)",
+      technical_supervision: "Műszaki felügyelet",
+      technical_supervision_default: "(1,5%)",
       other_services: "Egyéb szolgáltatások",
-      legal_services: "Jogi szolgáltatások (0,5% megvalósításból)",
+      legal_services: "Jogi szolgáltatások",
+      legal_services_default: "(0,5% megvalósításból)",
       development_fee: "Fejlesztési díj",
-      other_fees: "Egyéb díjak (1% 2.1-2.6-ból)",
-      reserve: "Tartalék (5% megvalósításból)",
+      other_fees: "Egyéb díjak",
+      other_fees_default: "(1% 2.1-2.6-ból)",
+      reserve: "Tartalék",
+      reserve_default: "(5% megvalósításból)",
       result: "Eredmény",
       mode_auto: "Auto",
       mode_manual: "Kézi",
@@ -153,17 +190,26 @@ export default function CostInputs({ data, projectData, language, onChange }) {
       greenery_terrain_unit: "Grün auf Gelände",
       greenery_structure_unit: "Grün auf Struktur",
       engineering_networks: "Ingenieurnetzwerke (4% von 2.1-2.5)",
-      additional_costs: "Zusätzliche Kosten (% der Umsetzung)",
-      project_management: "Projektmanagement (3,5%)",
-      site_equipment: "Baustelleneinrichtung (3%)",
-      project_activity: "Projekttätigkeit (3,5%)",
-      engineering_activity: "Ingenieurtätigkeit (1%)",
-      technical_supervision: "Technische Aufsicht (1,5%)",
+      additional_costs: "Zusätzliche Kosten",
+      additional_costs_subtitle: "(% der Umsetzung)",
+      project_management: "Projektmanagement",
+      project_management_default: "(3,5%)",
+      site_equipment: "Baustelleneinrichtung",
+      site_equipment_default: "(3%)",
+      project_activity: "Projekttätigkeit",
+      project_activity_default: "(3,5%)",
+      engineering_activity: "Ingenieurtätigkeit",
+      engineering_activity_default: "(1%)",
+      technical_supervision: "Technische Aufsicht",
+      technical_supervision_default: "(1,5%)",
       other_services: "Sonstige Dienstleistungen",
-      legal_services: "Rechtsdienstleistungen (0,5% der Umsetzung)",
+      legal_services: "Rechtsdienstleistungen",
+      legal_services_default: "(0,5% der Umsetzung)",
       development_fee: "Entwicklungsgebühr",
-      other_fees: "Sonstige Gebühren (1% von 2.1-2.6)",
-      reserve: "Reserve (5% der Umsetzung)",
+      other_fees: "Sonstige Gebühren",
+      other_fees_default: "(1% von 2.1-2.6)",
+      reserve: "Reserve",
+      reserve_default: "(5% der Umsetzung)",
       result: "Ergebnis",
       mode_auto: "Auto",
       mode_manual: "Manuell",
@@ -210,15 +256,31 @@ export default function CostInputs({ data, projectData, language, onChange }) {
     
   const totalImplementation = implementationSubtotal + engineeringNetworks;
 
-  // Additional costs
-  const projectManagement = totalImplementation * 0.035;
-  const siteEquipment = totalImplementation * 0.03;
-  const projectActivity = totalImplementation * 0.035;
-  const engineeringActivity = totalImplementation * 0.01;
-  const technicalSupervision = totalImplementation * 0.015;
+  // Additional costs - with manual mode support
+  const projectManagement = safeData.project_management_manual_mode
+    ? (safeData.project_management_manual_value || 0)
+    : totalImplementation * 0.035;
+    
+  const siteEquipment = safeData.site_equipment_manual_mode
+    ? (safeData.site_equipment_manual_value || 0)
+    : totalImplementation * 0.03;
+    
+  const projectActivity = safeData.project_activity_manual_mode
+    ? (safeData.project_activity_manual_value || 0)
+    : totalImplementation * 0.035;
+    
+  const engineeringActivity = safeData.engineering_activity_manual_mode
+    ? (safeData.engineering_activity_manual_value || 0)
+    : totalImplementation * 0.01;
+    
+  const technicalSupervision = safeData.technical_supervision_manual_mode
+    ? (safeData.technical_supervision_manual_value || 0)
+    : totalImplementation * 0.015;
 
-  // Other services
-  const legalServices = totalImplementation * 0.005;
+  // Other services - with manual mode support
+  const legalServices = safeData.legal_services_manual_mode
+    ? (safeData.legal_services_manual_value || 0)
+    : totalImplementation * 0.005;
   
   // Development fee - can be per m² or total manual
   const totalSalesArea = (safeProjectData.sales_area_apartments || 0) + 
@@ -231,10 +293,14 @@ export default function CostInputs({ data, projectData, language, onChange }) {
     ? (safeData.development_fee_manual_value || 0)
     : totalSalesArea * (safeData.development_fee_per_m2 || 0);
     
-  const otherFees = implementationSubtotal * 0.01;
+  const otherFees = safeData.other_fees_manual_mode
+    ? (safeData.other_fees_manual_value || 0)
+    : implementationSubtotal * 0.01;
 
-  // Reserve
-  const reserve = totalImplementation * 0.05;
+  // Reserve - with manual mode support
+  const reserve = safeData.reserve_manual_mode
+    ? (safeData.reserve_manual_value || 0)
+    : totalImplementation * 0.05;
 
   const handleChange = (field, value) => {
     onChange({ ...safeData, [field]: parseFloat(value) || 0 });
@@ -301,6 +367,49 @@ export default function CostInputs({ data, projectData, language, onChange }) {
           <p className="text-sm text-muted-foreground">{t.result}</p>
           <p className="text-lg font-bold text-primary">{currencyFormatter(cost, 'EUR', '€', 0)}</p>
         </div>
+      </div>
+    );
+  };
+  
+  const renderSimpleCostItem = (prefix, label, defaultLabel) => {
+    const isManual = safeData[`${prefix}_manual_mode`];
+    
+    return (
+      <div className="border rounded-lg p-4 bg-muted/10">
+        <div className="flex items-center justify-between mb-3">
+          <Label className="font-semibold flex items-center gap-2">
+            {label}
+            {isManual && <Badge variant="outline" className="text-xs">{t.manual_badge}</Badge>}
+          </Label>
+          <Select 
+            value={isManual ? 'manual' : 'auto'} 
+            onValueChange={(value) => handleModeChange(prefix, value)}
+          >
+            <SelectTrigger className="w-24 h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="auto">{t.mode_auto}</SelectItem>
+              <SelectItem value="manual">{t.mode_manual}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {isManual ? (
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">{t.total_amount}</Label>
+            <Input 
+              type="number" 
+              min="0"
+              step="1000"
+              value={safeData[`${prefix}_manual_value`] || ""} 
+              onChange={(e) => handleChange(`${prefix}_manual_value`, e.target.value)} 
+              className="font-semibold"
+            />
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{defaultLabel}</p>
+        )}
       </div>
     );
   };
@@ -382,38 +491,42 @@ export default function CostInputs({ data, projectData, language, onChange }) {
         </div>
       </div>
 
-      <div className="border-t pt-4">
-        <h4 className="font-semibold mb-2">{t.additional_costs}</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between py-1">
-            <span className="text-muted-foreground">{t.project_management}</span>
-            <span className="font-semibold">{currencyFormatter(projectManagement, 'EUR', '€', 0)}</span>
+      <div className="border-t pt-6">
+        <h4 className="font-semibold mb-4">{t.additional_costs} <span className="text-sm text-muted-foreground font-normal">{t.additional_costs_subtitle}</span></h4>
+        <div className="space-y-4">
+          {renderSimpleCostItem('project_management', t.project_management, t.project_management_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(projectManagement, 'EUR', '€', 0)}</span>
           </div>
-          <div className="flex justify-between py-1">
-            <span className="text-muted-foreground">{t.site_equipment}</span>
-            <span className="font-semibold">{currencyFormatter(siteEquipment, 'EUR', '€', 0)}</span>
+          
+          {renderSimpleCostItem('site_equipment', t.site_equipment, t.site_equipment_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(siteEquipment, 'EUR', '€', 0)}</span>
           </div>
-          <div className="flex justify-between py-1">
-            <span className="text-muted-foreground">{t.project_activity}</span>
-            <span className="font-semibold">{currencyFormatter(projectActivity, 'EUR', '€', 0)}</span>
+          
+          {renderSimpleCostItem('project_activity', t.project_activity, t.project_activity_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(projectActivity, 'EUR', '€', 0)}</span>
           </div>
-          <div className="flex justify-between py-1">
-            <span className="text-muted-foreground">{t.engineering_activity}</span>
-            <span className="font-semibold">{currencyFormatter(engineeringActivity, 'EUR', '€', 0)}</span>
+          
+          {renderSimpleCostItem('engineering_activity', t.engineering_activity, t.engineering_activity_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(engineeringActivity, 'EUR', '€', 0)}</span>
           </div>
-          <div className="flex justify-between py-1">
-            <span className="text-muted-foreground">{t.technical_supervision}</span>
-            <span className="font-semibold">{currencyFormatter(technicalSupervision, 'EUR', '€', 0)}</span>
+          
+          {renderSimpleCostItem('technical_supervision', t.technical_supervision, t.technical_supervision_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(technicalSupervision, 'EUR', '€', 0)}</span>
           </div>
         </div>
       </div>
 
-      <div className="border-t pt-4">
+      <div className="border-t pt-6">
         <h4 className="font-semibold mb-4">{t.other_services}</h4>
         <div className="space-y-4">
-          <div className="p-3 bg-muted/20 rounded">
-            <p className="text-sm text-muted-foreground mb-1">{t.legal_services}</p>
-            <p className="font-semibold">{currencyFormatter(legalServices, 'EUR', '€', 2)}</p>
+          {renderSimpleCostItem('legal_services', t.legal_services, t.legal_services_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(legalServices, 'EUR', '€', 0)}</span>
           </div>
 
           {/* Development Fee with manual option */}
@@ -470,16 +583,17 @@ export default function CostInputs({ data, projectData, language, onChange }) {
             </div>
           </div>
 
-          <div className="p-3 bg-muted/20 rounded">
-            <p className="text-sm text-muted-foreground mb-1">{t.other_fees}</p>
-            <p className="font-semibold">{currencyFormatter(otherFees, 'EUR', '€', 2)}</p>
+          {renderSimpleCostItem('other_fees', t.other_fees, t.other_fees_default)}
+          <div className="text-sm text-muted-foreground text-right -mt-2">
+            {t.result}: <span className="font-semibold text-foreground">{currencyFormatter(otherFees, 'EUR', '€', 0)}</span>
           </div>
         </div>
       </div>
 
-      <div className="border-t pt-4">
-        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-          <p className="text-sm font-semibold mb-1">{t.reserve}</p>
+      <div className="border-t pt-6">
+        {renderSimpleCostItem('reserve', t.reserve, t.reserve_default)}
+        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg mt-4">
+          <p className="text-sm font-semibold mb-1">{t.result}</p>
           <p className="text-lg font-bold">{currencyFormatter(reserve, 'EUR', '€', 2)}</p>
         </div>
       </div>

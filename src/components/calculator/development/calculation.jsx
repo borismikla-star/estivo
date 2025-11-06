@@ -92,11 +92,25 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const totalImplementation = implementationSubtotal + engineeringNetworks;
 
     // 3. Additional Budget Costs (percentages of implementation costs)
-    const projectManagement = totalImplementation * 0.035; // 3.5%
-    const siteEquipment = totalImplementation * 0.03; // 3%
-    const projectActivity = totalImplementation * 0.035; // 3.5%
-    const engineeringActivity = totalImplementation * 0.01; // 1%
-    const technicalSupervision = totalImplementation * 0.015; // 1.5%
+    const projectManagement = cost_data.project_management_manual_mode
+        ? num(cost_data.project_management_manual_value)
+        : totalImplementation * 0.035; // 3.5%
+        
+    const siteEquipment = cost_data.site_equipment_manual_mode
+        ? num(cost_data.site_equipment_manual_value)
+        : totalImplementation * 0.03; // 3%
+        
+    const projectActivity = cost_data.project_activity_manual_mode
+        ? num(cost_data.project_activity_manual_value)
+        : totalImplementation * 0.035; // 3.5%
+        
+    const engineeringActivity = cost_data.engineering_activity_manual_mode
+        ? num(cost_data.engineering_activity_manual_value)
+        : totalImplementation * 0.01; // 1%
+        
+    const technicalSupervision = cost_data.technical_supervision_manual_mode
+        ? num(cost_data.technical_supervision_manual_value)
+        : totalImplementation * 0.015; // 1.5%
 
     // Sales and Marketing will be calculated as % of revenue later
     let salesCosts = 0;
@@ -106,18 +120,24 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
                                   engineeringActivity + technicalSupervision;
 
     // 4. Other Services - with manual mode support for development fee
-    const legalServices = totalImplementation * 0.005; // 0.5%
+    const legalServices = cost_data.legal_services_manual_mode
+        ? num(cost_data.legal_services_manual_value)
+        : totalImplementation * 0.005; // 0.5%
     
     const developmentFee = cost_data.development_fee_manual_mode
         ? num(cost_data.development_fee_manual_value)
         : totalSalesArea * num(cost_data.development_fee_per_m2);
         
-    const otherFeesPermits = implementationSubtotal * 0.01; // 1% of 2.1-2.6
+    const otherFeesPermits = cost_data.other_fees_manual_mode
+        ? num(cost_data.other_fees_manual_value)
+        : implementationSubtotal * 0.01; // 1% of 2.1-2.6
 
     const totalOtherServices = legalServices + developmentFee + otherFeesPermits;
 
     // 5. Reserve
-    const reserveProvision = totalImplementation * 0.05; // 5%
+    const reserveProvision = cost_data.reserve_manual_mode
+        ? num(cost_data.reserve_manual_value)
+        : totalImplementation * 0.05; // 5%
 
     // === REVENUE CALCULATIONS ===
     const apartmentsUnitPrice = num(revenue_data.apartments_unit_price);
