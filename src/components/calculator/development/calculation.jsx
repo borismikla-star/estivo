@@ -1,3 +1,4 @@
+
 // Helper function to calculate IRR using Newton-Raphson method
 function calculateIRR(cashFlows, guess = 0.1) {
     const maxIterations = 100;
@@ -61,26 +62,33 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const totalNFA = nfaAbove + nfaBelow;
     const totalSalesArea = salesAreaApartments + salesAreaNonResidential + salesAreaBalconies + salesAreaGardens + basementArea;
 
-    // === COST CALCULATIONS ===
+    // === COST CALCULATIONS WITH MANUAL MODE SUPPORT ===
     
     // 1. Land + Project Purchase
     const landAndProject = num(cost_data.land_and_project);
 
-    // 2. Implementation
-    const aboveGroundUnitPrice = num(cost_data.above_ground_unit_price);
-    const belowGroundUnitPrice = num(cost_data.below_ground_unit_price);
-    const outdoorAreasUnitPrice = num(cost_data.outdoor_areas_unit_price);
-    const greeneryTerrainUnitPrice = num(cost_data.greenery_terrain_unit_price);
-    const greeneryStructureUnitPrice = num(cost_data.greenery_structure_unit_price);
+    // 2. Implementation - with manual mode support
+    const calculateCost = (prefix, area) => {
+        const isManual = cost_data[`${prefix}_manual_mode`];
+        if (isManual) {
+            return num(cost_data[`${prefix}_manual_value`]);
+        }
+        return area * num(cost_data[`${prefix}_unit_price`]);
+    };
 
-    const aboveGroundCost = gfaAbove * aboveGroundUnitPrice;
-    const belowGroundCost = gfaBelow * belowGroundUnitPrice;
-    const outdoorAreasCost = pavedAreas * outdoorAreasUnitPrice;
-    const greeneryTerrainCost = greenAreasTerrain * greeneryTerrainUnitPrice;
-    const greeneryStructureCost = greenAreasStructure * greeneryStructureUnitPrice;
+    const aboveGroundCost = calculateCost('above_ground', gfaAbove);
+    const belowGroundCost = calculateCost('below_ground', gfaBelow);
+    const outdoorAreasCost = calculateCost('outdoor_areas', pavedAreas);
+    const greeneryTerrainCost = calculateCost('greenery_terrain', greenAreasTerrain);
+    const greeneryStructureCost = calculateCost('greenery_structure', greenAreasStructure);
 
     const implementationSubtotal = aboveGroundCost + belowGroundCost + outdoorAreasCost + greeneryTerrainCost + greeneryStructureCost;
-    const engineeringNetworks = implementationSubtotal * 0.04; // 4% of 2.1-2.5
+    
+    // Engineering networks - with manual mode support
+    const engineeringNetworks = cost_data.engineering_networks_manual_mode
+        ? num(cost_data.engineering_networks_manual_value)
+        : implementationSubtotal * 0.04; // 4% of 2.1-2.5
+    
     const totalImplementation = implementationSubtotal + engineeringNetworks;
 
     // 3. Additional Budget Costs (percentages of implementation costs)
@@ -97,10 +105,13 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const totalAdditionalBudget = projectManagement + siteEquipment + projectActivity + 
                                   engineeringActivity + technicalSupervision;
 
-    // 4. Other Services
+    // 4. Other Services - with manual mode support for development fee
     const legalServices = totalImplementation * 0.005; // 0.5%
-    const developmentFeePerM2 = num(cost_data.development_fee_per_m2);
-    const developmentFee = totalSalesArea * developmentFeePerM2;
+    
+    const developmentFee = cost_data.development_fee_manual_mode
+        ? num(cost_data.development_fee_manual_value)
+        : totalSalesArea * num(cost_data.development_fee_per_m2);
+        
     const otherFeesPermits = implementationSubtotal * 0.01; // 1% of 2.1-2.6
 
     const totalOtherServices = legalServices + developmentFee + otherFeesPermits;
