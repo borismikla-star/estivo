@@ -43,7 +43,10 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
 
     // VAT rate (20% in most EU countries)
     const VAT_RATE = 0.20;
-    const isVATpayer = entity_type === 'PO'; // PO = VAT payer, FO = non-VAT payer
+    
+    // IMPORTANT: Use project_info_data.vat_payer instead of entity_type
+    // User can explicitly set VAT payer status regardless of entity type
+    const isVATpayer = project_info_data.vat_payer === true;
 
     // === PROJECT DATA ===
     const totalLandArea = num(project_info_data.total_land_area);
@@ -174,14 +177,14 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     let vatInput = 0;  // VAT on costs (can be deducted by VAT payer)
     let vatOutput = 0; // VAT on revenue (must be paid to tax authority)
     let totalCostsExclVAT = 0;
-    let totalRevenueExclVAT = totalGrossRevenue; // Apartments are VAT exempt, totalGrossRevenue is effectively net of VAT for the developer
+    let totalRevenueExclVAT = totalGrossRevenue; // Apartments are VAT exempt
 
-    // TOTAL COSTS BEFORE FINANCING (This is the gross cost, incl. potential VAT if not deductible)
+    // TOTAL COSTS BEFORE FINANCING (with VAT)
     const totalCostsWithVAT = landAndProject + totalImplementation + totalAdditionalBudget + 
                                salesCosts + marketingCosts + totalOtherServices + reserveProvision;
 
     if (isVATpayer) {
-        // PO / VAT payer - can deduct input VAT
+        // VAT payer - can deduct input VAT
         // Calculate VAT on costs (assuming all costs are provided as VAT inclusive and we extract VAT)
         vatInput = totalCostsWithVAT * (VAT_RATE / (1 + VAT_RATE)); // Extract VAT from prices with VAT
         totalCostsExclVAT = totalCostsWithVAT - vatInput; // Net costs without VAT
@@ -192,7 +195,7 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
         vatOutput = taxableRevenue * VAT_RATE;
         // totalRevenueExclVAT remains totalGrossRevenue as calculated, as we assume it's net for the developer
     } else {
-        // FO / Non-VAT payer - cannot deduct input VAT, must pay full prices
+        // Non-VAT payer - cannot deduct input VAT, must pay full prices
         vatInput = 0; // No deduction possible
         vatOutput = 0; // No VAT on sales
         totalCostsExclVAT = totalCostsWithVAT; // Pays full price including embedded VAT
