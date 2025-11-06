@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import CountrySelector from "../CountrySelector";
@@ -14,14 +15,6 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
   const handleEstimateRate = useCallback(async () => {
     console.log("Rate estimation temporarily disabled");
   }, []);
-
-  const handleCountryChange = useCallback((country, entityType) => {
-    onBulkUpdate('property_data', { 
-      ...projectData.property_data,
-      country: country,
-      entity_type: entityType
-    });
-  }, [projectData, onBulkUpdate]);
 
   const ensureNumber = useCallback((value) => {
     const num = Number(value);
@@ -89,7 +82,7 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
         t={t}
       />,
     },
-  ], [t_calc, projectData, language, onBulkUpdate, handleEstimateRate, isEstimatingRate, ensureNumber]);
+  ], [t_calc, projectData, language, onBulkUpdate, handleEstimateRate, isEstimatingRate, ensureNumber, t]);
 
   return (
      <div className="space-y-6">

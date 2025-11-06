@@ -43,14 +43,6 @@ export default function DevelopmentCalculator({ projectData, onBulkUpdate, langu
 
   const t = translations[language] || translations.en;
 
-  const handleCountryChange = useCallback((country, entityType) => {
-    onBulkUpdate('property_data', { 
-      ...projectData.property_data,
-      country: country,
-      entity_type: entityType
-    });
-  }, [projectData, onBulkUpdate]);
-
   // Calculate total costs and revenue for financing calculations
   const project_info = projectData.project_info_data || {};
   const cost_data = projectData.cost_data || {};

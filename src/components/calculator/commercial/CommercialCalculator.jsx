@@ -1,3 +1,4 @@
+
 import React, { useCallback, useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import CountrySelector from "../CountrySelector";
@@ -10,14 +11,6 @@ import LegislativeNotes from "../LegislativeNotes";
 
 
 export default function CommercialCalculator({ projectData, onBulkUpdate, language, countryPresets, t }) {
-
-  const handleCountryChange = useCallback((country, entityType) => {
-    onBulkUpdate('property_data', { 
-      ...projectData.property_data,
-      country: country,
-      entity_type: entityType
-    });
-  }, [projectData, onBulkUpdate]);
 
   const translations = {
       en: {
