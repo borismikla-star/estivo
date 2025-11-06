@@ -1,512 +1,411 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { currencyFormatter, percentFormatter } from '../../lib/formatters';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import KPICard from '../shared/KPICard';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
+import { currencyFormatter, percentFormatter } from '@/components/lib/formatters';
+import { TrendingUp, TrendingDown, DollarSign, Target, PieChart as PieChartIcon, BarChart3 } from 'lucide-react';
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+const COLORS = ['#003E7E', '#004C97', '#0066CC', '#0080FF', '#33A3FF', '#66BBFF', '#99D6FF'];
 
-export default function DevelopmentResults({ results, currency = '€', language = 'en' }) {
+export default function ResultsDisplay({ results, currency = '€', language = 'en' }) {
     if (!results || !results.kpis) return null;
 
-    const { kpis, cost_breakdown, revenue_breakdown } = results;
+    const { kpis, costBreakdown, revenueBreakdown } = results;
 
     const translations = {
+        sk: {
+            title: "Výsledky developmentu",
+            overview: "Prehľad",
+            charts: "Grafy",
+            cashflow: "Cash Flow",
+            kpis_title: "Kľúčové ukazovatele",
+            total_project_costs: "Celkové náklady",
+            total_project_costs_desc: "Všetky náklady vrátane financovania",
+            gross_revenue: "Hrubé tržby",
+            gross_revenue_desc: "Celkové príjmy z predaja",
+            gross_profit: "Hrubý zisk",
+            gross_profit_desc: "Tržby mínus náklady",
+            profit_margin: "Zisková marža",
+            profit_margin_desc: "Percento zisku z tržieb",
+            developer_margin: "Marža developera",
+            developer_margin_desc: "Čistý zisk ako % nákladov",
+            return_on_cost: "Návratnosť nákladov",
+            return_on_cost_desc: "ROC - zisk/náklady",
+            equity_multiple: "Násobok kapitálu",
+            equity_multiple_desc: "Koľkokrát sa vráti vlastný kapitál",
+            irr: "IRR",
+            irr_desc: "Vnútorná miera návratnosti",
+            annualized_return: "Ročná návratnosť",
+            annualized_return_desc: "Ročný výnos vlastného kapitálu",
+            cost_breakdown: "Rozloženie nákladov",
+            revenue_breakdown: "Rozloženie príjmov",
+            key_metrics: "Kľúčové metriky",
+            cost_per_m2: "Náklady/m²",
+            revenue_per_m2: "Príjem/m²",
+            profit_per_m2: "Zisk/m²",
+            break_even_revenue: "Bod zvratu",
+            break_even_percentage: "Bod zvratu %",
+            project_duration: "Trvanie projektu",
+            months: "mesiacov",
+            cashflow_timeline: "Časová os Cash Flow",
+            period: "Obdobie",
+            costs: "Náklady",
+            revenue: "Príjmy",
+            cumulative_cashflow: "Kumulatívny Cash Flow",
+        },
         en: {
-            financial_overview: "Financial Overview",
-            investment_summary: "Investment Summary",
-            profitability: "Profitability Analysis",
-            per_m2_metrics: "Per M² Metrics",
-            developer_returns: "Developer Returns",
-            risk_analysis: "Risk Analysis",
-            project_areas: "Project Areas",
-            efficiency_ratios: "Efficiency Ratios",
+            title: "Development Results",
+            overview: "Overview",
+            charts: "Charts",
+            cashflow: "Cash Flow",
+            kpis_title: "Key Performance Indicators",
+            total_project_costs: "Total Costs",
+            total_project_costs_desc: "All costs including financing",
+            gross_revenue: "Gross Revenue",
+            gross_revenue_desc: "Total sales revenue",
+            gross_profit: "Gross Profit",
+            gross_profit_desc: "Revenue minus costs",
+            profit_margin: "Profit Margin",
+            profit_margin_desc: "Profit as % of revenue",
+            developer_margin: "Developer Margin",
+            developer_margin_desc: "Net profit as % of cost",
+            return_on_cost: "Return on Cost",
+            return_on_cost_desc: "ROC - profit/cost",
+            equity_multiple: "Equity Multiple",
+            equity_multiple_desc: "How many times equity is returned",
+            irr: "IRR",
+            irr_desc: "Internal Rate of Return",
+            annualized_return: "Annualized Return",
+            annualized_return_desc: "Annual return on equity",
             cost_breakdown: "Cost Breakdown",
             revenue_breakdown: "Revenue Breakdown",
-            
-            // KPIs
-            total_costs: "Total Project Costs",
-            own_resources: "Own Resources",
-            bank_resources: "Bank Resources",
-            financing_costs: "Financing Costs",
-            gross_revenue: "Gross Revenue",
-            net_revenue: "Net Revenue",
-            gross_profit: "Gross Profit",
-            net_profit: "Net Profit",
-            profit_margin: "Profit Margin",
-            developer_margin: "Developer's Margin",
-            return_on_cost: "Return on Cost",
-            equity_multiple: "Equity Multiple",
-            annualized_return: "Annualized Return",
-            irr: "IRR (Internal Rate of Return)",
+            key_metrics: "Key Metrics",
+            cost_per_m2: "Cost/m²",
+            revenue_per_m2: "Revenue/m²",
+            profit_per_m2: "Profit/m²",
+            break_even_revenue: "Break-Even",
+            break_even_percentage: "Break-Even %",
             project_duration: "Project Duration",
-            cost_per_m2: "Total Cost per m²",
-            land_cost_per_m2: "Land Cost per m²",
-            construction_cost_per_m2: "Construction Cost per m²",
-            revenue_per_m2: "Revenue per m²",
-            profit_per_m2: "Profit per m²",
-            break_even: "Break-Even Revenue",
-            break_even_pct: "Break-Even %",
-            land_uplift: "Land Value Uplift",
-            land_uplift_pct: "Land Value Uplift %",
-            total_gfa: "Total GFA",
-            total_nfa: "Total NFA",
-            total_sales_area: "Total Sales Area",
-            total_land: "Total Land Area",
-            gfa_to_land: "GFA to Land Ratio",
-            nfa_to_gfa: "NFA to GFA Ratio",
-            sales_to_gfa: "Sales to GFA Ratio",
             months: "months",
-            years: "years",
-        },
-        sk: {
-            financial_overview: "Finančný prehľad",
-            investment_summary: "Súhrn investície",
-            profitability: "Analýza ziskovosti",
-            per_m2_metrics: "Metriky na m²",
-            developer_returns: "Výnosy developera",
-            risk_analysis: "Analýza rizík",
-            project_areas: "Plochy projektu",
-            efficiency_ratios: "Ukazovatele efektívnosti",
-            cost_breakdown: "Rozdelenie nákladov",
-            revenue_breakdown: "Rozdelenie príjmov",
-            
-            // KPIs
-            total_costs: "Celkové náklady projektu",
-            own_resources: "Vlastné zdroje",
-            bank_resources: "Bankové zdroje",
-            financing_costs: "Náklady na financovanie",
-            gross_revenue: "Hrubé tržby",
-            net_revenue: "Čisté tržby",
-            gross_profit: "Hrubý zisk",
-            net_profit: "Čistý zisk",
-            profit_margin: "Zisková marža",
-            developer_margin: "Marža developera",
-            return_on_cost: "Návratnosť nákladov",
-            equity_multiple: "Násobok kapitálu",
-            annualized_return: "Ročná návratnosť",
-            irr: "IRR (Vnútorná miera návratnosti)",
-            project_duration: "Trvanie projektu",
-            cost_per_m2: "Celkové náklady na m²",
-            land_cost_per_m2: "Náklady na pozemok na m²",
-            construction_cost_per_m2: "Náklady na výstavbu na m²",
-            revenue_per_m2: "Príjem na m²",
-            profit_per_m2: "Zisk na m²",
-            break_even: "Bod zvratu - tržby",
-            break_even_pct: "Bod zvratu %",
-            land_uplift: "Zhodnotenie pozemku",
-            land_uplift_pct: "Zhodnotenie pozemku %",
-            total_gfa: "Celková HPP",
-            total_nfa: "Celková ČÚP",
-            total_sales_area: "Celková predajná plocha",
-            total_land: "Celková plocha pozemku",
-            gfa_to_land: "Pomer HPP k pozemku",
-            nfa_to_gfa: "Pomer ČÚP k HPP",
-            sales_to_gfa: "Pomer predajnej plochy k HPP",
-            months: "mesiacov",
-            years: "rokov",
+            cashflow_timeline: "Cash Flow Timeline",
+            period: "Period",
+            costs: "Costs",
+            revenue: "Revenue",
+            cumulative_cashflow: "Cumulative Cash Flow",
         },
         pl: {
-            financial_overview: "Przegląd finansowy",
-            investment_summary: "Podsumowanie inwestycji",
-            profitability: "Analiza rentowności",
-            per_m2_metrics: "Metryki na m²",
-            developer_returns: "Zwroty dewelopera",
-            risk_analysis: "Analiza ryzyka",
-            project_areas: "Obszary projektu",
-            efficiency_ratios: "Wskaźniki efektywności",
+            title: "Wyniki deweloperskie",
+            overview: "Przegląd",
+            charts: "Wykresy",
+            cashflow: "Przepływ gotówki",
+            kpis_title: "Kluczowe wskaźniki",
+            total_project_costs: "Całkowite koszty",
+            total_project_costs_desc: "Wszystkie koszty wraz z finansowaniem",
+            gross_revenue: "Przychody brutto",
+            gross_revenue_desc: "Całkowite przychody ze sprzedaży",
+            gross_profit: "Zysk brutto",
+            gross_profit_desc: "Przychody minus koszty",
+            profit_margin: "Marża zysku",
+            profit_margin_desc: "Zysk jako % przychodów",
+            developer_margin: "Marża dewelopera",
+            developer_margin_desc: "Zysk netto jako % kosztów",
+            return_on_cost: "Zwrot z kosztów",
+            return_on_cost_desc: "ROC - zysk/koszty",
+            equity_multiple: "Mnożnik kapitału",
+            equity_multiple_desc: "Ile razy zwraca się kapitał",
+            irr: "IRR",
+            irr_desc: "Wewnętrzna stopa zwrotu",
+            annualized_return: "Roczny zwrot",
+            annualized_return_desc: "Roczny zwrot z kapitału",
             cost_breakdown: "Podział kosztów",
             revenue_breakdown: "Podział przychodów",
-            
-            // KPIs
-            total_costs: "Całkowite koszty projektu",
-            own_resources: "Własne zasoby",
-            bank_resources: "Zasoby bankowe",
-            financing_costs: "Koszty finansowania",
-            gross_revenue: "Przychody brutto",
-            net_revenue: "Przychody netto",
-            gross_profit: "Zysk brutto",
-            net_profit: "Zysk netto",
-            profit_margin: "Marża zysku",
-            developer_margin: "Marża dewelopera",
-            return_on_cost: "Zwrot z kosztów",
-            equity_multiple: "Mnożnik kapitału",
-            annualized_return: "Roczny zwrot",
-            irr: "IRR (Wewnętrzna stopa zwrotu)",
+            key_metrics: "Kluczowe metryki",
+            cost_per_m2: "Koszt/m²",
+            revenue_per_m2: "Przychód/m²",
+            profit_per_m2: "Zysk/m²",
+            break_even_revenue: "Próg rentowności",
+            break_even_percentage: "Próg rentowności %",
             project_duration: "Czas trwania projektu",
-            cost_per_m2: "Całkowity koszt na m²",
-            land_cost_per_m2: "Koszt gruntu na m²",
-            construction_cost_per_m2: "Koszt budowy na m²",
-            revenue_per_m2: "Przychód na m²",
-            profit_per_m2: "Zysk na m²",
-            break_even: "Próg rentowności - przychody",
-            break_even_pct: "Próg rentowności %",
-            land_uplift: "Wzrost wartości gruntu",
-            land_uplift_pct: "Wzrost wartości gruntu %",
-            total_gfa: "Całkowita powierzchnia brutto",
-            total_nfa: "Całkowita powierzchnia netto",
-            total_sales_area: "Całkowita powierzchnia sprzedaży",
-            total_land: "Całkowita powierzchnia działki",
-            gfa_to_land: "Stosunek GFA do działki",
-            nfa_to_gfa: "Stosunek NFA do GFA",
-            sales_to_gfa: "Stosunek sprzedaży do GFA",
-            months: "miesięcy",
-            years: "lat",
+            months: "miesiące",
+            cashflow_timeline: "Oś czasu przepływu gotówki",
+            period: "Okres",
+            costs: "Koszty",
+            revenue: "Przychody",
+            cumulative_cashflow: "Skumulowany przepływ gotówki",
         },
         hu: {
-            financial_overview: "Pénzügyi áttekintés",
-            investment_summary: "Befektetési összefoglaló",
-            profitability: "Jövedelmezőségi elemzés",
-            per_m2_metrics: "M² mutatók",
-            developer_returns: "Fejlesztői hozamok",
-            risk_analysis: "Kockázatelemzés",
-            project_areas: "Projekt területek",
-            efficiency_ratios: "Hatékonysági mutatók",
-            cost_breakdown: "Költségek megoszlása",
-            revenue_breakdown: "Bevételek megoszlása",
-            
-            // KPIs
-            total_costs: "Teljes projektköltség",
-            own_resources: "Saját források",
-            bank_resources: "Banki források",
-            financing_costs: "Finanszírozási költségek",
+            title: "Fejlesztési eredmények",
+            overview: "Áttekintés",
+            charts: "Grafikonok",
+            cashflow: "Pénzáramlás",
+            kpis_title: "Kulcs teljesítménymutatók",
+            total_project_costs: "Összes költség",
+            total_project_costs_desc: "Összes költség a finanszírozással együtt",
             gross_revenue: "Bruttó bevétel",
-            net_revenue: "Nettó bevétel",
+            gross_revenue_desc: "Összes értékesítési bevétel",
             gross_profit: "Bruttó nyereség",
-            net_profit: "Nettó nyereség",
+            gross_profit_desc: "Bevétel mínusz költségek",
             profit_margin: "Profitmarzs",
+            profit_margin_desc: "Nyereség mint a bevétel %-a",
             developer_margin: "Fejlesztői marzs",
+            developer_margin_desc: "Nettó nyereség mint a költség %-a",
             return_on_cost: "Költség megtérülés",
+            return_on_cost_desc: "ROC - nyereség/költség",
             equity_multiple: "Tőke szorzó",
+            equity_multiple_desc: "Hányszor térül meg a tőke",
+            irr: "IRR",
+            irr_desc: "Belső megtérülési ráta",
             annualized_return: "Éves hozam",
-            irr: "IRR (Belső megtérülési ráta)",
-            project_duration: "Projekt időtartama",
-            cost_per_m2: "Teljes költség m²-enként",
-            land_cost_per_m2: "Telek költség m²-enként",
-            construction_cost_per_m2: "Építési költség m²-enként",
-            revenue_per_m2: "Bevétel m²-enként",
-            profit_per_m2: "Nyereség m²-enként",
-            break_even: "Megtérülési pont - bevétel",
-            break_even_pct: "Megtérülési pont %",
-            land_uplift: "Telek értéknövekedés",
-            land_uplift_pct: "Telek értéknövekedés %",
-            total_gfa: "Teljes bruttó terület",
-            total_nfa: "Teljes nettó terület",
-            total_sales_area: "Teljes értékesítési terület",
-            total_land: "Teljes telek terület",
-            gfa_to_land: "GFA - telek arány",
-            nfa_to_gfa: "NFA - GFA arány",
-            sales_to_gfa: "Értékesítés - GFA arány",
+            annualized_return_desc: "Éves tőkehozam",
+            cost_breakdown: "Költségek részletezése",
+            revenue_breakdown: "Bevételek részletezése",
+            key_metrics: "Kulcs metrikák",
+            cost_per_m2: "Költség/m²",
+            revenue_per_m2: "Bevétel/m²",
+            profit_per_m2: "Nyereség/m²",
+            break_even_revenue: "Fedezeti pont",
+            break_even_percentage: "Fedezeti pont %",
+            project_duration: "Projekt időtartam",
             months: "hónap",
-            years: "év",
+            cashflow_timeline: "Pénzáramlás idővonal",
+            period: "Időszak",
+            costs: "Költségek",
+            revenue: "Bevétel",
+            cumulative_cashflow: "Kumulatív pénzáramlás",
         },
         de: {
-            financial_overview: "Finanzübersicht",
-            investment_summary: "Investitionszusammenfassung",
-            profitability: "Rentabilitätsanalyse",
-            per_m2_metrics: "Pro M² Kennzahlen",
-            developer_returns: "Entwicklerrenditen",
-            risk_analysis: "Risikoanalyse",
-            project_areas: "Projektflächen",
-            efficiency_ratios: "Effizienzkennzahlen",
-            cost_breakdown: "Kostenaufschlüsselung",
-            revenue_breakdown: "Umsatzaufschlüsselung",
-            
-            // KPIs
-            total_costs: "Gesamtprojektkosten",
-            own_resources: "Eigenmittel",
-            bank_resources: "Bankmittel",
-            financing_costs: "Finanzierungskosten",
+            title: "Entwicklungsergebnisse",
+            overview: "Übersicht",
+            charts: "Diagramme",
+            cashflow: "Cashflow",
+            kpis_title: "Leistungskennzahlen",
+            total_project_costs: "Gesamtkosten",
+            total_project_costs_desc: "Alle Kosten inkl. Finanzierung",
             gross_revenue: "Bruttoeinnahmen",
-            net_revenue: "Nettoeinnahmen",
+            gross_revenue_desc: "Gesamte Verkaufserlöse",
             gross_profit: "Bruttogewinn",
-            net_profit: "Nettogewinn",
+            gross_profit_desc: "Einnahmen minus Kosten",
             profit_margin: "Gewinnmarge",
+            profit_margin_desc: "Gewinn als % der Einnahmen",
             developer_margin: "Entwicklermarge",
+            developer_margin_desc: "Nettogewinn als % der Kosten",
             return_on_cost: "Kostenrendite",
+            return_on_cost_desc: "ROC - Gewinn/Kosten",
             equity_multiple: "Eigenkapital-Multiplikator",
+            equity_multiple_desc: "Wie oft wird das Eigenkapital zurückgegeben",
+            irr: "IRR",
+            irr_desc: "Interner Zinsfuß",
             annualized_return: "Jährliche Rendite",
-            irr: "IRR (Interner Zinsfuß)",
+            annualized_return_desc: "Jährliche Eigenkapitalrendite",
+            cost_breakdown: "Kostenaufschlüsselung",
+            revenue_breakdown: "Einnahmenaufschlüsselung",
+            key_metrics: "Kennzahlen",
+            cost_per_m2: "Kosten/m²",
+            revenue_per_m2: "Einnahmen/m²",
+            profit_per_m2: "Gewinn/m²",
+            break_even_revenue: "Break-Even",
+            break_even_percentage: "Break-Even %",
             project_duration: "Projektdauer",
-            cost_per_m2: "Gesamtkosten pro m²",
-            land_cost_per_m2: "Grundstückskosten pro m²",
-            construction_cost_per_m2: "Baukosten pro m²",
-            revenue_per_m2: "Einnahmen pro m²",
-            profit_per_m2: "Gewinn pro m²",
-            break_even: "Break-Even Umsatz",
-            break_even_pct: "Break-Even %",
-            land_uplift: "Grundstückswertsteigerung",
-            land_uplift_pct: "Grundstückswertsteigerung %",
-            total_gfa: "Gesamte Bruttogeschossfläche",
-            total_nfa: "Gesamte Nettogeschossfläche",
-            total_sales_area: "Gesamte Verkaufsfläche",
-            total_land: "Gesamte Grundstücksfläche",
-            gfa_to_land: "BGF zu Grundstück Verhältnis",
-            nfa_to_gfa: "NGF zu BGF Verhältnis",
-            sales_to_gfa: "Verkauf zu BGF Verhältnis",
             months: "Monate",
-            years: "Jahre",
+            cashflow_timeline: "Cashflow-Zeitachse",
+            period: "Zeitraum",
+            costs: "Kosten",
+            revenue: "Einnahmen",
+            cumulative_cashflow: "Kumulativer Cashflow",
         }
     };
 
     const t = translations[language] || translations.en;
 
-    // Safe number formatter
-    const safeNum = (value) => {
-        const num = Number(value);
-        return isNaN(num) ? 0 : num;
-    };
+    // Generate Cash Flow Timeline data (simplified - 4 phases)
+    const cashFlowData = [
+        { period: '1-6 ' + t.months, costs: -kpis.total_project_costs * 0.3, revenue: 0, cumulative: -kpis.total_project_costs * 0.3 },
+        { period: '7-12 ' + t.months, costs: -kpis.total_project_costs * 0.4, revenue: kpis.gross_revenue * 0.2, cumulative: -kpis.total_project_costs * 0.7 + kpis.gross_revenue * 0.2 },
+        { period: '13-18 ' + t.months, costs: -kpis.total_project_costs * 0.2, revenue: kpis.gross_revenue * 0.4, cumulative: -kpis.total_project_costs * 0.9 + kpis.gross_revenue * 0.6 },
+        { period: '19-24 ' + t.months, costs: -kpis.total_project_costs * 0.1, revenue: kpis.gross_revenue * 0.4, cumulative: kpis.gross_profit }
+    ];
 
     return (
         <div className="space-y-6">
-            {/* Key Performance Indicators */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t.financial_overview}</CardTitle>
+            <Card className="shadow-premium border-primary/20">
+                <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                        <TrendingUp className="w-6 h-6" />
+                        {t.title}
+                    </CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        <KPICard
-                            label={t.gross_profit}
-                            value={currencyFormatter(safeNum(kpis.gross_profit), 'EUR', currency, 0)}
-                            variant={safeNum(kpis.gross_profit) > 0 ? 'success' : 'danger'}
-                        />
-                        <KPICard
-                            label={t.profit_margin}
-                            value={percentFormatter(safeNum(kpis.profit_margin))}
-                            variant={safeNum(kpis.profit_margin) > 15 ? 'success' : 'warning'}
-                        />
-                        <KPICard
-                            label={t.return_on_cost}
-                            value={percentFormatter(safeNum(kpis.return_on_cost))}
-                            variant={safeNum(kpis.return_on_cost) > 20 ? 'success' : 'warning'}
-                        />
-                        <KPICard
-                            label={t.equity_multiple}
-                            value={`${safeNum(kpis.equity_multiple).toFixed(2)}x`}
-                            variant={safeNum(kpis.equity_multiple) > 1.5 ? 'success' : 'warning'}
-                        />
-                        <KPICard
-                            label={t.irr}
-                            value={percentFormatter(safeNum(kpis.irr))}
-                            variant={safeNum(kpis.irr) > 15 ? 'success' : 'warning'}
-                        />
-                        <KPICard
-                            label={t.developer_margin}
-                            value={percentFormatter(safeNum(kpis.developer_margin))}
-                            variant={safeNum(kpis.developer_margin) > 20 ? 'success' : 'warning'}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+                <CardContent className="pt-6">
+                    <Tabs defaultValue="overview" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3 mb-6">
+                            <TabsTrigger value="overview">{t.overview}</TabsTrigger>
+                            <TabsTrigger value="charts">{t.charts}</TabsTrigger>
+                            <TabsTrigger value="cashflow">{t.cashflow}</TabsTrigger>
+                        </TabsList>
 
-            {/* Investment Summary */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t.investment_summary}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <KPICard
-                            label={t.total_costs}
-                            value={currencyFormatter(safeNum(kpis.total_project_costs), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.own_resources}
-                            value={currencyFormatter(safeNum(kpis.own_resources), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.bank_resources}
-                            value={currencyFormatter(safeNum(kpis.bank_resources), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.gross_revenue}
-                            value={currencyFormatter(safeNum(kpis.gross_revenue), 'EUR', currency, 0)}
-                        />
-                    </div>
-                    <div className="mt-4 p-4 bg-muted/30 rounded-lg">
-                        <p className="text-sm text-muted-foreground mb-1">{t.project_duration}</p>
-                        <p className="text-lg font-semibold">
-                            {safeNum(kpis.project_duration_months).toFixed(0)} {t.months} 
-                            ({safeNum(kpis.project_duration_years).toFixed(1)} {t.years})
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
+                        {/* Overview Tab */}
+                        <TabsContent value="overview" className="space-y-6">
+                            <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <Target className="w-5 h-5" />
+                                {t.kpis_title}
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <KPICard
+                                    title={t.total_project_costs}
+                                    value={currencyFormatter(kpis.total_project_costs, 'EUR', currency, 0)}
+                                    icon={DollarSign}
+                                    description={t.total_project_costs_desc}
+                                />
+                                <KPICard
+                                    title={t.gross_revenue}
+                                    value={currencyFormatter(kpis.gross_revenue, 'EUR', currency, 0)}
+                                    icon={TrendingUp}
+                                    description={t.gross_revenue_desc}
+                                    trend="up"
+                                />
+                                <KPICard
+                                    title={t.gross_profit}
+                                    value={currencyFormatter(kpis.gross_profit, 'EUR', currency, 0)}
+                                    icon={TrendingUp}
+                                    description={t.gross_profit_desc}
+                                    trend={kpis.gross_profit > 0 ? "up" : "down"}
+                                />
+                                <KPICard
+                                    title={t.profit_margin}
+                                    value={percentFormatter(kpis.profit_margin)}
+                                    icon={Target}
+                                    description={t.profit_margin_desc}
+                                />
+                                <KPICard
+                                    title={t.developer_margin}
+                                    value={percentFormatter(kpis.developer_margin)}
+                                    icon={Target}
+                                    description={t.developer_margin_desc}
+                                />
+                                <KPICard
+                                    title={t.return_on_cost}
+                                    value={percentFormatter(kpis.return_on_cost)}
+                                    icon={TrendingUp}
+                                    description={t.return_on_cost_desc}
+                                />
+                                <KPICard
+                                    title={t.equity_multiple}
+                                    value={`${kpis.equity_multiple?.toFixed(2)}x`}
+                                    icon={TrendingUp}
+                                    description={t.equity_multiple_desc}
+                                />
+                                <KPICard
+                                    title={t.irr}
+                                    value={percentFormatter(kpis.irr)}
+                                    icon={TrendingUp}
+                                    description={t.irr_desc}
+                                />
+                                <KPICard
+                                    title={t.annualized_return}
+                                    value={percentFormatter(kpis.annualized_return)}
+                                    icon={TrendingUp}
+                                    description={t.annualized_return_desc}
+                                />
+                            </div>
 
-            {/* Per M² Metrics */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t.per_m2_metrics}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        <KPICard
-                            label={t.cost_per_m2}
-                            value={currencyFormatter(safeNum(kpis.cost_per_m2), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.construction_cost_per_m2}
-                            value={currencyFormatter(safeNum(kpis.construction_cost_per_m2), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.revenue_per_m2}
-                            value={currencyFormatter(safeNum(kpis.revenue_per_m2), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.profit_per_m2}
-                            value={currencyFormatter(safeNum(kpis.profit_per_m2), 'EUR', currency, 0)}
-                            variant={safeNum(kpis.profit_per_m2) > 0 ? 'success' : 'danger'}
-                        />
-                        <KPICard
-                            label={t.land_cost_per_m2}
-                            value={currencyFormatter(safeNum(kpis.land_cost_per_m2), 'EUR', currency, 0)}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+                            <div className="border-t pt-6">
+                                <h3 className="text-lg font-semibold mb-4">{t.key_metrics}</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                                    <div className="bg-muted/30 p-4 rounded-lg">
+                                        <p className="text-sm text-muted-foreground mb-1">{t.cost_per_m2}</p>
+                                        <p className="text-lg font-bold">{currencyFormatter(kpis.cost_per_m2, 'EUR', currency, 0)}</p>
+                                    </div>
+                                    <div className="bg-muted/30 p-4 rounded-lg">
+                                        <p className="text-sm text-muted-foreground mb-1">{t.revenue_per_m2}</p>
+                                        <p className="text-lg font-bold">{currencyFormatter(kpis.revenue_per_m2, 'EUR', currency, 0)}</p>
+                                    </div>
+                                    <div className="bg-muted/30 p-4 rounded-lg">
+                                        <p className="text-sm text-muted-foreground mb-1">{t.profit_per_m2}</p>
+                                        <p className="text-lg font-bold">{currencyFormatter(kpis.profit_per_m2, 'EUR', currency, 0)}</p>
+                                    </div>
+                                    <div className="bg-muted/30 p-4 rounded-lg">
+                                        <p className="text-sm text-muted-foreground mb-1">{t.break_even_revenue}</p>
+                                        <p className="text-lg font-bold">{currencyFormatter(kpis.break_even_revenue, 'EUR', currency, 0)}</p>
+                                    </div>
+                                    <div className="bg-muted/30 p-4 rounded-lg">
+                                        <p className="text-sm text-muted-foreground mb-1">{t.break_even_percentage}</p>
+                                        <p className="text-lg font-bold">{percentFormatter(kpis.break_even_percentage)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </TabsContent>
 
-            {/* Risk Analysis */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t.risk_analysis}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <KPICard
-                            label={t.break_even}
-                            value={currencyFormatter(safeNum(kpis.break_even_revenue), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.break_even_pct}
-                            value={percentFormatter(safeNum(kpis.break_even_percentage))}
-                            variant={safeNum(kpis.break_even_percentage) < 80 ? 'success' : 'warning'}
-                        />
-                        <KPICard
-                            label={t.land_uplift}
-                            value={currencyFormatter(safeNum(kpis.land_value_uplift), 'EUR', currency, 0)}
-                        />
-                        <KPICard
-                            label={t.land_uplift_pct}
-                            value={percentFormatter(safeNum(kpis.land_value_uplift_percent))}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+                        {/* Charts Tab */}
+                        <TabsContent value="charts" className="space-y-8">
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {/* Cost Breakdown */}
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                        <PieChartIcon className="w-5 h-5" />
+                                        {t.cost_breakdown}
+                                    </h3>
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <PieChart>
+                                            <Pie
+                                                data={costBreakdown}
+                                                dataKey="value"
+                                                nameKey="name"
+                                                cx="50%"
+                                                cy="50%"
+                                                outerRadius={80}
+                                                label
+                                            >
+                                                {costBreakdown.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
+                                            <Legend />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
 
-            {/* Project Areas & Efficiency */}
-            <div className="grid lg:grid-cols-2 gap-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t.project_areas}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center py-2 border-b border-border">
-                                <span className="text-muted-foreground">{t.total_land}</span>
-                                <span className="font-semibold">{safeNum(kpis.total_land_area).toLocaleString()} m²</span>
+                                {/* Revenue Breakdown */}
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                        <BarChart3 className="w-5 h-5" />
+                                        {t.revenue_breakdown}
+                                    </h3>
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <BarChart data={revenueBreakdown}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="name" />
+                                            <YAxis tickFormatter={(value) => `${currency}${(value / 1000).toFixed(0)}k`} />
+                                            <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
+                                            <Bar dataKey="value" fill="#003E7E" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
-                            <div className="flex justify-between items-center py-2 border-b border-border">
-                                <span className="text-muted-foreground">{t.total_gfa}</span>
-                                <span className="font-semibold">{safeNum(kpis.total_gfa).toLocaleString()} m²</span>
-                            </div>
-                            <div className="flex justify-between items-center py-2 border-b border-border">
-                                <span className="text-muted-foreground">{t.total_nfa}</span>
-                                <span className="font-semibold">{safeNum(kpis.total_nfa).toLocaleString()} m²</span>
-                            </div>
-                            <div className="flex justify-between items-center py-2">
-                                <span className="text-muted-foreground">{t.total_sales_area}</span>
-                                <span className="font-semibold">{safeNum(kpis.total_sales_area).toLocaleString()} m²</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </TabsContent>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t.efficiency_ratios}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center py-2 border-b border-border">
-                                <span className="text-muted-foreground">{t.gfa_to_land}</span>
-                                <span className="font-semibold">{safeNum(kpis.gfa_to_land_ratio).toFixed(2)}</span>
-                            </div>
-                            <div className="flex justify-between items-center py-2 border-b border-border">
-                                <span className="text-muted-foreground">{t.nfa_to_gfa}</span>
-                                <span className="font-semibold">{percentFormatter(safeNum(kpis.nfa_to_gfa_ratio))}</span>
-                            </div>
-                            <div className="flex justify-between items-center py-2">
-                                <span className="text-muted-foreground">{t.sales_to_gfa}</span>
-                                <span className="font-semibold">{percentFormatter(safeNum(kpis.sales_to_gfa_ratio))}</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Charts */}
-            {cost_breakdown && cost_breakdown.length > 0 && (
-                <div className="grid lg:grid-cols-2 gap-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t.cost_breakdown}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                        {/* Cash Flow Tab */}
+                        <TabsContent value="cashflow" className="space-y-6">
+                            <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5" />
+                                {t.cashflow_timeline}
+                            </h3>
                             <ResponsiveContainer width="100%" height={400}>
-                                <PieChart>
-                                    <Pie
-                                        data={cost_breakdown}
-                                        cx="50%"
-                                        cy="50%"
-                                        labelLine={false}
-                                        label={({ name, value }) => `${name}: ${currencyFormatter(value, 'EUR', currency, 0)}`}
-                                        outerRadius={120}
-                                        fill="#8884d8"
-                                        dataKey="value"
-                                    >
-                                        {cost_breakdown.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
+                                <LineChart data={cashFlowData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="period" />
+                                    <YAxis tickFormatter={(value) => `${currency}${(value / 1000).toFixed(0)}k`} />
                                     <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
                                     <Legend />
-                                </PieChart>
+                                    <Line type="monotone" dataKey="costs" stroke="#E53935" name={t.costs} strokeWidth={2} />
+                                    <Line type="monotone" dataKey="revenue" stroke="#00B894" name={t.revenue} strokeWidth={2} />
+                                    <Line type="monotone" dataKey="cumulative" stroke="#003E7E" name={t.cumulative_cashflow} strokeWidth={3} />
+                                </LineChart>
                             </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-
-                    {revenue_breakdown && revenue_breakdown.length > 0 && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t.revenue_breakdown}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <ResponsiveContainer width="100%" height={400}>
-                                    <PieChart>
-                                        <Pie
-                                            data={revenue_breakdown}
-                                            cx="50%"
-                                            cy="50%"
-                                            labelLine={false}
-                                            label={({ name, value }) => `${name}: ${currencyFormatter(value, 'EUR', currency, 0)}`}
-                                            outerRadius={120}
-                                            fill="#8884d8"
-                                            dataKey="value"
-                                        >
-                                            {revenue_breakdown.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
-                                        <Legend />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </CardContent>
-                        </Card>
-                    )}
-                </div>
-            )}
+                        </TabsContent>
+                    </Tabs>
+                </CardContent>
+            </Card>
         </div>
     );
 }
