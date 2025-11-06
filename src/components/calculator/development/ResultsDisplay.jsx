@@ -408,6 +408,34 @@ export default function ResultsDisplay({ results, currency = '€', language = '
         { period: '19-24 ' + t.months, costs: -kpis.total_project_costs * 0.1, revenue: kpis.gross_revenue * 0.4, cumulative: kpis.gross_profit }
     ];
 
+    // VAT Impact message based on entity type
+    const vatImpactMessages = {
+        sk: {
+            vat_payer: `Ako platca DPH môžete odpočítať ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} z nákladov, čo výrazne znižuje reálne náklady projektu.`,
+            non_vat_payer: `Ako neplatca DPH platíte plnú cenu vrátane DPH, čo zvyšuje vaše náklady o približne 20%. Zvážte registráciu ako platca DPH.`
+        },
+        en: {
+            vat_payer: `As VAT payer you can deduct ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} from costs, significantly reducing real project costs.`,
+            non_vat_payer: `As non-VAT payer you pay full price including VAT, increasing your costs by approximately 20%. Consider registering as VAT payer.`
+        },
+        pl: {
+            vat_payer: `Jako płatnik VAT możesz odliczyć ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} od kosztów, co znacznie obniża rzeczywiste koszty projektu.`,
+            non_vat_payer: `Jako niebędący płatnikiem VAT płacisz pełną cenę wraz z VAT, co zwiększa Twoje koszty o około 20%. Rozważ rejestrację jako płatnik VAT.`
+        },
+        hu: {
+            vat_payer: `ÁFA fizetőként levonhat ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} a költségekből, ami jelentősen csökkenti a valós projektköltségeket.`,
+            non_vat_payer: `Nem ÁFA fizetőként a teljes árat fizeti ÁFA-val együtt, ami körülbelül 20%-kal növeli a költségeket. Fontolja meg az ÁFA fizetői regisztrációt.`
+        },
+        de: {
+            vat_payer: `Als Mehrwertsteuerzahler können Sie ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} von den Kosten abziehen, was die tatsächlichen Projektkosten erheblich reduziert.`,
+            non_vat_payer: `Als Nicht-Mehrwertsteuerzahler zahlen Sie den vollen Preis inklusive Mehrwertsteuer, was Ihre Kosten um etwa 20% erhöht. Erwägen Sie die Registrierung als Mehrwertsteuerzahler.`
+        }
+    };
+
+    const vatMessage = kpis.is_vat_payer 
+        ? (vatImpactMessages[language] || vatImpactMessages.en).vat_payer
+        : (vatImpactMessages[language] || vatImpactMessages.en).non_vat_payer;
+
     return (
         <div className="space-y-6">
             <Card className="shadow-premium border-primary/20">
@@ -592,47 +620,10 @@ export default function ResultsDisplay({ results, currency = '€', language = '
 
                             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                                 <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">
-                                    {kpis.is_vat_payer 
-                                        ? language === 'sk' 
-                                            ? '💡 Výhoda platcu DPH'
-                                            : language === 'pl'
-                                                ? '💡 Zaleta płatnika VAT'
-                                                : language === 'hu'
-                                                    ? '💡 ÁFA fizető előnye'
-                                                    : language === 'de'
-                                                        ? '💡 Vorteil als Mehrwertsteuerzahler'
-                                                        : '💡 Advantage of VAT Payer'
-                                        : language === 'sk'
-                                            ? '⚠️ Pozícia neplatcu DPH'
-                                            : language === 'pl'
-                                                ? '⚠️ Pozycja niepłatnika VAT'
-                                                : language === 'hu'
-                                                    ? '⚠️ Nem ÁFA fizető pozíciója'
-                                                    : language === 'de'
-                                                        ? '⚠️ Position als Nicht-Mehrwertsteuerzahler'
-                                                        : '⚠️ Position of Non-VAT Payer'
-                                    }
+                                {kpis.is_vat_payer ? t.vat_advantage.replace('✓ ', '💡 ') : t.vat_disadvantage.replace('⚠ ', '⚠️ ')}
                                 </h4>
                                 <p className="text-sm text-blue-800 dark:text-blue-200">
-                                    {kpis.is_vat_payer 
-                                        ? language === 'sk' 
-                                            ? `Ako platca DPH môžete odpočítať ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} z nákladov, čo výrazne znižuje reálne náklady projektu.`
-                                            : language === 'pl'
-                                                ? `Jako płatnik VAT możesz odliczyć ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} od kosztów, co znacząco obniża realne koszty projektu.`
-                                                : language === 'hu'
-                                                    ? `ÁFA fizetőként ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)}-t levonhat a költségekből, ami jelentősen csökkenti a projekt valós költségeit.`
-                                                    : language === 'de'
-                                                        ? `Als Mehrwertsteuerzahler können Sie ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} von den Kosten abziehen, was die realen Projektkosten erheblich reduziert.`
-                                                        : `As VAT payer you can deduct ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} from costs, significantly reducing real project costs.`
-                                        : language === 'sk'
-                                            ? `Ako neplatca DPH platíte plnú cenu vrátane DPH, čo zvyšuje vaše náklady o približne 20%. Zvážte registráciu ako platca DPH.`
-                                            : language === 'pl'
-                                                ? `Jako niepłatnik VAT płacisz pełną cenę z VAT, co zwiększa twoje koszty o około 20%. Rozważ rejestrację jako płatnik VAT.`
-                                                : language === 'hu'
-                                                    ? `Nem ÁFA fizetőként teljes árat fizet, beleértve az ÁFA-t, ami körülbelül 20%-kal növeli a költségeit. Fontolja meg az ÁFA fizetőként való regisztrációt.`
-                                                    : language === 'de'
-                                                        ? `Als Nicht-Mehrwertsteuerzahler zahlen Sie den vollen Preis inklusive Mehrwertsteuer, was Ihre Kosten um etwa 20% erhöht. Erwägen Sie die Registrierung als Mehrwertsteuerzahler.`
-                                    }
+                                    {vatMessage}
                                 </p>
                             </div>
                         </TabsContent>
