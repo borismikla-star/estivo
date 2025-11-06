@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { currencyFormatter, percentFormatter } from '../lib/formatters';
 
@@ -29,6 +30,8 @@ export default function PDFReport({ projectData, results, language, user }) {
             projectType: "Project Type",
             country: "Country",
             keyMetrics: "Key Financial Metrics",
+            
+            // General metrics (long_term_lease, commercial, airbnb)
             totalInvestment: "Total Investment",
             downPayment: "Down Payment",
             loanAmount: "Loan Amount",
@@ -48,6 +51,32 @@ export default function PDFReport({ projectData, results, language, user }) {
             monthlyRent: "Monthly Rent",
             annualRent: "Annual Rent",
             noi: "Net Operating Income",
+            
+            // Development-specific metrics
+            developmentMetrics: "Development Metrics",
+            totalProjectCosts: "Total Project Costs",
+            ownResources: "Own Resources",
+            bankResources: "Bank Resources",
+            financingCosts: "Financing Costs",
+            grossRevenue: "Gross Revenue",
+            netRevenue: "Net Revenue",
+            grossProfit: "Gross Profit",
+            netProfit: "Net Profit",
+            profitMargin: "Profit Margin",
+            developerMargin: "Developer's Margin",
+            returnOnCost: "Return on Cost (ROC)",
+            equityMultiple: "Equity Multiple",
+            annualizedReturn: "Annualized Return",
+            projectDuration: "Project Duration",
+            costPerM2: "Cost per m²",
+            revenuePerM2: "Revenue per m²",
+            profitPerM2: "Profit per m²",
+            breakEven: "Break-Even Revenue",
+            breakEvenPct: "Break-Even %",
+            projectAreas: "Project Areas",
+            totalGFA: "Total GFA",
+            totalNFA: "Total NFA",
+            totalSalesArea: "Total Sales Area",
         },
         sk: {
             reportTitle: "Správa o investičnej analýze",
@@ -56,6 +85,8 @@ export default function PDFReport({ projectData, results, language, user }) {
             projectType: "Typ projektu",
             country: "Krajina",
             keyMetrics: "Kľúčové finančné ukazovatele",
+            
+            // General metrics
             totalInvestment: "Celková investícia",
             downPayment: "Vlastné zdroje",
             loanAmount: "Výška úveru",
@@ -75,6 +106,32 @@ export default function PDFReport({ projectData, results, language, user }) {
             monthlyRent: "Mesačný nájom",
             annualRent: "Ročný nájom",
             noi: "Čistý prevádzkový príjem",
+            
+            // Development-specific
+            developmentMetrics: "Ukazovatele developmentu",
+            totalProjectCosts: "Celkové náklady projektu",
+            ownResources: "Vlastné zdroje",
+            bankResources: "Bankové zdroje",
+            financingCosts: "Náklady na financovanie",
+            grossRevenue: "Hrubé tržby",
+            netRevenue: "Čisté tržby",
+            grossProfit: "Hrubý zisk",
+            netProfit: "Čistý zisk",
+            profitMargin: "Zisková marža",
+            developerMargin: "Marža developera",
+            returnOnCost: "Návratnosť nákladov (ROC)",
+            equityMultiple: "Násobok kapitálu",
+            annualizedReturn: "Ročná návratnosť",
+            projectDuration: "Trvanie projektu",
+            costPerM2: "Náklady na m²",
+            revenuePerM2: "Príjem na m²",
+            profitPerM2: "Zisk na m²",
+            breakEven: "Bod zvratu - tržby",
+            breakEvenPct: "Bod zvratu %",
+            projectAreas: "Plochy projektu",
+            totalGFA: "Celková HPP",
+            totalNFA: "Celková ČÚP",
+            totalSalesArea: "Celková predajná plocha",
         }
     };
     const currentT = t[language] || t.en;
@@ -84,6 +141,15 @@ export default function PDFReport({ projectData, results, language, user }) {
         if (typeof value === 'number') return `${value.toFixed(1)} years`;
         return 'N/A';
     };
+    
+    const formatDuration = (months) => {
+        if (months === undefined || months === null) return 'N/A';
+        const years = (months / 12).toFixed(1);
+        return `${months} months (${years} years)`;
+    };
+    
+    // Determine if this is a development project
+    const isDevelopment = type === 'development';
     
     // This component is only for printing
     return (
@@ -105,83 +171,136 @@ export default function PDFReport({ projectData, results, language, user }) {
                     <KeyValue label={currentT.country} value={country} />
                 </Section>
                 
-                <Section title={currentT.keyMetrics}>
-                     <div className="grid grid-cols-2 gap-x-12">
-                        <KeyValue label={currentT.totalInvestment} value={currencyFormatter(kpis.total_investment || 0)} isBold />
-                        <KeyValue label={currentT.downPayment} value={currencyFormatter(kpis.down_payment || 0)} isBold />
-                        
-                        {kpis.roi_10_year !== undefined && (
-                            <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi_10_year)} isBold />
-                        )}
-                        {kpis.roi !== undefined && (
-                            <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi)} isBold />
-                        )}
-                        
-                        {kpis.cash_on_cash_return !== undefined && (
-                            <KeyValue label={currentT.cashOnCash} value={percentFormatter(kpis.cash_on_cash_return)} />
-                        )}
-                        
-                        {kpis.irr !== undefined && (
-                            <KeyValue label={currentT.irr} value={percentFormatter(kpis.irr)} />
-                        )}
-                        
-                        {kpis.npv !== undefined && (
-                            <KeyValue label={currentT.npv} value={currencyFormatter(kpis.npv)} />
-                        )}
-                        
-                        {kpis.payback_period !== undefined && (
-                            <KeyValue label={currentT.payback} value={formatPaybackPeriod(kpis.payback_period)} />
-                        )}
-                        
-                        {kpis.cap_rate !== undefined && (
-                            <KeyValue label={currentT.capRate} value={percentFormatter(kpis.cap_rate)} />
-                        )}
-                        
-                        {kpis.dscr !== undefined && (
-                            <KeyValue label={currentT.dscr} value={kpis.dscr.toFixed(2)} />
-                        )}
-                        
-                        {kpis.gross_rental_yield !== undefined && (
-                            <KeyValue label={currentT.grossYield} value={percentFormatter(kpis.gross_rental_yield)} />
-                        )}
-                        {kpis.gross_yield !== undefined && (
-                            <KeyValue label={currentT.grossYield} value={percentFormatter(kpis.gross_yield)} />
-                        )}
-                        
-                        {kpis.net_rental_yield !== undefined && (
-                            <KeyValue label={currentT.netYield} value={percentFormatter(kpis.net_rental_yield)} />
-                        )}
-                        {kpis.net_yield !== undefined && (
-                            <KeyValue label={currentT.netYield} value={percentFormatter(kpis.net_yield)} />
-                        )}
-                        
-                        {kpis.monthly_cash_flow !== undefined && (
-                            <KeyValue label={currentT.monthlyCashFlow} value={currencyFormatter(kpis.monthly_cash_flow)} />
-                        )}
-                        
-                        {kpis.annual_cash_flow !== undefined && (
-                            <KeyValue label={currentT.annualCashFlow} value={currencyFormatter(kpis.annual_cash_flow)} />
-                        )}
-                    </div>
-                </Section>
+                {isDevelopment ? (
+                    /* DEVELOPMENT PROJECT */
+                    <>
+                        <Section title={currentT.developmentMetrics}>
+                            <div className="grid grid-cols-2 gap-x-12">
+                                <KeyValue label={currentT.totalProjectCosts} value={currencyFormatter(kpis.total_project_costs || 0)} isBold />
+                                <KeyValue label={currentT.grossRevenue} value={currencyFormatter(kpis.gross_revenue || 0)} isBold />
+                                
+                                <KeyValue label={currentT.grossProfit} value={currencyFormatter(kpis.gross_profit || 0)} isBold />
+                                <KeyValue label={currentT.profitMargin} value={percentFormatter(kpis.profit_margin || 0)} isBold />
+                                
+                                <KeyValue label={currentT.developerMargin} value={percentFormatter(kpis.developer_margin || 0)} />
+                                <KeyValue label={currentT.returnOnCost} value={percentFormatter(kpis.return_on_cost || 0)} />
+                                
+                                <KeyValue label={currentT.equityMultiple} value={`${(kpis.equity_multiple || 0).toFixed(2)}x`} />
+                                <KeyValue label={currentT.irr} value={percentFormatter(kpis.irr || 0)} />
+                                
+                                <KeyValue label={currentT.annualizedReturn} value={percentFormatter(kpis.annualized_return || 0)} />
+                                <KeyValue label={currentT.projectDuration} value={formatDuration(kpis.project_duration_months)} />
+                            </div>
+                        </Section>
 
-                <Section title={currentT.propertyDetails}>
-                    {property_data?.purchase_price !== undefined && (
-                        <KeyValue label={currentT.purchasePrice} value={currencyFormatter(property_data.purchase_price)} />
-                    )}
-                    {property_data?.price !== undefined && (
-                        <KeyValue label={currentT.purchasePrice} value={currencyFormatter(property_data.price)} />
-                    )}
-                    {property_data?.monthly_rent !== undefined && (
-                        <KeyValue label={currentT.monthlyRent} value={currencyFormatter(property_data.monthly_rent)} />
-                    )}
-                    {kpis.annual_rent !== undefined && (
-                        <KeyValue label={currentT.annualRent} value={currencyFormatter(kpis.annual_rent)} />
-                    )}
-                    {kpis.net_operating_income !== undefined && (
-                        <KeyValue label={currentT.noi} value={currencyFormatter(kpis.net_operating_income)} />
-                    )}
-                </Section>
+                        <Section title={currentT.keyMetrics}>
+                            <div className="grid grid-cols-2 gap-x-12">
+                                <KeyValue label={currentT.ownResources} value={currencyFormatter(kpis.own_resources || 0)} />
+                                <KeyValue label={currentT.bankResources} value={currencyFormatter(kpis.bank_resources || 0)} />
+                                
+                                <KeyValue label={currentT.financingCosts} value={currencyFormatter(kpis.total_financing_costs || 0)} />
+                                <KeyValue label={currentT.netRevenue} value={currencyFormatter(kpis.net_revenue || 0)} />
+                                
+                                <KeyValue label={currentT.costPerM2} value={currencyFormatter(kpis.cost_per_m2 || 0)} />
+                                <KeyValue label={currentT.revenuePerM2} value={currencyFormatter(kpis.revenue_per_m2 || 0)} />
+                                
+                                <KeyValue label={currentT.profitPerM2} value={currencyFormatter(kpis.profit_per_m2 || 0)} />
+                                <KeyValue label={currentT.breakEven} value={currencyFormatter(kpis.break_even_revenue || 0)} />
+                                
+                                <KeyValue label={currentT.breakEvenPct} value={percentFormatter(kpis.break_even_percentage || 0)} />
+                            </div>
+                        </Section>
+
+                        <Section title={currentT.projectAreas}>
+                            <div className="grid grid-cols-2 gap-x-12">
+                                <KeyValue label={currentT.totalGFA} value={`${(kpis.total_gfa || 0).toLocaleString()} m²`} />
+                                <KeyValue label={currentT.totalNFA} value={`${(kpis.total_nfa || 0).toLocaleString()} m²`} />
+                                <KeyValue label={currentT.totalSalesArea} value={`${(kpis.total_sales_area || 0).toLocaleString()} m²`} />
+                            </div>
+                        </Section>
+                    </>
+                ) : (
+                    /* RENTAL PROJECTS (long_term_lease, commercial, airbnb) */
+                    <>
+                        <Section title={currentT.keyMetrics}>
+                            <div className="grid grid-cols-2 gap-x-12">
+                                <KeyValue label={currentT.totalInvestment} value={currencyFormatter(kpis.total_investment || 0)} isBold />
+                                <KeyValue label={currentT.downPayment} value={currencyFormatter(kpis.down_payment || 0)} isBold />
+                                
+                                {kpis.roi_10_year !== undefined && (
+                                    <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi_10_year)} isBold />
+                                )}
+                                {kpis.roi !== undefined && (
+                                    <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi)} isBold />
+                                )}
+                                
+                                {kpis.cash_on_cash_return !== undefined && (
+                                    <KeyValue label={currentT.cashOnCash} value={percentFormatter(kpis.cash_on_cash_return)} />
+                                )}
+                                
+                                {kpis.irr !== undefined && (
+                                    <KeyValue label={currentT.irr} value={percentFormatter(kpis.irr)} />
+                                )}
+                                
+                                {kpis.npv !== undefined && (
+                                    <KeyValue label={currentT.npv} value={currencyFormatter(kpis.npv)} />
+                                )}
+                                
+                                {kpis.payback_period !== undefined && (
+                                    <KeyValue label={currentT.payback} value={formatPaybackPeriod(kpis.payback_period)} />
+                                )}
+                                
+                                {kpis.cap_rate !== undefined && (
+                                    <KeyValue label={currentT.capRate} value={percentFormatter(kpis.cap_rate)} />
+                                )}
+                                
+                                {kpis.dscr !== undefined && (
+                                    <KeyValue label={currentT.dscr} value={kpis.dscr.toFixed(2)} />
+                                )}
+                                
+                                {kpis.gross_rental_yield !== undefined && (
+                                    <KeyValue label={currentT.grossYield} value={percentFormatter(kpis.gross_rental_yield)} />
+                                )}
+                                {kpis.gross_yield !== undefined && (
+                                    <KeyValue label={currentT.grossYield} value={percentFormatter(kpis.gross_yield)} />
+                                )}
+                                
+                                {kpis.net_rental_yield !== undefined && (
+                                    <KeyValue label={currentT.netYield} value={percentFormatter(kpis.net_rental_yield)} />
+                                )}
+                                {kpis.net_yield !== undefined && (
+                                    <KeyValue label={currentT.netYield} value={percentFormatter(kpis.net_yield)} />
+                                )}
+                                
+                                {kpis.monthly_cash_flow !== undefined && (
+                                    <KeyValue label={currentT.monthlyCashFlow} value={currencyFormatter(kpis.monthly_cash_flow)} />
+                                )}
+                                
+                                {kpis.annual_cash_flow !== undefined && (
+                                    <KeyValue label={currentT.annualCashFlow} value={currencyFormatter(kpis.annual_cash_flow)} />
+                                )}
+                            </div>
+                        </Section>
+
+                        <Section title={currentT.propertyDetails}>
+                            {property_data?.purchase_price !== undefined && (
+                                <KeyValue label={currentT.purchasePrice} value={currencyFormatter(property_data.purchase_price)} />
+                            )}
+                            {property_data?.price !== undefined && (
+                                <KeyValue label={currentT.purchasePrice} value={currencyFormatter(property_data.price)} />
+                            )}
+                            {property_data?.monthly_rent !== undefined && (
+                                <KeyValue label={currentT.monthlyRent} value={currencyFormatter(property_data.monthly_rent)} />
+                            )}
+                            {kpis.annual_rent !== undefined && (
+                                <KeyValue label={currentT.annualRent} value={currencyFormatter(kpis.annual_rent)} />
+                            )}
+                            {kpis.net_operating_income !== undefined && (
+                                <KeyValue label={currentT.noi} value={currencyFormatter(kpis.net_operating_income)} />
+                            )}
+                        </Section>
+                    </>
+                )}
             </main>
 
             <footer className="mt-12 pt-4 border-t text-center text-xs text-gray-500">

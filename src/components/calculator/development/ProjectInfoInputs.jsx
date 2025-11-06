@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -113,68 +114,183 @@ export default function ProjectInfoInputs({ data, language, onChange }) {
       <h3 className="text-lg font-semibold text-foreground">{t.title}</h3>
       <div className="grid md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label>{t.total_land_area}</Label>
-          <Input type="number" value={safeData.total_land_area || ""} onChange={(e) => handleChange('total_land_area', e.target.value)} />
+          <Label htmlFor="total_land_area">{t.total_land_area} <span className="text-destructive">*</span></Label>
+          <Input 
+            id="total_land_area"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.total_land_area || ""} 
+            onChange={(e) => handleChange('total_land_area', e.target.value)} 
+            required
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.building_area}</Label>
-          <Input type="number" value={safeData.building_area || ""} onChange={(e) => handleChange('building_area', e.target.value)} />
+          <Label htmlFor="building_area">{t.building_area}</Label>
+          <Input 
+            id="building_area"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.building_area || ""} 
+            onChange={(e) => handleChange('building_area', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.gfa_above}</Label>
-          <Input type="number" value={safeData.gfa_above || ""} onChange={(e) => handleChange('gfa_above', e.target.value)} />
+          <Label htmlFor="gfa_above">{t.gfa_above} <span className="text-destructive">*</span></Label>
+          <Input 
+            id="gfa_above"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.gfa_above || ""} 
+            onChange={(e) => handleChange('gfa_above', e.target.value)} 
+            required
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.gfa_below}</Label>
-          <Input type="number" value={safeData.gfa_below || ""} onChange={(e) => handleChange('gfa_below', e.target.value)} />
+          <Label htmlFor="gfa_below">{t.gfa_below}</Label>
+          <Input 
+            id="gfa_below"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.gfa_below || ""} 
+            onChange={(e) => handleChange('gfa_below', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.nfa_above}</Label>
-          <Input type="number" value={safeData.nfa_above || ""} onChange={(e) => handleChange('nfa_above', e.target.value)} />
+          <Label htmlFor="nfa_above">{t.nfa_above}</Label>
+          <Input 
+            id="nfa_above"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.nfa_above || ""} 
+            onChange={(e) => handleChange('nfa_above', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.nfa_below}</Label>
-          <Input type="number" value={safeData.nfa_below || ""} onChange={(e) => handleChange('nfa_below', e.target.value)} />
+          <Label htmlFor="nfa_below">{t.nfa_below}</Label>
+          <Input 
+            id="nfa_below"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.nfa_below || ""} 
+            onChange={(e) => handleChange('nfa_below', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.sales_area_apartments}</Label>
-          <Input type="number" value={safeData.sales_area_apartments || ""} onChange={(e) => handleChange('sales_area_apartments', e.target.value)} />
+          <Label htmlFor="sales_area_apartments">{t.sales_area_apartments} <span className="text-destructive">*</span></Label>
+          <Input 
+            id="sales_area_apartments"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.sales_area_apartments || ""} 
+            onChange={(e) => handleChange('sales_area_apartments', e.target.value)} 
+            required
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.sales_area_non_residential}</Label>
-          <Input type="number" value={safeData.sales_area_non_residential || ""} onChange={(e) => handleChange('sales_area_non_residential', e.target.value)} />
+          <Label htmlFor="sales_area_non_residential">{t.sales_area_non_residential}</Label>
+          <Input 
+            id="sales_area_non_residential"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.sales_area_non_residential || ""} 
+            onChange={(e) => handleChange('sales_area_non_residential', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.sales_area_balconies}</Label>
-          <Input type="number" value={safeData.sales_area_balconies || ""} onChange={(e) => handleChange('sales_area_balconies', e.target.value)} />
+          <Label htmlFor="sales_area_balconies">{t.sales_area_balconies}</Label>
+          <Input 
+            id="sales_area_balconies"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.sales_area_balconies || ""} 
+            onChange={(e) => handleChange('sales_area_balconies', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.sales_area_gardens}</Label>
-          <Input type="number" value={safeData.sales_area_gardens || ""} onChange={(e) => handleChange('sales_area_gardens', e.target.value)} />
+          <Label htmlFor="sales_area_gardens">{t.sales_area_gardens}</Label>
+          <Input 
+            id="sales_area_gardens"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.sales_area_gardens || ""} 
+            onChange={(e) => handleChange('sales_area_gardens', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.parking_indoor_count}</Label>
-          <Input type="number" value={safeData.parking_indoor_count || ""} onChange={(e) => handleChange('parking_indoor_count', e.target.value)} />
+          <Label htmlFor="parking_indoor_count">{t.parking_indoor_count}</Label>
+          <Input 
+            id="parking_indoor_count"
+            type="number" 
+            min="0"
+            step="1"
+            value={safeData.parking_indoor_count || ""} 
+            onChange={(e) => handleChange('parking_indoor_count', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.parking_outdoor_count}</Label>
-          <Input type="number" value={safeData.parking_outdoor_count || ""} onChange={(e) => handleChange('parking_outdoor_count', e.target.value)} />
+          <Label htmlFor="parking_outdoor_count">{t.parking_outdoor_count}</Label>
+          <Input 
+            id="parking_outdoor_count"
+            type="number" 
+            min="0"
+            step="1"
+            value={safeData.parking_outdoor_count || ""} 
+            onChange={(e) => handleChange('parking_outdoor_count', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.paved_areas}</Label>
-          <Input type="number" value={safeData.paved_areas || ""} onChange={(e) => handleChange('paved_areas', e.target.value)} />
+          <Label htmlFor="paved_areas">{t.paved_areas}</Label>
+          <Input 
+            id="paved_areas"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.paved_areas || ""} 
+            onChange={(e) => handleChange('paved_areas', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.green_areas_terrain}</Label>
-          <Input type="number" value={safeData.green_areas_terrain || ""} onChange={(e) => handleChange('green_areas_terrain', e.target.value)} />
+          <Label htmlFor="green_areas_terrain">{t.green_areas_terrain}</Label>
+          <Input 
+            id="green_areas_terrain"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.green_areas_terrain || ""} 
+            onChange={(e) => handleChange('green_areas_terrain', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.green_areas_structure}</Label>
-          <Input type="number" value={safeData.green_areas_structure || ""} onChange={(e) => handleChange('green_areas_structure', e.target.value)} />
+          <Label htmlFor="green_areas_structure">{t.green_areas_structure}</Label>
+          <Input 
+            id="green_areas_structure"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.green_areas_structure || ""} 
+            onChange={(e) => handleChange('green_areas_structure', e.target.value)} 
+          />
         </div>
         <div className="space-y-2">
-          <Label>{t.basement_area}</Label>
-          <Input type="number" value={safeData.basement_area || ""} onChange={(e) => handleChange('basement_area', e.target.value)} />
+          <Label htmlFor="basement_area">{t.basement_area}</Label>
+          <Input 
+            id="basement_area"
+            type="number" 
+            min="0"
+            step="0.01"
+            value={safeData.basement_area || ""} 
+            onChange={(e) => handleChange('basement_area', e.target.value)} 
+          />
         </div>
       </div>
     </div>

@@ -90,19 +90,26 @@ export default function RevenueInputs({ data, projectData, language, onChange })
       
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>{t.apartments_unit}</Label>
+          <Label htmlFor="apartments_unit">{t.apartments_unit} <span className="text-destructive">*</span></Label>
           <Input 
+            id="apartments_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.apartments_unit_price || ""} 
             onChange={(e) => handleChange('apartments_unit_price', e.target.value)} 
+            required
           />
           <p className="text-sm text-muted-foreground">{t.result}: {currencyFormatter(apartmentsRevenue, 'EUR', '€', 2)}</p>
         </div>
 
         <div className="space-y-2">
-          <Label>{t.non_residential_unit}</Label>
+          <Label htmlFor="non_residential_unit">{t.non_residential_unit}</Label>
           <Input 
+            id="non_residential_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.non_residential_unit_price || ""} 
             onChange={(e) => handleChange('non_residential_unit_price', e.target.value)} 
           />
@@ -110,9 +117,12 @@ export default function RevenueInputs({ data, projectData, language, onChange })
         </div>
 
         <div className="space-y-2">
-          <Label>{t.parking_indoor_unit}</Label>
+          <Label htmlFor="parking_indoor_unit">{t.parking_indoor_unit}</Label>
           <Input 
+            id="parking_indoor_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.parking_indoor_unit_price || ""} 
             onChange={(e) => handleChange('parking_indoor_unit_price', e.target.value)} 
           />
@@ -120,9 +130,12 @@ export default function RevenueInputs({ data, projectData, language, onChange })
         </div>
 
         <div className="space-y-2">
-          <Label>{t.parking_outdoor_unit}</Label>
+          <Label htmlFor="parking_outdoor_unit">{t.parking_outdoor_unit}</Label>
           <Input 
+            id="parking_outdoor_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.parking_outdoor_unit_price || ""} 
             onChange={(e) => handleChange('parking_outdoor_unit_price', e.target.value)} 
           />
@@ -130,9 +143,12 @@ export default function RevenueInputs({ data, projectData, language, onChange })
         </div>
 
         <div className="space-y-2">
-          <Label>{t.balconies_unit}</Label>
+          <Label htmlFor="balconies_unit">{t.balconies_unit}</Label>
           <Input 
+            id="balconies_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.balconies_unit_price || ""} 
             onChange={(e) => handleChange('balconies_unit_price', e.target.value)} 
           />
@@ -140,9 +156,12 @@ export default function RevenueInputs({ data, projectData, language, onChange })
         </div>
 
         <div className="space-y-2">
-          <Label>{t.gardens_unit}</Label>
+          <Label htmlFor="gardens_unit">{t.gardens_unit}</Label>
           <Input 
+            id="gardens_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.gardens_unit_price || ""} 
             onChange={(e) => handleChange('gardens_unit_price', e.target.value)} 
           />
@@ -150,9 +169,12 @@ export default function RevenueInputs({ data, projectData, language, onChange })
         </div>
 
         <div className="space-y-2">
-          <Label>{t.basements_unit}</Label>
+          <Label htmlFor="basements_unit">{t.basements_unit}</Label>
           <Input 
+            id="basements_unit"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.basements_unit_price || ""} 
             onChange={(e) => handleChange('basements_unit_price', e.target.value)} 
           />
@@ -160,9 +182,12 @@ export default function RevenueInputs({ data, projectData, language, onChange })
         </div>
 
         <div className="space-y-2">
-          <Label>{t.other_revenue}</Label>
+          <Label htmlFor="other_revenue">{t.other_revenue}</Label>
           <Input 
+            id="other_revenue"
             type="number" 
+            min="0"
+            step="1"
             value={safeData.other_revenue || ""} 
             onChange={(e) => handleChange('other_revenue', e.target.value)} 
             placeholder="0"
