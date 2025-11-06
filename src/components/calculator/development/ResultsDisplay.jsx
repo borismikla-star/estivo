@@ -21,7 +21,29 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             overview: "Prehľad",
             charts: "Grafy",
             cashflow: "Cash Flow",
+            vat_impact: "Vplyv DPH",
             kpis_title: "Kľúčové ukazovatele",
+            
+            // VAT Impact translations
+            vat_section_title: "Analýza DPH",
+            vat_input: "DPH na vstupe",
+            vat_input_desc: "Odpočítateľná DPH z nákladov",
+            vat_input_tooltip: "Suma DPH zaplatená na nákladoch, ktorú môže platca DPH odpočítať. FO neplatca DPH = 0 €, PO = cca 20% z nákladov.",
+            vat_output: "DPH na výstupe",
+            vat_output_desc: "DPH z predaja",
+            vat_output_tooltip: "Suma DPH, ktorú musí platca DPH odviesť z predaja. Byty sú oslobodené od DPH, ale nebytové priestory a parkovacie miesta môžu podliehať DPH.",
+            vat_balance: "Saldo DPH",
+            vat_balance_desc: "Výsledná pozícia voči štátu",
+            vat_balance_tooltip: "Rozdiel medzi DPH na výstupe a vstupe. Kladné číslo = treba zaplatiť štátu, záporné = štát vráti.",
+            net_profit_after_vat: "Čistý zisk po DPH",
+            net_profit_after_vat_desc: "Reálny zisk po zohľadnení DPH",
+            net_profit_after_vat_tooltip: "Skutočný zisk po zaplatení/odpočítaní DPH. Pre FO neplatcu je rovnaký ako hrubý zisk, pre PO zahŕňa vplyv DPH salda.",
+            entity_type_label: "Typ subjektu",
+            vat_payer: "Platca DPH",
+            non_vat_payer: "Neplatca DPH",
+            vat_advantage: "✓ Výhoda: Môžete odpočítať DPH z nákladov",
+            vat_disadvantage: "⚠ Nevýhoda: Platíte plnú cenu vrátane DPH",
+            
             total_project_costs: "Celkové náklady",
             total_project_costs_desc: "Všetky náklady vrátane financovania",
             total_project_costs_tooltip: "Súčet všetkých nákladov projektu: pozemok, výstavba, inžinierske siete, financovanie, rezerva a ostatné náklady.",
@@ -75,7 +97,29 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             overview: "Overview",
             charts: "Charts",
             cashflow: "Cash Flow",
+            vat_impact: "VAT Impact",
             kpis_title: "Key Performance Indicators",
+            
+            // VAT Impact
+            vat_section_title: "VAT Analysis",
+            vat_input: "VAT Input",
+            vat_input_desc: "Deductible VAT on costs",
+            vat_input_tooltip: "Amount of VAT paid on costs that can be deducted by VAT payer. Non-VAT payer = 0 €, Company = approx. 20% of costs.",
+            vat_output: "VAT Output",
+            vat_output_desc: "VAT on sales",
+            vat_output_tooltip: "Amount of VAT that must be paid to tax authority from sales. Apartments are VAT exempt, but non-residential and parking may have VAT.",
+            vat_balance: "VAT Balance",
+            vat_balance_desc: "Net position with tax authority",
+            vat_balance_tooltip: "Difference between VAT output and input. Positive = must pay to state, negative = state refunds.",
+            net_profit_after_vat: "Net Profit after VAT",
+            net_profit_after_vat_desc: "Real profit after VAT consideration",
+            net_profit_after_vat_tooltip: "Actual profit after paying/deducting VAT. For non-VAT payer same as gross profit, for company includes VAT balance impact.",
+            entity_type_label: "Entity Type",
+            vat_payer: "VAT Payer",
+            non_vat_payer: "Non-VAT Payer",
+            vat_advantage: "✓ Advantage: Can deduct VAT from costs",
+            vat_disadvantage: "⚠ Disadvantage: Pay full price including VAT",
+            
             total_project_costs: "Total Costs",
             total_project_costs_desc: "All costs including financing",
             total_project_costs_tooltip: "Sum of all project costs: land, construction, engineering networks, financing, reserve and other costs.",
@@ -107,8 +151,8 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             revenue_breakdown: "Revenue Breakdown",
             key_metrics: "Key Metrics",
             cost_per_m2: "Cost/m²",
-            cost_per_m2_tooltip: "Total project costs divided by total sales area. Shows average cost per m².",
             revenue_per_m2: "Revenue/m²",
+            cost_per_m2_tooltip: "Total project costs divided by total sales area. Shows average cost per m².",
             revenue_per_m2_tooltip: "Total revenue divided by total sales area. Shows average selling price per m².",
             profit_per_m2: "Profit/m2",
             profit_per_m2_tooltip: "Profit divided by total sales area. Shows how much profit each m² generates.",
@@ -129,7 +173,29 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             overview: "Przegląd",
             charts: "Wykresy",
             cashflow: "Przepływ gotówki",
+            vat_impact: "Wpływ VAT",
             kpis_title: "Kluczowe wskaźniki",
+
+            // VAT Impact translations
+            vat_section_title: "Analiza VAT",
+            vat_input: "VAT naliczony",
+            vat_input_desc: "Podlegający odliczeniu VAT od kosztów",
+            vat_input_tooltip: "Kwota VAT zapłacona od kosztów, którą płatnik VAT może odliczyć. Podmiot niebędący płatnikiem VAT = 0 €, Firma = ok. 20% kosztów.",
+            vat_output: "VAT należny",
+            vat_output_desc: "VAT od sprzedaży",
+            vat_output_tooltip: "Kwota VAT, którą płatnik VAT musi odprowadzić od sprzedaży. Mieszkania są zwolnione z VAT, ale powierzchnie niemieszkalne i miejsca parkingowe mogą podlegać VAT.",
+            vat_balance: "Saldo VAT",
+            vat_balance_desc: "Pozycja netto względem urzędu skarbowego",
+            vat_balance_tooltip: "Różnica między VAT należnym a naliczonym. Dodatnia = do zapłaty państwu, ujemna = państwo zwraca.",
+            net_profit_after_vat: "Zysk netto po VAT",
+            net_profit_after_vat_desc: "Realny zysk po uwzględnieniu VAT",
+            net_profit_after_vat_tooltip: "Rzeczywisty zysk po zapłaceniu/odliczeniu VAT. Dla niepłatnika VAT taki sam jak zysk brutto, dla firmy uwzględnia wpływ salda VAT.",
+            entity_type_label: "Typ podmiotu",
+            vat_payer: "Płatnik VAT",
+            non_vat_payer: "Niepłatnik VAT",
+            vat_advantage: "✓ Zaleta: Możesz odliczyć VAT od kosztów",
+            vat_disadvantage: "⚠ Wada: Płacisz pełną cenę z VAT",
+            
             total_project_costs: "Całkowite koszty",
             total_project_costs_desc: "Wszystkie koszty wraz z finansowaniem",
             total_project_costs_tooltip: "Suma wszystkich kosztów projektu: grunt, budowa, sieci inżynieryjne, finansowanie, rezerwa i inne koszty.",
@@ -183,7 +249,29 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             overview: "Áttekintés",
             charts: "Grafikonok",
             cashflow: "Pénzáramlás",
+            vat_impact: "ÁFA hatás",
             kpis_title: "Kulcs teljesítménymutatók",
+
+            // VAT Impact translations
+            vat_section_title: "ÁFA elemzés",
+            vat_input: "ÁFA bejövő oldalon",
+            vat_input_desc: "Levonható ÁFA a költségekből",
+            vat_input_tooltip: "A költségekre fizetett ÁFA összege, amelyet az ÁFA-fizető levonhat. Nem ÁFA-fizető = 0 €, Cég = kb. a költségek 20%-a.",
+            vat_output: "ÁFA kimenő oldalon",
+            vat_output_desc: "ÁFA az értékesítésből",
+            vat_output_tooltip: "Az ÁFA összege, amelyet az ÁFA-fizetőnek be kell fizetnie az értékesítésből. A lakások ÁFA-mentesek, de a nem lakáscélú és parkolóhelyek ÁFA alá eshetnek.",
+            vat_balance: "ÁFA egyenleg",
+            vat_balance_desc: "Nettó pozíció az adóhatósággal szemben",
+            vat_balance_tooltip: "Az ÁFA kimenő és bejövő oldal közötti különbség. Pozitív = az államnak kell fizetni, negatív = az állam visszatérít.",
+            net_profit_after_vat: "Nettó nyereség ÁFA után",
+            net_profit_after_vat_desc: "Valós nyereség az ÁFA figyelembevételével",
+            net_profit_after_vat_tooltip: "Tényleges nyereség az ÁFA kifizetése/levonása után. Nem ÁFA-fizető esetében megegyezik a bruttó nyereséggel, cég esetében tartalmazza az ÁFA egyenleg hatását.",
+            entity_type_label: "Jogi forma",
+            vat_payer: "ÁFA fizető",
+            non_vat_payer: "Nem ÁFA fizető",
+            vat_advantage: "✓ Előny: Levonhatja az ÁFA-t a költségekből",
+            vat_disadvantage: "⚠ Hátrány: Teljes árat fizet, beleértve az ÁFA-t",
+
             total_project_costs: "Összes költség",
             total_project_costs_desc: "Összes költség a finanszírozással együtt",
             total_project_costs_tooltip: "Összes projektköltség összege: telek, építés, mérnöki hálózatok, finanszírozás, tartalék és egyéb költségek.",
@@ -237,7 +325,29 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             overview: "Übersicht",
             charts: "Diagramme",
             cashflow: "Cashflow",
+            vat_impact: "Mehrwertsteuer-Auswirkungen",
             kpis_title: "Leistungskennzahlen",
+
+            // VAT Impact translations
+            vat_section_title: "Mehrwertsteuer-Analyse",
+            vat_input: "Vorsteuer",
+            vat_input_desc: "Abziehbare Mehrwertsteuer auf Kosten",
+            vat_input_tooltip: "Betrag der auf Kosten gezahlten Mehrwertsteuer, die vom Mehrwertsteuerzahler abgezogen werden kann. Nicht-Mehrwertsteuerzahler = 0 €, Unternehmen = ca. 20% der Kosten.",
+            vat_output: "Umsatzsteuer",
+            vat_output_desc: "Mehrwertsteuer auf Verkäufe",
+            vat_output_tooltip: "Betrag der Mehrwertsteuer, der vom Mehrwertsteuerzahler aus Verkäufen an das Finanzamt abgeführt werden muss. Wohnungen sind mehrwertsteuerbefreit, aber Nichtwohnflächen und Parkplätze können der Mehrwertsteuer unterliegen.",
+            vat_balance: "Mehrwertsteuer-Saldo",
+            vat_balance_desc: "Nettoposition gegenüber dem Finanzamt",
+            vat_balance_tooltip: "Differenz zwischen Umsatzsteuer und Vorsteuer. Positiv = an den Staat zu zahlen, negativ = Staat erstattet.",
+            net_profit_after_vat: "Nettogewinn nach Mehrwertsteuer",
+            net_profit_after_vat_desc: "Realistischer Gewinn nach Berücksichtigung der Mehrwertsteuer",
+            net_profit_after_vat_tooltip: "Tatsächlicher Gewinn nach Zahlung/Abzug der Mehrwertsteuer. Für Nicht-Mehrwertsteuerzahler gleich dem Bruttogewinn, für Unternehmen beinhaltet es die Auswirkung des Mehrwertsteuer-Saldos.",
+            entity_type_label: "Rechtsform",
+            vat_payer: "Mehrwertsteuerzahler",
+            non_vat_payer: "Nicht-Mehrwertsteuerzahler",
+            vat_advantage: "✓ Vorteil: Sie können die Mehrwertsteuer von den Kosten abziehen",
+            vat_disadvantage: "⚠ Nachteil: Sie zahlen den vollen Preis inklusive Mehrwertsteuer",
+            
             total_project_costs: "Gesamtkosten",
             total_project_costs_desc: "Alle Kosten inkl. Finanzierung",
             total_project_costs_tooltip: "Summe aller Projektkosten: Grundstück, Bau, technische Netze, Finanzierung, Reserve und sonstige Kosten.",
@@ -309,8 +419,9 @@ export default function ResultsDisplay({ results, currency = '€', language = '
                 </CardHeader>
                 <CardContent className="pt-6">
                     <Tabs defaultValue="overview" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3 mb-6">
+                        <TabsList className="grid w-full grid-cols-4 mb-6">
                             <TabsTrigger value="overview">{t.overview}</TabsTrigger>
+                            <TabsTrigger value="vat_impact">{t.vat_impact}</TabsTrigger>
                             <TabsTrigger value="charts">{t.charts}</TabsTrigger>
                             <TabsTrigger value="cashflow">{t.cashflow}</TabsTrigger>
                         </TabsList>
@@ -428,6 +539,101 @@ export default function ResultsDisplay({ results, currency = '€', language = '
                                         <p className="text-lg font-bold">{percentFormatter(kpis.break_even_percentage)}</p>
                                     </div>
                                 </div>
+                            </div>
+                        </TabsContent>
+
+                        {/* NEW: VAT Impact Tab */}
+                        <TabsContent value="vat_impact" className="space-y-6">
+                            <div className="bg-muted/30 p-4 rounded-lg mb-4">
+                                <p className="text-sm font-semibold mb-2">{t.entity_type_label}</p>
+                                <p className="text-2xl font-bold text-primary mb-2">
+                                    {kpis.is_vat_payer ? t.vat_payer : t.non_vat_payer}
+                                </p>
+                                <p className={`text-sm ${kpis.is_vat_payer ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                    {kpis.is_vat_payer ? t.vat_advantage : t.vat_disadvantage}
+                                </p>
+                            </div>
+
+                            <h3 className="text-lg font-semibold">{t.vat_section_title}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <KPICard
+                                    title={t.vat_input}
+                                    value={currencyFormatter(kpis.vat_input || 0, 'EUR', currency, 0)}
+                                    icon={DollarSign}
+                                    description={t.vat_input_desc}
+                                    trend={kpis.vat_input > 0 ? "up" : null}
+                                    tooltip={t.vat_input_tooltip}
+                                />
+                                <KPICard
+                                    title={t.vat_output}
+                                    value={currencyFormatter(kpis.vat_output || 0, 'EUR', currency, 0)}
+                                    icon={DollarSign}
+                                    description={t.vat_output_desc}
+                                    trend={kpis.vat_output > 0 ? "down" : null}
+                                    tooltip={t.vat_output_tooltip}
+                                />
+                                <KPICard
+                                    title={t.vat_balance}
+                                    value={currencyFormatter(kpis.vat_balance || 0, 'EUR', currency, 0)}
+                                    icon={kpis.vat_balance >= 0 ? TrendingDown : TrendingUp}
+                                    description={t.vat_balance_desc}
+                                    trend={kpis.vat_balance >= 0 ? "down" : "up"}
+                                    tooltip={t.vat_balance_tooltip}
+                                />
+                                <KPICard
+                                    title={t.net_profit_after_vat}
+                                    value={currencyFormatter(kpis.net_profit_after_vat || 0, 'EUR', currency, 0)}
+                                    icon={TrendingUp}
+                                    description={t.net_profit_after_vat_desc}
+                                    trend={kpis.net_profit_after_vat > 0 ? "up" : "down"}
+                                    tooltip={t.net_profit_after_vat_tooltip}
+                                />
+                            </div>
+
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">
+                                    {kpis.is_vat_payer 
+                                        ? language === 'sk' 
+                                            ? '💡 Výhoda platcu DPH'
+                                            : language === 'pl'
+                                                ? '💡 Zaleta płatnika VAT'
+                                                : language === 'hu'
+                                                    ? '💡 ÁFA fizető előnye'
+                                                    : language === 'de'
+                                                        ? '💡 Vorteil als Mehrwertsteuerzahler'
+                                                        : '💡 Advantage of VAT Payer'
+                                        : language === 'sk'
+                                            ? '⚠️ Pozícia neplatcu DPH'
+                                            : language === 'pl'
+                                                ? '⚠️ Pozycja niepłatnika VAT'
+                                                : language === 'hu'
+                                                    ? '⚠️ Nem ÁFA fizető pozíciója'
+                                                    : language === 'de'
+                                                        ? '⚠️ Position als Nicht-Mehrwertsteuerzahler'
+                                                        : '⚠️ Position of Non-VAT Payer'
+                                    }
+                                </h4>
+                                <p className="text-sm text-blue-800 dark:text-blue-200">
+                                    {kpis.is_vat_payer 
+                                        ? language === 'sk' 
+                                            ? `Ako platca DPH môžete odpočítať ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} z nákladov, čo výrazne znižuje reálne náklady projektu.`
+                                            : language === 'pl'
+                                                ? `Jako płatnik VAT możesz odliczyć ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} od kosztów, co znacząco obniża realne koszty projektu.`
+                                                : language === 'hu'
+                                                    ? `ÁFA fizetőként ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)}-t levonhat a költségekből, ami jelentősen csökkenti a projekt valós költségeit.`
+                                                    : language === 'de'
+                                                        ? `Als Mehrwertsteuerzahler können Sie ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} von den Kosten abziehen, was die realen Projektkosten erheblich reduziert.`
+                                                        : `As VAT payer you can deduct ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} from costs, significantly reducing real project costs.`
+                                        : language === 'sk'
+                                            ? `Ako neplatca DPH platíte plnú cenu vrátane DPH, čo zvyšuje vaše náklady o približne 20%. Zvážte registráciu ako platca DPH.`
+                                            : language === 'pl'
+                                                ? `Jako niepłatnik VAT płacisz pełną cenę z VAT, co zwiększa twoje koszty o około 20%. Rozważ rejestrację jako płatnik VAT.`
+                                                : language === 'hu'
+                                                    ? `Nem ÁFA fizetőként teljes árat fizet, beleértve az ÁFA-t, ami körülbelül 20%-kal növeli a költségeit. Fontolja meg az ÁFA fizetőként való regisztrációt.`
+                                                    : language === 'de'
+                                                        ? `Als Nicht-Mehrwertsteuerzahler zahlen Sie den vollen Preis inklusive Mehrwertsteuer, was Ihre Kosten um etwa 20% erhöht. Erwägen Sie die Registrierung als Mehrwertsteuerzahler.`
+                                    }
+                                </p>
                             </div>
                         </TabsContent>
 

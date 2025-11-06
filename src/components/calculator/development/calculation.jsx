@@ -32,13 +32,18 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
         project_info_data = {},
         cost_data = {},
         revenue_data = {},
-        financing_data = {}
+        financing_data = {},
+        entity_type = 'FO' // Get entity type from projectData, default to 'FO'
     } = projectData;
 
     const num = (value) => {
         const parsed = Number(value);
         return isNaN(parsed) ? 0 : parsed;
     };
+
+    // VAT rate (20% in most EU countries)
+    const VAT_RATE = 0.20;
+    const isVATpayer = entity_type === 'PO'; // PO = VAT payer, FO = non-VAT payer
 
     // === PROJECT DATA ===
     const totalLandArea = num(project_info_data.total_land_area);
@@ -165,16 +170,44 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     salesCosts = totalGrossRevenue * 0.02; // 2% of revenue
     marketingCosts = totalGrossRevenue * 0.008; // 0.8% of revenue
 
-    // === TOTAL COSTS BEFORE FINANCING ===
-    const totalCostsBeforeFinancing = landAndProject + totalImplementation + totalAdditionalBudget + 
-                                      salesCosts + marketingCosts + totalOtherServices + reserveProvision;
+    // === VAT CALCULATIONS ===
+    let vatInput = 0;  // VAT on costs (can be deducted by VAT payer)
+    let vatOutput = 0; // VAT on revenue (must be paid to tax authority)
+    let totalCostsExclVAT = 0;
+    let totalRevenueExclVAT = totalGrossRevenue; // Apartments are VAT exempt, totalGrossRevenue is effectively net of VAT for the developer
+
+    // TOTAL COSTS BEFORE FINANCING (This is the gross cost, incl. potential VAT if not deductible)
+    const totalCostsWithVAT = landAndProject + totalImplementation + totalAdditionalBudget + 
+                               salesCosts + marketingCosts + totalOtherServices + reserveProvision;
+
+    if (isVATpayer) {
+        // PO / VAT payer - can deduct input VAT
+        // Calculate VAT on costs (assuming all costs are provided as VAT inclusive and we extract VAT)
+        vatInput = totalCostsWithVAT * (VAT_RATE / (1 + VAT_RATE)); // Extract VAT from prices with VAT
+        totalCostsExclVAT = totalCostsWithVAT - vatInput; // Net costs without VAT
+        
+        // VAT on revenue (apartments are VAT exempt, but some items like parking/non-res might have VAT)
+        // Assume non-residential and parking revenues are taxable. Assume they are provided as NET prices.
+        const taxableRevenue = nonResidentialRevenue + parkingIndoorRevenue + parkingOutdoorRevenue;
+        vatOutput = taxableRevenue * VAT_RATE;
+        // totalRevenueExclVAT remains totalGrossRevenue as calculated, as we assume it's net for the developer
+    } else {
+        // FO / Non-VAT payer - cannot deduct input VAT, must pay full prices
+        vatInput = 0; // No deduction possible
+        vatOutput = 0; // No VAT on sales
+        totalCostsExclVAT = totalCostsWithVAT; // Pays full price including embedded VAT
+        // totalRevenueExclVAT remains totalGrossRevenue as calculated
+    }
+
+    const vatBalance = vatOutput - vatInput; // Net VAT to pay to tax authority (can be negative = refund)
 
     // === FINANCING ===
     const ownResourcesPercent = num(financing_data.own_resources_percent) || 30;
     const bankInterestPercent = num(financing_data.bank_interest_percent) || 6;
 
-    const ownResources = totalCostsBeforeFinancing * (ownResourcesPercent / 100);
-    const bankResources = totalCostsBeforeFinancing * ((100 - ownResourcesPercent) / 100);
+    // Use actual costs (excl VAT for VAT payers, incl VAT for non-payers)
+    const ownResources = totalCostsExclVAT * (ownResourcesPercent / 100);
+    const bankResources = totalCostsExclVAT * ((100 - ownResourcesPercent) / 100);
 
     const ownResourcesInterest = ownResources * 0.05; // 5% interest on own resources
     const bankFees = bankResources * 0.002; // 0.2% bank fees
@@ -183,16 +216,19 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const totalFinancingCosts = ownResourcesInterest + bankFees + bankInterest;
 
     // === TOTAL PROJECT COSTS ===
-    const totalProjectCosts = totalCostsBeforeFinancing + totalFinancingCosts;
+    const totalProjectCosts = totalCostsExclVAT + totalFinancingCosts;
 
     // === NET REVENUE (after sales commission which is already in salesCosts) ===
-    const netRevenue = totalGrossRevenue - salesCosts;
+    const netRevenue = totalRevenueExclVAT - salesCosts;
 
     // === PROFIT ANALYSIS ===
-    const grossProfit = totalGrossRevenue - totalProjectCosts;
+    const grossProfit = totalRevenueExclVAT - totalProjectCosts;
     const netProfit = netRevenue - totalProjectCosts;
     
-    const profitMargin = totalGrossRevenue > 0 ? (grossProfit / totalGrossRevenue) * 100 : 0;
+    // NET PROFIT AFTER VAT (real profit considering VAT balance)
+    const netProfitAfterVAT = grossProfit - vatBalance; // If VAT balance > 0, reduces profit
+    
+    const profitMargin = totalRevenueExclVAT > 0 ? (grossProfit / totalRevenueExclVAT) * 100 : 0;
     const developerMargin = totalProjectCosts > 0 ? (grossProfit / totalProjectCosts) * 100 : 0;
     const returnOnCost = totalProjectCosts > 0 ? (grossProfit / totalProjectCosts) * 100 : 0;
 
@@ -200,7 +236,7 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const costPerM2 = totalSalesArea > 0 ? totalProjectCosts / totalSalesArea : 0;
     const landCostPerM2 = totalLandArea > 0 ? landAndProject / totalLandArea : 0;
     const constructionCostPerM2 = totalGFA > 0 ? totalImplementation / totalGFA : 0;
-    const revenuePerM2 = totalSalesArea > 0 ? totalGrossRevenue / totalSalesArea : 0;
+    const revenuePerM2 = totalSalesArea > 0 ? totalRevenueExclVAT / totalSalesArea : 0;
     const profitPerM2 = totalSalesArea > 0 ? grossProfit / totalSalesArea : 0;
 
     // === DEVELOPER'S RETURN - CORRECTED WITH IRR ===
@@ -227,8 +263,8 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     cashFlowsForIRR.push(-ownResources);
     
     // During construction: costs are paid out (negative cash flows)
-    const constructionMonths = Math.max(projectDurationMonths - 6, projectDurationMonths * 0.75);
-    const monthlyCostDuringConstruction = (totalCostsBeforeFinancing - ownResources) / constructionMonths;
+    const constructionMonths = Math.max(projectDurationMonths - 6, projectDurationMonths * 0.75); // At least 75% of duration
+    const monthlyCostDuringConstruction = (totalCostsExclVAT - ownResources) / constructionMonths;
     
     for (let month = 1; month <= constructionMonths; month++) {
         cashFlowsForIRR.push(-monthlyCostDuringConstruction);
@@ -236,7 +272,7 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     
     // During sales phase: revenue comes in (positive cash flows)
     const salesMonths = projectDurationMonths - constructionMonths;
-    const monthlyRevenueDuringSales = salesMonths > 0 ? totalGrossRevenue / salesMonths : 0;
+    const monthlyRevenueDuringSales = salesMonths > 0 ? totalRevenueExclVAT / salesMonths : 0;
     
     for (let month = 1; month <= salesMonths; month++) {
         cashFlowsForIRR.push(monthlyRevenueDuringSales);
@@ -249,10 +285,10 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
 
     // === BREAKEVEN & RISK METRICS ===
     const breakEvenRevenue = totalProjectCosts;
-    const breakEvenPercentage = totalGrossRevenue > 0 ? (breakEvenRevenue / totalGrossRevenue) * 100 : 0;
+    const breakEvenPercentage = totalRevenueExclVAT > 0 ? (breakEvenRevenue / totalRevenueExclVAT) * 100 : 0;
     
     // Land value uplift
-    const landValueUplift = totalGrossRevenue - landAndProject;
+    const landValueUplift = totalRevenueExclVAT - landAndProject;
     const landValueUpliftPercent = landAndProject > 0 ? (landValueUplift / landAndProject) * 100 : 0;
 
     // === COST BREAKDOWN FOR CHARTS ===
@@ -373,14 +409,14 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const revLabels = revenueLabels[language] || revenueLabels.en;
     
     const revenueBreakdown = [
-        { name: revLabels.apartments, value: apartmentsRevenue, percentage: totalGrossRevenue > 0 ? ((apartmentsRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.non_residential, value: nonResidentialRevenue, percentage: totalGrossRevenue > 0 ? ((nonResidentialRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.parking_indoor, value: parkingIndoorRevenue, percentage: totalGrossRevenue > 0 ? ((parkingIndoorRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.parking_outdoor, value: parkingOutdoorRevenue, percentage: totalGrossRevenue > 0 ? ((parkingOutdoorRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.balconies, value: balconiesRevenue, percentage: totalGrossRevenue > 0 ? ((balconiesRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.gardens, value: gardensRevenue, percentage: totalGrossRevenue > 0 ? ((gardensRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.basements, value: basementsRevenue, percentage: totalGrossRevenue > 0 ? ((basementsRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 },
-        { name: revLabels.other, value: otherRevenue, percentage: totalGrossRevenue > 0 ? ((otherRevenue / totalGrossRevenue) * 100).toFixed(1) : 0 }
+        { name: revLabels.apartments, value: apartmentsRevenue, percentage: totalRevenueExclVAT > 0 ? ((apartmentsRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.non_residential, value: nonResidentialRevenue, percentage: totalRevenueExclVAT > 0 ? ((nonResidentialRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.parking_indoor, value: parkingIndoorRevenue, percentage: totalRevenueExclVAT > 0 ? ((parkingIndoorRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.parking_outdoor, value: parkingOutdoorRevenue, percentage: totalRevenueExclVAT > 0 ? ((parkingOutdoorRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.balconies, value: balconiesRevenue, percentage: totalRevenueExclVAT > 0 ? ((balconiesRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.gardens, value: gardensRevenue, percentage: totalRevenueExclVAT > 0 ? ((gardensRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.basements, value: basementsRevenue, percentage: totalRevenueExclVAT > 0 ? ((basementsRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 },
+        { name: revLabels.other, value: otherRevenue, percentage: totalRevenueExclVAT > 0 ? ((otherRevenue / totalRevenueExclVAT) * 100).toFixed(1) : 0 }
     ].filter(item => item.value > 0);
 
     return {
@@ -392,7 +428,7 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
             total_financing_costs: totalFinancingCosts,
             
             // Revenue
-            gross_revenue: totalGrossRevenue,
+            gross_revenue: totalRevenueExclVAT,
             net_revenue: netRevenue,
             
             // Profit Metrics
@@ -434,6 +470,15 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
             // Timeline
             project_duration_months: projectDurationMonths,
             project_duration_years: projectDurationYears,
+
+            // NEW: VAT METRICS
+            vat_input: vatInput,
+            vat_output: vatOutput,
+            vat_balance: vatBalance,
+            net_profit_after_vat: netProfitAfterVAT,
+            is_vat_payer: isVATpayer,
+            total_costs_with_vat: totalCostsWithVAT,
+            total_costs_excl_vat: totalCostsExclVAT,
         },
         cost_breakdown: costBreakdown,
         revenue_breakdown: revenueBreakdown
