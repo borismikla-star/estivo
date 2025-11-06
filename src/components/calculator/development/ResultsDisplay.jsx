@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -11,7 +12,7 @@ const COLORS = ['#003E7E', '#004C97', '#0066CC', '#0080FF', '#33A3FF', '#66BBFF'
 export default function ResultsDisplay({ results, currency = '€', language = 'en' }) {
     if (!results || !results.kpis) return null;
 
-    const { kpis, costBreakdown, revenueBreakdown } = results;
+    const { kpis, cost_breakdown, revenue_breakdown } = results;
 
     const translations = {
         sk: {
@@ -339,48 +340,52 @@ export default function ResultsDisplay({ results, currency = '€', language = '
                         <TabsContent value="charts" className="space-y-8">
                             <div className="grid md:grid-cols-2 gap-6">
                                 {/* Cost Breakdown */}
-                                <div>
-                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                        <PieChartIcon className="w-5 h-5" />
-                                        {t.cost_breakdown}
-                                    </h3>
-                                    <ResponsiveContainer width="100%" height={300}>
-                                        <PieChart>
-                                            <Pie
-                                                data={costBreakdown}
-                                                dataKey="value"
-                                                nameKey="name"
-                                                cx="50%"
-                                                cy="50%"
-                                                outerRadius={80}
-                                                label
-                                            >
-                                                {costBreakdown.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                ))}
-                                            </Pie>
-                                            <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
-                                            <Legend />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                {cost_breakdown && cost_breakdown.length > 0 && (
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                            <PieChartIcon className="w-5 h-5" />
+                                            {t.cost_breakdown}
+                                        </h3>
+                                        <ResponsiveContainer width="100%" height={300}>
+                                            <PieChart>
+                                                <Pie
+                                                    data={cost_breakdown}
+                                                    dataKey="value"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius={80}
+                                                    label
+                                                >
+                                                    {cost_breakdown.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
+                                                <Legend />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                )}
 
                                 {/* Revenue Breakdown */}
-                                <div>
-                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                        <BarChart3 className="w-5 h-5" />
-                                        {t.revenue_breakdown}
-                                    </h3>
-                                    <ResponsiveContainer width="100%" height={300}>
-                                        <BarChart data={revenueBreakdown}>
-                                            <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="name" />
-                                            <YAxis tickFormatter={(value) => `${currency}${(value / 1000).toFixed(0)}k`} />
-                                            <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
-                                            <Bar dataKey="value" fill="#003E7E" />
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                {revenue_breakdown && revenue_breakdown.length > 0 && (
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                            <BarChart3 className="w-5 h-5" />
+                                            {t.revenue_breakdown}
+                                        </h3>
+                                        <ResponsiveContainer width="100%" height={300}>
+                                            <BarChart data={revenue_breakdown}>
+                                                <CartesianGrid strokeDasharray="3 3" />
+                                                <XAxis dataKey="name" />
+                                                <YAxis tickFormatter={(value) => `${currency}${(value / 1000).toFixed(0)}k`} />
+                                                <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
+                                                <Bar dataKey="value" fill="#003E7E" />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                )}
                             </div>
                         </TabsContent>
 
