@@ -151,9 +151,9 @@ export default function PDFReport({ projectData, results, language, user }) {
     // Determine if this is a development project
     const isDevelopment = type === 'development';
     
-    // This component is only for printing
+    // This component is only for printing - CRITICAL: Add print-container class
     return (
-        <div className="hidden print:block p-8 font-sans">
+        <div className="hidden print:block print-container p-8 font-sans bg-white">
             <header className="mb-8 text-center">
                  {user?.entity_type === 'PO' && user.company_logo_url ? (
                     <img src={user.company_logo_url} alt="Company Logo" className="h-16 w-auto max-w-xs mx-auto mb-4 object-contain" />
