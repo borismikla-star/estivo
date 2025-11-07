@@ -32,6 +32,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         financing_data = {},
         income_data = {},
         opex_data = {},
+        capex_data = {},
         assumptions_data = {},
     } = projectData;
 
@@ -65,57 +66,59 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     }
     const annualDebtService = monthlyMortgagePayment * 12;
 
-    // === INCOME ===
+    // === INCOME - WITH REIMBURSEMENTS ===
     const annualRent = num(income_data.annual_rent);
+    const camReimbursements = num(income_data.cam_reimbursements) || 0;
+    const otherReimbursements = num(income_data.other_reimbursements) || 0;
     const otherIncome = num(income_data.other_income) || 0;
     const vacancyRate = num(income_data.vacancy_rate) || 5;
+    const rentEscalationPercent = num(income_data.rent_escalation_percent) || 2;
     
-    const potentialGrossIncome = annualRent + otherIncome;
+    const potentialGrossIncome = annualRent + camReimbursements + otherReimbursements + otherIncome;
     const vacancyLoss = potentialGrossIncome * (vacancyRate / 100);
     const effectiveGrossIncome = potentialGrossIncome - vacancyLoss;
 
     // === OPERATING EXPENSES - FIXED! ===
-    // CRITICAL FIX: property_tax and maintenance are now FLAT ANNUAL AMOUNTS, not percentages
-    const propertyTax = num(opex_data.property_tax) || 0; // Annual flat amount in €
-    const insurance = num(opex_data.insurance) || 0; // Annual flat amount in €
-    const utilities = num(opex_data.utilities) || 0; // Annual flat amount in €
-    const maintenance = num(opex_data.maintenance) || 0; // Annual flat amount in €
-    const propertyManagementPercent = num(opex_data.property_management || opex_data.property_management_fee) || 0; // % of EGI
-    const otherExpenses = num(opex_data.other_expenses || opex_data.other_opex) || 0; // Annual flat amount in €
+    const propertyTax = num(opex_data.property_tax) || 0;
+    const insurance = num(opex_data.insurance) || 0;
+    const utilities = num(opex_data.utilities) || 0;
+    const maintenance = num(opex_data.maintenance) || 0;
+    const propertyManagementPercent = num(opex_data.property_management || opex_data.property_management_fee) || 0;
+    const otherExpenses = num(opex_data.other_expenses || opex_data.other_opex) || 0;
     
-    // Calculate actual annual expenses
-    const annualPropertyTax = propertyTax; // ✅ FIXED: Direct flat amount
-    const annualInsurance = insurance; // Already correct
-    const annualUtilities = utilities; // Already correct
-    const annualMaintenance = maintenance; // ✅ FIXED: Direct flat amount
-    const annualPropertyManagement = (effectiveGrossIncome * propertyManagementPercent) / 100; // % of EGI - correct
+    const annualPropertyTax = propertyTax;
+    const annualInsurance = insurance;
+    const annualUtilities = utilities;
+    const annualMaintenance = maintenance;
+    const annualPropertyManagement = (effectiveGrossIncome * propertyManagementPercent) / 100;
     
     const totalAnnualOperatingExpenses = annualPropertyTax + annualInsurance + annualUtilities + 
                                          annualMaintenance + annualPropertyManagement + otherExpenses;
 
+    // === CAPEX - NEW! ===
+    const capexReservePercent = num(capex_data.capex_reserve_percent) || 0;
+    const roofReplacement = num(capex_data.roof_replacement) || 0;
+    const hvacReplacement = num(capex_data.hvac_replacement) || 0;
+    const tenantImprovements = num(capex_data.tenant_improvements) || 0;
+    
+    // CapEx can be either % of NOI or specific reserves
+    const netOperatingIncomeBeforeCapEx = effectiveGrossIncome - totalAnnualOperatingExpenses;
+    const capexFromPercent = (netOperatingIncomeBeforeCapEx * capexReservePercent) / 100;
+    const capexFromSpecific = roofReplacement + hvacReplacement + tenantImprovements;
+    const totalAnnualCapEx = Math.max(capexFromPercent, capexFromSpecific); // Use whichever is higher
+
     // === CORE METRICS ===
-    const netOperatingIncome = effectiveGrossIncome - totalAnnualOperatingExpenses;
+    const netOperatingIncome = netOperatingIncomeBeforeCapEx - totalAnnualCapEx;
     const annualCashFlow = netOperatingIncome - annualDebtService;
     const monthlyCashFlow = annualCashFlow / 12;
 
     // === ADVANCED METRICS ===
-    // 1. Cap Rate - Most important for commercial
     const capRate = price > 0 ? (netOperatingIncome / price) * 100 : 0;
-    
-    // 2. DSCR - Critical for lenders
     const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : 0;
-    
-    // 3. Cash-on-Cash Return - based on total equity
     const cashOnCashReturn = totalEquity > 0 ? (annualCashFlow / totalEquity) * 100 : 0;
-    
-    // 4. Operating Expense Ratio
     const opexRatio = effectiveGrossIncome > 0 ? (totalAnnualOperatingExpenses / effectiveGrossIncome) * 100 : 0;
-    
-    // 5. Break-Even Occupancy
     const breakEvenOccupancy = potentialGrossIncome > 0 ? 
-        ((totalAnnualOperatingExpenses + annualDebtService) / potentialGrossIncome) * 100 : 0;
-    
-    // 6. Gross Rent Multiplier
+        ((totalAnnualOperatingExpenses + totalAnnualCapEx + annualDebtService) / potentialGrossIncome) * 100 : 0;
     const grm = annualRent > 0 ? price / annualRent : 0;
 
     // === NPV & IRR CALCULATION ===
@@ -123,34 +126,35 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const holdingPeriod = num(assumptions_data.holding_period) || 10;
     const exitCapRate = num(assumptions_data.exit_cap_rate) || capRate;
     const appreciationRate = num(assumptions_data.appreciation_rate) || 2;
-    const rentGrowthRate = num(assumptions_data.rent_growth_rate) || 2;
     const expenseGrowthRate = 2;
     
-    // Project cash flows
+    // Project cash flows with RENT ESCALATION
     const projections = [];
-    const cashFlowsForIRR = [-totalEquity]; // Year 0: initial investment
+    const cashFlowsForIRR = [-totalEquity];
     let cumulativeCashFlow = 0;
     let remainingLoanBalance = loanAmount;
     let currentPropertyValue = price;
     let currentRent = annualRent;
     let currentOpex = totalAnnualOperatingExpenses;
+    let currentCapEx = totalAnnualCapEx;
     let npvSum = 0;
     
     for (let year = 1; year <= holdingPeriod; year++) {
         if (year > 1) {
             currentPropertyValue *= (1 + appreciationRate / 100);
-            currentRent *= (1 + rentGrowthRate / 100);
+            currentRent *= (1 + rentEscalationPercent / 100); // Use rent escalation from input
             currentOpex *= (1 + expenseGrowthRate / 100);
+            // CapEx grows with OpEx growth
+            currentCapEx *= (1 + expenseGrowthRate / 100);
         }
         
-        const yearPGI = currentRent + otherIncome;
+        const yearPGI = currentRent + camReimbursements + otherReimbursements + otherIncome;
         const yearVacancy = yearPGI * (vacancyRate / 100);
         const yearEGI = yearPGI - yearVacancy;
-        const yearNOI = yearEGI - currentOpex;
+        const yearNOI = yearEGI - currentOpex - currentCapEx;
         const yearCashFlow = yearNOI - annualDebtService;
         cumulativeCashFlow += yearCashFlow;
         
-        // Discount cash flow for NPV
         const discountFactor = Math.pow(1 + discountRate / 100, year);
         npvSum += yearCashFlow / discountFactor;
         
@@ -173,6 +177,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             year,
             gross_income: yearEGI,
             operating_expenses: currentOpex,
+            capex: currentCapEx,
             noi: yearNOI,
             debt_service: annualDebtService,
             net_cash_flow: yearCashFlow,
@@ -183,11 +188,9 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             cumulative_roi: cumulativeROI
         });
         
-        // For IRR: Years 1-(holdingPeriod-1) are just cash flows
         if (year < holdingPeriod) {
             cashFlowsForIRR.push(yearCashFlow);
         } else {
-            // Final year: cash flow + exit equity
             const finalYearNOI = yearNOI;
             const exitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : currentPropertyValue;
             const exitEquity = exitValue - remainingLoanBalance;
@@ -195,21 +198,19 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         }
     }
     
-    // Calculate exit value and NPV
     const finalYearNOI = projections[holdingPeriod - 1].noi;
     const exitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : projections[holdingPeriod - 1].property_value;
     const exitEquity = exitValue - projections[holdingPeriod - 1].loan_balance;
     const exitDiscountFactor = Math.pow(1 + discountRate / 100, holdingPeriod);
     const npv = npvSum + (exitEquity / exitDiscountFactor) - totalEquity;
     
-    // Overall returns - IRR using Newton-Raphson
     const totalCashFlows = projections[holdingPeriod - 1].cumulative_cash_flow;
     const totalReturn = totalCashFlows + exitEquity;
     const overallROI = totalEquity > 0 ? ((totalReturn - totalEquity) / totalEquity) * 100 : 0;
     const irr = calculateIRR(cashFlowsForIRR);
     const equityMultiple = totalEquity > 0 ? totalReturn / totalEquity : 0;
 
-    // === EXPENSE BREAKDOWN FOR CHARTS - WITH TRANSLATIONS ===
+    // === EXPENSE BREAKDOWN FOR CHARTS ===
     const expenseLabels = {
         en: {
             property_tax: 'Property Tax',
@@ -217,6 +218,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             utilities: 'Utilities',
             maintenance: 'Maintenance',
             property_mgmt: 'Property Mgmt',
+            capex: 'CapEx Reserve',
             other: 'Other'
         },
         sk: {
@@ -225,6 +227,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             utilities: 'Energie',
             maintenance: 'Údržba',
             property_mgmt: 'Správa nehnuteľnosti',
+            capex: 'CapEx rezerva',
             other: 'Ostatné'
         },
         pl: {
@@ -233,6 +236,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             utilities: 'Media',
             maintenance: 'Konserwacja',
             property_mgmt: 'Zarządzanie',
+            capex: 'Rezerwa CapEx',
             other: 'Inne'
         },
         hu: {
@@ -241,6 +245,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             utilities: 'Közművek',
             maintenance: 'Karbantartás',
             property_mgmt: 'Ingatlankezelés',
+            capex: 'CapEx tartalék',
             other: 'Egyéb'
         },
         de: {
@@ -249,25 +254,25 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             utilities: 'Nebenkosten',
             maintenance: 'Instandhaltung',
             property_mgmt: 'Hausverwaltung',
+            capex: 'CapEx-Rücklage',
             other: 'Sonstiges'
         }
     };
     
     const labels = expenseLabels[language] || expenseLabels.en;
     
-    const totalOpex = annualPropertyTax + annualInsurance + annualUtilities + annualMaintenance + 
-                      annualPropertyManagement + otherExpenses;
+    const totalOpexPlusCapEx = totalAnnualOperatingExpenses + totalAnnualCapEx;
 
     const expenseBreakdown = [
-        { name: labels.property_tax, value: annualPropertyTax, percentage: totalOpex > 0 ? ((annualPropertyTax / totalOpex) * 100).toFixed(1) : '0' },
-        { name: labels.insurance, value: annualInsurance, percentage: totalOpex > 0 ? ((annualInsurance / totalOpex) * 100).toFixed(1) : '0' },
-        { name: labels.utilities, value: annualUtilities, percentage: totalOpex > 0 ? ((annualUtilities / totalOpex) * 100).toFixed(1) : '0' },
-        { name: labels.maintenance, value: annualMaintenance, percentage: totalOpex > 0 ? ((annualMaintenance / totalOpex) * 100).toFixed(1) : '0' },
-        { name: labels.property_mgmt, value: annualPropertyManagement, percentage: totalOpex > 0 ? ((annualPropertyManagement / totalOpex) * 100).toFixed(1) : '0' },
-        { name: labels.other, value: otherExpenses, percentage: totalOpex > 0 ? ((otherExpenses / totalOpex) * 100).toFixed(1) : '0' }
+        { name: labels.property_tax, value: annualPropertyTax, percentage: totalOpexPlusCapEx > 0 ? ((annualPropertyTax / totalOpexPlusCapEx) * 100).toFixed(1) : '0' },
+        { name: labels.insurance, value: annualInsurance, percentage: totalOpexPlusCapEx > 0 ? ((annualInsurance / totalOpexPlusCapEx) * 100).toFixed(1) : '0' },
+        { name: labels.utilities, value: annualUtilities, percentage: totalOpexPlusCapEx > 0 ? ((annualUtilities / totalOpexPlusCapEx) * 100).toFixed(1) : '0' },
+        { name: labels.maintenance, value: annualMaintenance, percentage: totalOpexPlusCapEx > 0 ? ((annualMaintenance / totalOpexPlusCapEx) * 100).toFixed(1) : '0' },
+        { name: labels.property_mgmt, value: annualPropertyManagement, percentage: totalOpexPlusCapEx > 0 ? ((annualPropertyManagement / totalOpexPlusCapEx) * 100).toFixed(1) : '0' },
+        { name: labels.capex, value: totalAnnualCapEx, percentage: totalOpexPlusCapEx > 0 ? ((totalAnnualCapEx / totalOpexPlusCapEx) * 100).toFixed(1) : '0' },
+        { name: labels.other, value: otherExpenses, percentage: totalOpexPlusCapEx > 0 ? ((otherExpenses / totalOpexPlusCapEx) * 100).toFixed(1) : '0' }
     ].filter(item => item.value > 0);
 
-    // === ADDITIONAL KPIs FOR COMMERCIAL ===
     const roi_10_year = overallROI;
 
     return {
@@ -285,6 +290,8 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             effective_gross_income: effectiveGrossIncome,
             vacancy_loss: vacancyLoss,
             annual_rent: annualRent,
+            cam_reimbursements: camReimbursements,
+            other_reimbursements: otherReimbursements,
             
             // Expenses
             total_annual_operating_expenses: totalAnnualOperatingExpenses,
@@ -294,6 +301,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             annual_maintenance: annualMaintenance,
             annual_management_fee: annualPropertyManagement,
             annual_other_opex: otherExpenses,
+            annual_capex: totalAnnualCapEx,
             
             // Performance
             net_operating_income: netOperatingIncome,
@@ -317,7 +325,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             equity_multiple: equityMultiple,
         },
         cashFlowProjection: projections,
-        equityBuildup: projections, // Same data, different visualization
+        equityBuildup: projections,
         expense_breakdown: expenseBreakdown,
     };
 }
