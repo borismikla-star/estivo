@@ -555,13 +555,13 @@ export default function PDFReport({ projectData, results, language, user }) {
                 )}
             </main>
 
-            <footer style={{ marginTop: '24px', paddingTop: '12px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '10px', color: '#6b7280', pageBreakInside: 'avoid' }}>
+            <footer style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#6b7280', pageBreakInside: 'avoid', pageBreakBefore: 'avoid' }}>
                 {user?.entity_type === 'PO' && user.company_name ? (
-                    <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>{user.company_name}</p>
+                    <p style={{ fontWeight: 'bold', marginBottom: '2px', marginTop: 0 }}>{user.company_name}</p>
                 ) : (
-                    <p style={{ marginBottom: '4px' }}>Estivo.app - Smarter Property Investing.</p>
+                    <p style={{ marginBottom: '2px', marginTop: 0 }}>Estivo.app - Smarter Property Investing.</p>
                 )}
-                <p>This report is for informational purposes only and does not constitute financial advice. All calculations are estimates.</p>
+                <p style={{ marginTop: 0, marginBottom: 0 }}>This report is for informational purposes only and does not constitute financial advice. All calculations are estimates.</p>
             </footer>
             
             {/* Print-specific CSS */}
@@ -578,6 +578,15 @@ export default function PDFReport({ projectData, results, language, user }) {
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
                         color-adjust: exact !important;
+                    }
+                    footer {
+                        page-break-before: avoid !important;
+                        page-break-inside: avoid !important;
+                        break-before: avoid !important;
+                        break-inside: avoid !important;
+                    }
+                    main {
+                        page-break-after: avoid !important;
                     }
                 }
             `}</style>
