@@ -1,3 +1,4 @@
+
 import React, { useCallback, useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import CountrySelector from "../CountrySelector";
@@ -73,6 +74,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
       title: t_calc.income, 
       content: <IncomeInputs 
         data={projectData.income_data || {}} 
+        propertyData={projectData.property_data || {}}
         language={language} 
         onChange={(updatedData) => onBulkUpdate("income_data", updatedData)} 
         t={t} 
@@ -83,6 +85,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
       title: t_calc.opex, 
       content: <OpexInputs 
         data={projectData.opex_data || {}} 
+        propertyData={projectData.property_data || {}}
         language={language} 
         onChange={(updatedData) => onBulkUpdate("opex_data", updatedData)} 
         t={t} 
