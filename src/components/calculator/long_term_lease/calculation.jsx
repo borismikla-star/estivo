@@ -1,3 +1,4 @@
+
 // Helper function to calculate IRR using Newton-Raphson method
 function calculateIRR(cashFlows, guess = 0.1) {
     const maxIterations = 100;
@@ -278,9 +279,18 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
             irr: irr,
             equity_multiple: equityMultiple,
             payback_period: paybackPeriod,
+
+            annual_property_tax: annualPropertyTax,
+            annual_insurance: annualInsurance,
+            annual_hoa: annualHOA,
+            annual_maintenance: annualMaintenance,
+            annual_management_fee: annualPropertyManagement,
+            annual_utilities: annualUtilities,
+            annual_other_costs: otherExpenses,
+            year_10_equity: finalEquity,
         },
-        projections,
+        cashFlowProjection: projections,
+        equityBuildup: projections,
         expense_breakdown: expenseBreakdown,
-        cash_flow_monthly: []
     };
 }

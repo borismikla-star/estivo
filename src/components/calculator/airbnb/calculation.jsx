@@ -1,3 +1,4 @@
+
 // Helper function to calculate IRR using Newton-Raphson method
 function calculateIRR(cashFlows, guess = 0.1) {
     const maxIterations = 100;
@@ -302,8 +303,23 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
             irr: irr,
             equity_multiple: equityMultiple,
             payback_period: paybackPeriod,
+
+            gross_rental_income: grossAnnualRevenue,
+            annual_cleaning_costs: annualCleaningCosts,
+            annual_utilities: annualUtilities,
+            annual_supplies: annualSupplies,
+            annual_property_tax: annualPropertyTax,
+            annual_insurance: annualInsurance,
+            annual_maintenance: annualMaintenance,
+            annual_platform_fees: platformFees,
+            annual_other_costs: otherExpenses,
         },
-        projections,
+        cashFlowProjection: projections,
+        equityBuildup: projections,
+        roiProgression: projections.map(p => ({
+            year: p.year,
+            roi: p.cumulative_roi
+        })),
         expense_breakdown: expenseBreakdown,
     };
 }

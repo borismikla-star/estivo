@@ -152,14 +152,11 @@ export default function LongTermLeaseResults({ results, currency = 'EUR', langua
 
     const t = translations[language] || translations.en;
 
-    const expenseData = [
-        { name: 'Property Tax', value: kpis.annual_property_tax || 0 },
-        { name: 'Insurance', value: kpis.annual_insurance || 0 },
-        { name: 'Maintenance', value: kpis.annual_maintenance || 0 },
-        { name: 'Management', value: kpis.annual_management_fee || 0 },
-        { name: 'Utilities', value: kpis.annual_utilities || 0 },
-        { name: 'Other', value: kpis.annual_other_costs || 0 },
-    ].filter(item => item.value > 0);
+    // Prepare chart data
+    const cashFlowChartData = (results.cashFlowProjection || []).map(p => ({
+        year: p.year,
+        cashFlow: p.net_cash_flow
+    }));
 
     return (
         <div className="space-y-6">
@@ -232,18 +229,30 @@ export default function LongTermLeaseResults({ results, currency = 'EUR', langua
 
                 {/* Details Tab */}
                 <TabsContent value="details" className="space-y-6 mt-6">
-                    {expenseData.length > 0 && (
-                        <ExpenseBreakdownChart data={expenseData} language={language} currency={currency} currencySymbol={currencySymbol}/>
+                    {results.expense_breakdown && results.expense_breakdown.length > 0 && (
+                        <ExpenseBreakdownChart 
+                            expenses={results.expense_breakdown} 
+                            currency={currency} 
+                            language={language} 
+                        />
                     )}
                 </TabsContent>
 
                 {/* Projections Tab */}
                 <TabsContent value="projections" className="space-y-6 mt-6">
-                    {results.cashFlowProjection && results.cashFlowProjection.length > 0 && (
-                        <CashFlowChart data={results.cashFlowProjection} language={language} currency={currency} currencySymbol={currencySymbol}/>
+                    {cashFlowChartData.length > 0 && (
+                        <CashFlowChart 
+                            data={cashFlowChartData} 
+                            currency={currency} 
+                            language={language} 
+                        />
                     )}
                     {results.equityBuildup && results.equityBuildup.length > 0 && (
-                        <EquityBuildupChart data={results.equityBuildup} language={language} currency={currency} currencySymbol={currencySymbol}/>
+                        <EquityBuildupChart 
+                            projections={results.equityBuildup} 
+                            currency={currency} 
+                            language={language} 
+                        />
                     )}
                     {results.cashFlowProjection && results.cashFlowProjection.length > 0 && (
                         <CashFlowTable 

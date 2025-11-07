@@ -151,15 +151,11 @@ export default function AirbnbResults({ results, currency = 'EUR', language = 'e
 
     const t = translations[language] || translations.en;
 
-    const expenseData = [
-        { name: 'Property Tax', value: kpis.annual_property_tax || 0 },
-        { name: 'Insurance', value: kpis.annual_insurance || 0 },
-        { name: 'Maintenance', value: kpis.annual_maintenance || 0 },
-        { name: 'Utilities', value: kpis.annual_utilities || 0 },
-        { name: 'Cleaning', value: kpis.annual_cleaning_costs || 0 },
-        { name: 'Platform Fees', value: kpis.annual_platform_fees || 0 },
-        { name: 'Other', value: kpis.annual_other_costs || 0 },
-    ].filter(item => item.value > 0);
+    // Prepare chart data
+    const cashFlowChartData = (results.cashFlowProjection || []).map(p => ({
+        year: p.year,
+        cashFlow: p.net_cash_flow
+    }));
 
     return (
         <div className="space-y-6">
@@ -230,20 +226,45 @@ export default function AirbnbResults({ results, currency = 'EUR', language = 'e
 
                 {/* Details Tab */}
                 <TabsContent value="details" className="space-y-6 mt-6">
-                    <ExpenseBreakdownChart data={expenseData} currency={currency} currencySymbol={currencySymbol} language={language} />
+                    {results.expense_breakdown && results.expense_breakdown.length > 0 && (
+                        <ExpenseBreakdownChart 
+                            expenses={results.expense_breakdown} 
+                            currency={currency} 
+                            language={language} 
+                        />
+                    )}
                 </TabsContent>
 
                 {/* Projections Tab */}
                 <TabsContent value="projections" className="space-y-6 mt-6">
-                    <CashFlowChart data={results.cashFlowProjection || []} currency={currency} language={language} />
-                    <EquityBuildupChart data={results.equityBuildup || []} currency={currency} language={language} />
-                    <ROIProgressionChart data={results.roiProgression || []} language={language} />
-                    <CashFlowTable 
-                        data={results.cashFlowProjection || []} 
-                        currency={currency} 
-                        currencySymbol={currencySymbol}
-                        language={language}
-                    />
+                    {cashFlowChartData.length > 0 && (
+                        <CashFlowChart 
+                            data={cashFlowChartData} 
+                            currency={currency} 
+                            language={language} 
+                        />
+                    )}
+                    {results.roiProgression && results.roiProgression.length > 0 && (
+                        <ROIProgressionChart 
+                            data={results.roiProgression} 
+                            language={language} 
+                        />
+                    )}
+                    {results.equityBuildup && results.equityBuildup.length > 0 && (
+                        <EquityBuildupChart 
+                            projections={results.equityBuildup} 
+                            currency={currency} 
+                            language={language} 
+                        />
+                    )}
+                    {results.cashFlowProjection && results.cashFlowProjection.length > 0 && (
+                        <CashFlowTable 
+                            data={results.cashFlowProjection} 
+                            currency={currency} 
+                            currencySymbol={currencySymbol}
+                            language={language}
+                        />
+                    )}
                 </TabsContent>
             </Tabs>
         </div>
