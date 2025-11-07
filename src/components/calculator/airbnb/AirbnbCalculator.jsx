@@ -66,6 +66,8 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
       title: t_calc.accordion_operating_costs,
       content: <OperatingInputs 
         data={projectData.operating_data || {}} 
+        purchasePrice={projectData.property_data?.purchase_price || 0}
+        grossRevenue={(ensureNumber(projectData.income_data?.avg_nightly_rate)) * 365 * ((ensureNumber(projectData.income_data?.occupancy_rate)) / 100)}
         onChange={(updatedData) => onBulkUpdate('operating_data', updatedData)} 
         language={language} 
         t={t} 
