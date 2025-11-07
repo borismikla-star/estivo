@@ -1,10 +1,10 @@
-
 import React, { useCallback, useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import CountrySelector from "../CountrySelector";
 import PropertyInputs from "./PropertyInputs";
 import IncomeInputs from "./IncomeInputs";
 import OpexInputs from "./OpexInputs";
+import CapExInputs from "./CapExInputs";
 import FinancingInputs from "./FinancingInputs";
 import AssumptionsInputs from "./AssumptionsInputs";
 import LegislativeNotes from "../LegislativeNotes";
@@ -15,17 +15,43 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
   const translations = {
       en: {
           accordion_property_details: "Property Details",
-          income: "Income",
+          income: "Income & Reimbursements",
           opex: "Operating Expenses",
+          capex: "Capital Expenditures (CapEx)",
           financing: "Financing",
           assumptions: "Assumptions",
       },
       sk: {
           accordion_property_details: "Detaily nehnuteľnosti",
-          income: "Príjmy",
+          income: "Príjmy a náhrady",
           opex: "Prevádzkové náklady",
+          capex: "Kapitálové výdavky (CapEx)",
           financing: "Financovanie",
           assumptions: "Predpoklady",
+      },
+      pl: {
+          accordion_property_details: "Szczegóły nieruchomości",
+          income: "Dochody i zwroty",
+          opex: "Koszty operacyjne",
+          capex: "Wydatki kapitałowe (CapEx)",
+          financing: "Finansowanie",
+          assumptions: "Założenia",
+      },
+      hu: {
+          accordion_property_details: "Ingatlan részletek",
+          income: "Bevételek és megtérítések",
+          opex: "Működési költségek",
+          capex: "Tőkekiadások (CapEx)",
+          financing: "Finanszírozás",
+          assumptions: "Feltételezések",
+      },
+      de: {
+          accordion_property_details: "Immobiliendetails",
+          income: "Einnahmen und Erstattungen",
+          opex: "Betriebskosten",
+          capex: "Investitionsausgaben (CapEx)",
+          financing: "Finanzierung",
+          assumptions: "Annahmen",
       }
   };
 
@@ -64,6 +90,16 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
     },
     { 
       value: "item-4", 
+      title: t_calc.capex, 
+      content: <CapExInputs 
+        data={projectData.capex_data || {}} 
+        language={language} 
+        onChange={(updatedData) => onBulkUpdate("capex_data", updatedData)} 
+        t={t} 
+      /> 
+    },
+    { 
+      value: "item-5", 
       title: t_calc.financing, 
       content: <FinancingInputs 
         data={projectData.financing_data || {}} 
@@ -74,7 +110,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
       /> 
     },
     { 
-      value: "item-5", 
+      value: "item-6", 
       title: t_calc.assumptions, 
       content: <AssumptionsInputs 
         data={projectData.assumptions_data || {}} 
