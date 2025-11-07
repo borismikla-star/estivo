@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { currencyFormatter, percentFormatter } from '../lib/formatters';
 
@@ -16,10 +15,35 @@ const KeyValue = ({ label, value, isBold = false }) => (
     </div>
 );
 
+const Table = ({ headers, rows }) => (
+    <table className="w-full border-collapse mb-4">
+        <thead>
+            <tr className="bg-gray-100">
+                {headers.map((header, idx) => (
+                    <th key={idx} className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-gray-700">
+                        {header}
+                    </th>
+                ))}
+            </tr>
+        </thead>
+        <tbody>
+            {rows.map((row, idx) => (
+                <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    {row.map((cell, cellIdx) => (
+                        <td key={cellIdx} className="border border-gray-300 px-3 py-2 text-sm text-gray-800">
+                            {cell}
+                        </td>
+                    ))}
+                </tr>
+            ))}
+        </tbody>
+    </table>
+);
+
 export default function PDFReport({ projectData, results, language, user }) {
     if (!projectData || !results) return null;
 
-    const { kpis } = results;
+    const { kpis, cost_breakdown, revenue_breakdown } = results;
     const { name, type, country, property_data } = projectData;
 
     const t = {
@@ -77,6 +101,24 @@ export default function PDFReport({ projectData, results, language, user }) {
             totalGFA: "Total GFA",
             totalNFA: "Total NFA",
             totalSalesArea: "Total Sales Area",
+            
+            // NEW: Breakdown sections
+            costBreakdown: "Cost Breakdown",
+            revenueBreakdown: "Revenue Breakdown",
+            cashFlowTimeline: "Cash Flow Timeline",
+            vatAnalysis: "VAT Analysis",
+            item: "Item",
+            amount: "Amount",
+            percentage: "Percentage",
+            period: "Period",
+            costs: "Costs",
+            revenue: "Revenue",
+            cumulative: "Cumulative",
+            months: "months",
+            vatInput: "VAT Input",
+            vatOutput: "VAT Output",
+            vatBalance: "VAT Balance",
+            netProfitAfterVAT: "Net Profit after VAT",
         },
         sk: {
             reportTitle: "Správa o investičnej analýze",
@@ -123,15 +165,33 @@ export default function PDFReport({ projectData, results, language, user }) {
             equityMultiple: "Násobok kapitálu",
             annualizedReturn: "Ročná návratnosť",
             projectDuration: "Trvanie projektu",
-            costPerM2: "Náklady na m²",
-            revenuePerM2: "Príjem na m²",
-            profitPerM2: "Zisk na m²",
+            costPerM2: "Náklady/m²",
+            revenuePerM2: "Príjem/m²",
+            profitPerM2: "Zisk/m²",
             breakEven: "Bod zvratu - tržby",
             breakEvenPct: "Bod zvratu %",
             projectAreas: "Plochy projektu",
             totalGFA: "Celková HPP",
             totalNFA: "Celková ČÚP",
             totalSalesArea: "Celková predajná plocha",
+            
+            // NEW: Breakdown sections
+            costBreakdown: "Rozloženie nákladov",
+            revenueBreakdown: "Rozloženie príjmov",
+            cashFlowTimeline: "Časová os Cash Flow",
+            vatAnalysis: "Analýza DPH",
+            item: "Položka",
+            amount: "Suma",
+            percentage: "Podiel",
+            period: "Obdobie",
+            costs: "Náklady",
+            revenue: "Príjmy",
+            cumulative: "Kumulatívne",
+            months: "mesiacov",
+            vatInput: "DPH na vstupe",
+            vatOutput: "DPH na výstupe",
+            vatBalance: "Saldo DPH",
+            netProfitAfterVAT: "Čistý zisk po DPH",
         }
     };
     const currentT = t[language] || t.en;
@@ -145,11 +205,28 @@ export default function PDFReport({ projectData, results, language, user }) {
     const formatDuration = (months) => {
         if (months === undefined || months === null) return 'N/A';
         const years = (months / 12).toFixed(1);
-        return `${months} months (${years} years)`;
+        return `${months} ${currentT.months} (${years} years)`;
     };
     
     // Determine if this is a development project
     const isDevelopment = type === 'development';
+    
+    // Generate simplified cash flow data for development
+    const generateCashFlowData = () => {
+        if (!isDevelopment || !kpis.total_project_costs || !kpis.gross_revenue) return null;
+        
+        const totalCosts = kpis.total_project_costs;
+        const totalRevenue = kpis.gross_revenue;
+        
+        return [
+            { period: '1-6 ' + currentT.months, costs: -totalCosts * 0.3, revenue: 0, cumulative: -totalCosts * 0.3 },
+            { period: '7-12 ' + currentT.months, costs: -totalCosts * 0.4, revenue: totalRevenue * 0.2, cumulative: -totalCosts * 0.7 + totalRevenue * 0.2 },
+            { period: '13-18 ' + currentT.months, costs: -totalCosts * 0.2, revenue: totalRevenue * 0.4, cumulative: -totalCosts * 0.9 + totalRevenue * 0.6 },
+            { period: '19-24 ' + currentT.months, costs: -totalCosts * 0.1, revenue: totalRevenue * 0.4, cumulative: kpis.gross_profit || 0 }
+        ];
+    };
+    
+    const cashFlowData = generateCashFlowData();
     
     // This component is only for printing - CRITICAL: Add print-container class
     return (
@@ -218,6 +295,61 @@ export default function PDFReport({ projectData, results, language, user }) {
                                 <KeyValue label={currentT.totalSalesArea} value={`${(kpis.total_sales_area || 0).toLocaleString()} m²`} />
                             </div>
                         </Section>
+
+                        {/* NEW: Cost Breakdown Table */}
+                        {cost_breakdown && cost_breakdown.length > 0 && (
+                            <Section title={currentT.costBreakdown}>
+                                <Table 
+                                    headers={[currentT.item, currentT.amount, currentT.percentage]}
+                                    rows={cost_breakdown.map(item => [
+                                        item.name,
+                                        currencyFormatter(item.value),
+                                        `${item.percentage}%`
+                                    ])}
+                                />
+                            </Section>
+                        )}
+
+                        {/* NEW: Revenue Breakdown Table */}
+                        {revenue_breakdown && revenue_breakdown.length > 0 && (
+                            <Section title={currentT.revenueBreakdown}>
+                                <Table 
+                                    headers={[currentT.item, currentT.amount, currentT.percentage]}
+                                    rows={revenue_breakdown.map(item => [
+                                        item.name,
+                                        currencyFormatter(item.value),
+                                        `${item.percentage}%`
+                                    ])}
+                                />
+                            </Section>
+                        )}
+
+                        {/* NEW: Cash Flow Timeline */}
+                        {cashFlowData && (
+                            <Section title={currentT.cashFlowTimeline}>
+                                <Table 
+                                    headers={[currentT.period, currentT.costs, currentT.revenue, currentT.cumulative]}
+                                    rows={cashFlowData.map(row => [
+                                        row.period,
+                                        currencyFormatter(row.costs),
+                                        currencyFormatter(row.revenue),
+                                        currencyFormatter(row.cumulative)
+                                    ])}
+                                />
+                            </Section>
+                        )}
+
+                        {/* NEW: VAT Analysis (if available) */}
+                        {(kpis.vat_input !== undefined || kpis.vat_output !== undefined) && (
+                            <Section title={currentT.vatAnalysis}>
+                                <div className="grid grid-cols-2 gap-x-12">
+                                    <KeyValue label={currentT.vatInput} value={currencyFormatter(kpis.vat_input || 0)} />
+                                    <KeyValue label={currentT.vatOutput} value={currencyFormatter(kpis.vat_output || 0)} />
+                                    <KeyValue label={currentT.vatBalance} value={currencyFormatter(kpis.vat_balance || 0)} isBold />
+                                    <KeyValue label={currentT.netProfitAfterVAT} value={currencyFormatter(kpis.net_profit_after_vat || 0)} isBold />
+                                </div>
+                            </Section>
+                        )}
                     </>
                 ) : (
                     /* RENTAL PROJECTS (long_term_lease, commercial, airbnb) */
