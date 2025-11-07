@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { currencyFormatter, percentFormatter } from '../lib/formatters';
 
@@ -554,11 +555,11 @@ export default function PDFReport({ projectData, results, language, user }) {
                 )}
             </main>
 
-            <footer style={{ marginTop: '48px', paddingTop: '16px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '10px', color: '#6b7280', pageBreakInside: 'avoid' }}>
+            <footer style={{ marginTop: '24px', paddingTop: '12px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '10px', color: '#6b7280', pageBreakInside: 'avoid' }}>
                 {user?.entity_type === 'PO' && user.company_name ? (
-                    <p style={{ fontWeight: 'bold' }}>{user.company_name}</p>
+                    <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>{user.company_name}</p>
                 ) : (
-                    <p>Estivo.app - Smarter Property Investing.</p>
+                    <p style={{ marginBottom: '4px' }}>Estivo.app - Smarter Property Investing.</p>
                 )}
                 <p>This report is for informational purposes only and does not constitute financial advice. All calculations are estimates.</p>
             </footer>
