@@ -56,6 +56,7 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           investment: "Investment",
           roi: "ROI",
           cashflow: "Annual Cashflow",
+          profit: "Profit", // NEW for development
           country: "Country",
           long_term_lease: "Long-Term Lease",
           commercial: "Commercial",
@@ -69,6 +70,7 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           investment: "Investícia",
           roi: "ROI",
           cashflow: "Ročný Cashflow",
+          profit: "Zisk", // NEW for development
           country: "Krajina",
           long_term_lease: "Dlhodobý prenájom",
           commercial: "Komerčné",
@@ -82,6 +84,7 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           investment: "Inwestycja",
           roi: "ROI",
           cashflow: "Roczny przepływ gotówki",
+          profit: "Zysk", // NEW for development
           country: "Kraj",
           long_term_lease: "Najem długoterminowy",
           commercial: "Komercyjny",
@@ -95,6 +98,7 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           investment: "Befektetés",
           roi: "ROI",
           cashflow: "Éves pénzforgalom",
+          profit: "Nyereség", // NEW for development
           country: "Ország",
           long_term_lease: "Hosszú távú bérlés",
           commercial: "Kereskedelmi",
@@ -108,6 +112,7 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           investment: "Investition",
           roi: "ROI",
           cashflow: "Jährlicher Cashflow",
+          profit: "Gewinn", // NEW for development
           country: "Land",
           long_term_lease: "Langzeitmiete",
           commercial: "Gewerblich",
@@ -124,15 +129,31 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
         const isFreePlan = !user?.plan || user.plan === 'free';
         const isLocked = isFreePlan && p.type !== 'long_term_lease';
         
+        // FIXED: Different KPIs for different project types
+        let equity, monthlyCashFlow, roi;
+        
+        if (p.type === 'development') {
+            // Development projects
+            equity = kpis.total_project_costs || kpis.own_resources || 0;
+            monthlyCashFlow = kpis.gross_profit || 0; // Use gross profit instead of monthly cashflow
+            roi = kpis.annualized_return || kpis.return_on_cost || kpis.irr || 0;
+        } else {
+            // Rental projects (long_term_lease, commercial, airbnb)
+            equity = kpis.total_investment || kpis.down_payment || kpis.total_equity || 0;
+            monthlyCashFlow = kpis.avg_monthly_cash_flow || kpis.monthly_cash_flow || 0;
+            roi = kpis.roi_10_year || kpis.roi || 0;
+        }
+        
         return {
             id: p.id,
             name: p.name,
             type: p.type,
             country: p.country,
-            equity: kpis.total_equity || 0,
-            monthlyCashFlow: kpis.avg_monthly_cash_flow || kpis.monthly_cash_flow || 0,
-            roi: kpis.roi_10_year || kpis.roi || 0,
+            equity: equity,
+            monthlyCashFlow: monthlyCashFlow,
+            roi: roi,
             isLocked: isLocked,
+            isDevelopment: p.type === 'development',
         };
     });
   }, [projects, user]);
@@ -141,8 +162,8 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
     let sortableItems = [...processedProjects];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
-        const valA = sortConfig.key === 'monthlyCashFlow' ? a[sortConfig.key] * 12 : a[sortConfig.key];
-        const valB = sortConfig.key === 'monthlyCashFlow' ? b[sortConfig.key] * 12 : b[sortConfig.key];
+        const valA = sortConfig.key === 'monthlyCashFlow' && !a.isDevelopment ? a[sortConfig.key] * 12 : a[sortConfig.key];
+        const valB = sortConfig.key === 'monthlyCashFlow' && !b.isDevelopment ? b[sortConfig.key] * 12 : b[sortConfig.key];
 
         if (valA < valB) {
           return sortConfig.direction === 'asc' ? -1 : 1;
@@ -248,8 +269,12 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
                   <span className="font-semibold">{formatCurrency(p.equity)}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground block text-xs">{t.cashflow}</span>
-                  <span className="font-semibold">{formatCurrency(p.monthlyCashFlow * 12)}</span>
+                  <span className="text-muted-foreground block text-xs">
+                    {p.isDevelopment ? t.profit : t.cashflow}
+                  </span>
+                  <span className="font-semibold">
+                    {p.isDevelopment ? formatCurrency(p.monthlyCashFlow) : formatCurrency(p.monthlyCashFlow * 12)}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground block text-xs">{t.roi}</span>
@@ -276,13 +301,18 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
                       onCheckedChange={handleSelectAll}
                       aria-label="Select all"
                       data-state={isIndeterminate ? 'indeterminate' : (isAllSelectedOnPage ? 'checked' : 'unchecked')}
-                      disabled={currentProjects.every(p => p.isLocked)} // Disable select all if all are locked
+                      disabled={currentProjects.every(p => p.isLocked)}
                   />
               </TableHead>
               <TableHead className="min-w-[150px]">{t.project_name}</TableHead>
               <TableHead className="min-w-[120px]">{t.type}</TableHead>
               <SortableHeader t_key="investment" sort_key="equity" />
-              <SortableHeader t_key="cashflow" sort_key="monthlyCashFlow" />
+              <TableHead>
+                <Button variant="ghost" onClick={() => requestSort('monthlyCashFlow')} className="h-8 px-2 lg:px-3">
+                  <span className="text-xs lg:text-sm">{t.cashflow}</span>
+                  <ArrowUpDown className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
+                </Button>
+              </TableHead>
               <SortableHeader t_key="roi" sort_key="roi" />
               <TableHead>{t.country}</TableHead>
             </TableRow>
@@ -320,7 +350,9 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
                   </div>
                 </TableCell>
                 <TableCell>{formatCurrency(p.equity)}</TableCell>
-                <TableCell>{formatCurrency(p.monthlyCashFlow * 12)}</TableCell>
+                <TableCell>
+                  {p.isDevelopment ? formatCurrency(p.monthlyCashFlow) : formatCurrency(p.monthlyCashFlow * 12)}
+                </TableCell>
                 <TableCell className="font-semibold">{formatPercent(p.roi)}</TableCell>
                 <TableCell>{p.country}</TableCell>
               </TableRow>
