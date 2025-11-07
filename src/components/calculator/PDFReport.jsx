@@ -2,175 +2,108 @@ import React from 'react';
 import { currencyFormatter, percentFormatter } from '../lib/formatters';
 
 const Section = ({ title, children }) => (
-    <div className="mb-8 page-break-inside-avoid">
-        <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2 mb-4 text-gray-800">{title}</h2>
+    <div className="mb-6 page-break-inside-avoid">
+        <h2 className="text-lg font-bold border-b-2 border-gray-800 pb-1 mb-3 text-gray-800" style={{ borderBottomColor: '#1f2937', borderBottomWidth: '2px' }}>{title}</h2>
         {children}
     </div>
 );
 
 const KeyValue = ({ label, value, isBold = false }) => (
-    <div className="flex justify-between items-center py-2 border-b border-gray-200">
-        <span className="text-gray-600">{label}</span>
-        <span className={`text-gray-900 ${isBold ? 'font-bold text-lg' : ''}`}>{value}</span>
+    <div className="flex justify-between items-center py-1.5 border-b border-gray-200" style={{ borderBottomColor: '#e5e7eb', borderBottomWidth: '1px', paddingTop: '6px', paddingBottom: '6px' }}>
+        <span className="text-gray-600" style={{ color: '#4b5563' }}>{label}</span>
+        <span className={`text-gray-900 ${isBold ? 'font-bold text-base' : ''}`} style={{ color: '#111827', fontWeight: isBold ? 'bold' : 'normal', fontSize: isBold ? '16px' : '14px' }}>{value}</span>
     </div>
 );
 
-const Table = ({ headers, rows }) => (
-    <table className="w-full border-collapse mb-4">
-        <thead>
-            <tr className="bg-gray-100">
-                {headers.map((header, idx) => (
-                    <th key={idx} className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-gray-700">
-                        {header}
-                    </th>
-                ))}
-            </tr>
-        </thead>
-        <tbody>
-            {rows.map((row, idx) => (
-                <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    {row.map((cell, cellIdx) => (
-                        <td key={cellIdx} className="border border-gray-300 px-3 py-2 text-sm text-gray-800">
-                            {cell}
-                        </td>
-                    ))}
-                </tr>
-            ))}
-        </tbody>
-    </table>
-);
-
-// NEW: Progress Bar Component for visual representation
-const ProgressBar = ({ label, value, max, color = '#003E7E', showPercentage = true }) => {
+// NEW: Print-friendly Progress Bar using table
+const PrintProgressBar = ({ label, value, max, color = '#003E7E', showPercentage = true }) => {
     const percentage = max > 0 ? (value / max) * 100 : 0;
+    const barWidth = Math.min(percentage, 100);
+    
     return (
-        <div className="mb-3">
-            <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-medium text-gray-700">{label}</span>
-                <span className="text-sm font-semibold text-gray-900">
+        <div className="mb-2" style={{ marginBottom: '8px' }}>
+            <div className="flex justify-between items-center mb-1" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span className="text-xs font-medium text-gray-700" style={{ fontSize: '11px', fontWeight: '500', color: '#374151' }}>{label}</span>
+                <span className="text-xs font-semibold text-gray-900" style={{ fontSize: '11px', fontWeight: '600', color: '#111827' }}>
                     {currencyFormatter(value)} {showPercentage && `(${percentage.toFixed(1)}%)`}
                 </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div 
-                    className="h-full rounded-full transition-all" 
-                    style={{ 
-                        width: `${Math.min(percentage, 100)}%`, 
-                        backgroundColor: color 
-                    }}
-                />
+            {/* Print-friendly progress bar using border */}
+            <div style={{ 
+                width: '100%', 
+                height: '8px', 
+                backgroundColor: '#e5e7eb',
+                borderRadius: '4px',
+                overflow: 'hidden',
+                border: '1px solid #d1d5db'
+            }}>
+                <div style={{ 
+                    width: `${barWidth}%`, 
+                    height: '100%',
+                    backgroundColor: color,
+                    transition: 'none'
+                }} />
             </div>
         </div>
     );
 };
 
-// NEW: Mini Pie Chart using CSS (Simple visual representation)
-const SimplePieChart = ({ data, colors }) => {
-    let cumulativePercent = 0;
-    const segments = data.map((item, idx) => {
-        const percent = item.percentage;
-        const startPercent = cumulativePercent;
-        cumulativePercent += parseFloat(percent);
-        return {
-            ...item,
-            startPercent,
-            percent: parseFloat(percent),
-            color: colors[idx % colors.length]
-        };
-    });
-
+// NEW: Visual Cash Flow Timeline for print
+const PrintCashFlowTimeline = ({ data, t }) => {
     return (
-        <div className="flex items-center gap-6">
-            <div className="relative w-32 h-32 rounded-full overflow-hidden" style={{ background: '#e5e7eb' }}>
-                {segments.map((segment, idx) => {
-                    const rotation = (segment.startPercent / 100) * 360;
-                    const skewAngle = 90 - (segment.percent / 100) * 360;
-                    
-                    return (
-                        <div
-                            key={idx}
-                            className="absolute w-full h-full"
-                            style={{
-                                clipPath: segment.percent > 50 ? 'none' : 'polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%)',
-                                transform: `rotate(${rotation}deg)`,
-                                transformOrigin: '50% 50%'
-                            }}
-                        >
-                            <div
-                                className="w-full h-full"
-                                style={{
-                                    background: segment.color,
-                                    transform: segment.percent > 50 ? 'none' : `skewY(${skewAngle}deg)`,
-                                    transformOrigin: '50% 50%'
-                                }}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="flex-1">
-                {segments.map((segment, idx) => (
-                    <div key={idx} className="flex items-center gap-2 mb-1">
-                        <div className="w-4 h-4 rounded" style={{ backgroundColor: segment.color }} />
-                        <span className="text-xs text-gray-700">{segment.name}: {segment.percentage}%</span>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
-
-// NEW: Visual Cash Flow Timeline
-const CashFlowTimeline = ({ data, t }) => {
-    const maxAbsValue = Math.max(...data.map(d => Math.max(Math.abs(d.costs), Math.abs(d.revenue), Math.abs(d.cumulative))));
-    
-    return (
-        <div className="space-y-4">
+        <div className="space-y-3" style={{ marginTop: '8px' }}>
             {data.map((row, idx) => (
-                <div key={idx} className="page-break-inside-avoid">
-                    <div className="font-semibold text-sm mb-2 text-gray-800">{row.period}</div>
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <div className="text-xs text-gray-600 mb-1">{t.costs}</div>
-                            <div className="bg-red-100 rounded-lg p-2">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-xs font-medium text-red-800">
+                <div key={idx} className="page-break-inside-avoid" style={{ pageBreakInside: 'avoid', marginBottom: '12px' }}>
+                    <div className="font-semibold text-sm mb-1 text-gray-800" style={{ fontWeight: '600', fontSize: '13px', color: '#1f2937', marginBottom: '4px' }}>{row.period}</div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+                        <tbody>
+                            <tr>
+                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '500' }}>{t.costs}</td>
+                                <td style={{ width: '70%', padding: '4px' }}>
+                                    <span style={{ 
+                                        backgroundColor: '#fee2e2', 
+                                        color: '#991b1b',
+                                        padding: '2px 8px',
+                                        borderRadius: '4px',
+                                        fontWeight: '600',
+                                        fontSize: '11px'
+                                    }}>
                                         {currencyFormatter(row.costs)}
                                     </span>
-                                </div>
-                                <div className="w-full bg-red-200 rounded-full h-2">
-                                    <div 
-                                        className="bg-red-600 h-full rounded-full" 
-                                        style={{ width: `${(Math.abs(row.costs) / maxAbsValue) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="text-xs text-gray-600 mb-1">{t.revenue}</div>
-                            <div className="bg-green-100 rounded-lg p-2">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-xs font-medium text-green-800">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '500' }}>{t.revenue}</td>
+                                <td style={{ width: '70%', padding: '4px' }}>
+                                    <span style={{ 
+                                        backgroundColor: '#d1fae5', 
+                                        color: '#065f46',
+                                        padding: '2px 8px',
+                                        borderRadius: '4px',
+                                        fontWeight: '600',
+                                        fontSize: '11px'
+                                    }}>
                                         {currencyFormatter(row.revenue)}
                                     </span>
-                                </div>
-                                <div className="w-full bg-green-200 rounded-full h-2">
-                                    <div 
-                                        className="bg-green-600 h-full rounded-full" 
-                                        style={{ width: `${(row.revenue / maxAbsValue) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-2 bg-blue-50 rounded-lg p-2">
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs font-semibold text-blue-900">{t.cumulative}</span>
-                            <span className={`text-sm font-bold ${row.cumulative >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {currencyFormatter(row.cumulative)}
-                            </span>
-                        </div>
-                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '600' }}>{t.cumulative}</td>
+                                <td style={{ width: '70%', padding: '4px' }}>
+                                    <span style={{ 
+                                        backgroundColor: '#dbeafe', 
+                                        color: row.cumulative >= 0 ? '#065f46' : '#991b1b',
+                                        padding: '2px 8px',
+                                        borderRadius: '4px',
+                                        fontWeight: 'bold',
+                                        fontSize: '12px'
+                                    }}>
+                                        {currencyFormatter(row.cumulative)}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             ))}
         </div>
@@ -192,7 +125,6 @@ export default function PDFReport({ projectData, results, language, user }) {
             country: "Country",
             keyMetrics: "Key Financial Metrics",
             
-            // General metrics
             totalInvestment: "Total Investment",
             downPayment: "Down Payment",
             loanAmount: "Loan Amount",
@@ -213,7 +145,6 @@ export default function PDFReport({ projectData, results, language, user }) {
             annualRent: "Annual Rent",
             noi: "Net Operating Income",
             
-            // Development-specific
             developmentMetrics: "Development Metrics",
             totalProjectCosts: "Total Project Costs",
             ownResources: "Own Resources",
@@ -239,14 +170,10 @@ export default function PDFReport({ projectData, results, language, user }) {
             totalNFA: "Total NFA",
             totalSalesArea: "Total Sales Area",
             
-            // Breakdown sections
             costBreakdown: "Cost Breakdown",
             revenueBreakdown: "Revenue Breakdown",
             cashFlowTimeline: "Cash Flow Timeline",
             vatAnalysis: "VAT Analysis",
-            item: "Item",
-            amount: "Amount",
-            percentage: "Percentage",
             period: "Period",
             costs: "Costs",
             revenue: "Revenue",
@@ -267,7 +194,6 @@ export default function PDFReport({ projectData, results, language, user }) {
             country: "Krajina",
             keyMetrics: "Kľúčové finančné ukazovatele",
             
-            // General metrics
             totalInvestment: "Celková investícia",
             downPayment: "Vlastné zdroje",
             loanAmount: "Výška úveru",
@@ -288,7 +214,6 @@ export default function PDFReport({ projectData, results, language, user }) {
             annualRent: "Ročný nájom",
             noi: "Čistý prevádzkový príjem",
             
-            // Development-specific
             developmentMetrics: "Ukazovatele developmentu",
             totalProjectCosts: "Celkové náklady projektu",
             ownResources: "Vlastné zdroje",
@@ -314,14 +239,10 @@ export default function PDFReport({ projectData, results, language, user }) {
             totalNFA: "Celková ČÚP",
             totalSalesArea: "Celková predajná plocha",
             
-            // Breakdown sections
             costBreakdown: "Rozloženie nákladov",
             revenueBreakdown: "Rozloženie príjmov",
             cashFlowTimeline: "Časová os Cash Flow",
             vatAnalysis: "Analýza DPH",
-            item: "Položka",
-            amount: "Suma",
-            percentage: "Podiel",
             period: "Obdobie",
             costs: "Náklady",
             revenue: "Príjmy",
@@ -351,7 +272,6 @@ export default function PDFReport({ projectData, results, language, user }) {
     
     const isDevelopment = type === 'development';
     
-    // Generate cash flow data
     const generateCashFlowData = () => {
         if (!isDevelopment || !kpis.total_project_costs || !kpis.gross_revenue) return null;
         
@@ -368,21 +288,20 @@ export default function PDFReport({ projectData, results, language, user }) {
     
     const cashFlowData = generateCashFlowData();
     
-    // Colors for charts
     const COST_COLORS = ['#003E7E', '#004C97', '#0066CC', '#0080FF', '#33A3FF', '#66BBFF', '#99D6FF'];
     const REVENUE_COLORS = ['#00B894', '#00D1A0', '#4ECCA3', '#78E4C8', '#A8F5E5'];
 
     return (
-        <div className="hidden print:block print-container p-8 font-sans bg-white" style={{ fontSize: '12px' }}>
+        <div className="hidden print:block print-container p-6 font-sans bg-white" style={{ padding: '24px', fontFamily: 'Arial, sans-serif', fontSize: '12px', backgroundColor: 'white' }}>
             {/* Header */}
-            <header className="mb-8 text-center page-break-inside-avoid">
+            <header className="mb-6 text-center page-break-inside-avoid" style={{ marginBottom: '24px', textAlign: 'center', pageBreakInside: 'avoid' }}>
                  {user?.entity_type === 'PO' && user.company_logo_url ? (
-                    <img src={user.company_logo_url} alt="Company Logo" className="h-16 w-auto max-w-xs mx-auto mb-4 object-contain" />
+                    <img src={user.company_logo_url} alt="Company Logo" style={{ height: '60px', maxWidth: '200px', margin: '0 auto 16px', objectFit: 'contain' }} />
                  ) : (
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" alt="Estivo Logo" className="h-10 mx-auto mb-4" />
+                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" alt="Estivo Logo" style={{ height: '40px', margin: '0 auto 16px' }} />
                  )}
-                <h1 className="text-3xl font-bold text-gray-800">{currentT.reportTitle}</h1>
-                <p className="text-gray-500">Generated on {new Date().toLocaleDateString()}</p>
+                <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>{currentT.reportTitle}</h1>
+                <p style={{ color: '#6b7280', fontSize: '12px' }}>Generated on {new Date().toLocaleDateString()}</p>
             </header>
 
             <main>
@@ -398,29 +317,29 @@ export default function PDFReport({ projectData, results, language, user }) {
                     <>
                         {/* Executive Summary */}
                         <Section title={currentT.summary}>
-                            <div className="grid grid-cols-2 gap-6 bg-blue-50 p-4 rounded-lg">
-                                <div className="text-center">
-                                    <div className="text-xs text-gray-600 mb-1">{currentT.totalProjectCosts}</div>
-                                    <div className="text-2xl font-bold text-gray-900">{currencyFormatter(kpis.total_project_costs || 0)}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', backgroundColor: '#eff6ff', padding: '12px', borderRadius: '8px' }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.totalProjectCosts}</div>
+                                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827' }}>{currencyFormatter(kpis.total_project_costs || 0)}</div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-xs text-gray-600 mb-1">{currentT.grossRevenue}</div>
-                                    <div className="text-2xl font-bold text-green-600">{currencyFormatter(kpis.gross_revenue || 0)}</div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.grossRevenue}</div>
+                                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#059669' }}>{currencyFormatter(kpis.gross_revenue || 0)}</div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-xs text-gray-600 mb-1">{currentT.grossProfit}</div>
-                                    <div className="text-2xl font-bold text-blue-600">{currencyFormatter(kpis.gross_profit || 0)}</div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.grossProfit}</div>
+                                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#2563eb' }}>{currencyFormatter(kpis.gross_profit || 0)}</div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-xs text-gray-600 mb-1">{currentT.profitMargin}</div>
-                                    <div className="text-2xl font-bold text-indigo-600">{percentFormatter(kpis.profit_margin || 0)}</div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.profitMargin}</div>
+                                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#4f46e5' }}>{percentFormatter(kpis.profit_margin || 0)}</div>
                                 </div>
                             </div>
                         </Section>
 
                         {/* Development Metrics */}
                         <Section title={currentT.developmentMetrics}>
-                            <div className="grid grid-cols-2 gap-x-8">
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
                                 <KeyValue label={currentT.developerMargin} value={percentFormatter(kpis.developer_margin || 0)} isBold />
                                 <KeyValue label={currentT.returnOnCost} value={percentFormatter(kpis.return_on_cost || 0)} isBold />
                                 <KeyValue label={currentT.equityMultiple} value={`${(kpis.equity_multiple || 0).toFixed(2)}x`} />
@@ -430,115 +349,109 @@ export default function PDFReport({ projectData, results, language, user }) {
                             </div>
                         </Section>
 
-                        {/* Financing Breakdown - NEW VISUAL */}
+                        {/* Financing Breakdown */}
                         <Section title={currentT.financingBreakdown}>
-                            <div className="space-y-2">
-                                <ProgressBar 
-                                    label={currentT.ownResources} 
-                                    value={kpis.own_resources || 0} 
-                                    max={kpis.total_project_costs || 1}
-                                    color="#00B894"
-                                />
-                                <ProgressBar 
-                                    label={currentT.bankResources} 
-                                    value={kpis.bank_resources || 0} 
-                                    max={kpis.total_project_costs || 1}
-                                    color="#E53935"
-                                />
-                                <ProgressBar 
-                                    label={currentT.financingCosts} 
-                                    value={kpis.total_financing_costs || 0} 
-                                    max={kpis.total_project_costs || 1}
-                                    color="#F9A825"
-                                />
-                            </div>
+                            <PrintProgressBar 
+                                label={currentT.ownResources} 
+                                value={kpis.own_resources || 0} 
+                                max={kpis.total_project_costs || 1}
+                                color="#00B894"
+                            />
+                            <PrintProgressBar 
+                                label={currentT.bankResources} 
+                                value={kpis.bank_resources || 0} 
+                                max={kpis.total_project_costs || 1}
+                                color="#E53935"
+                            />
+                            <PrintProgressBar 
+                                label={currentT.financingCosts} 
+                                value={kpis.total_financing_costs || 0} 
+                                max={kpis.total_project_costs || 1}
+                                color="#F9A825"
+                            />
                         </Section>
 
-                        {/* Cost Breakdown - VISUAL */}
+                        {/* Cost Breakdown */}
                         {cost_breakdown && cost_breakdown.length > 0 && (
                             <Section title={currentT.costBreakdown}>
-                                <div className="space-y-2">
-                                    {cost_breakdown.map((item, idx) => (
-                                        <ProgressBar
-                                            key={idx}
-                                            label={item.name}
-                                            value={item.value}
-                                            max={kpis.total_project_costs || 1}
-                                            color={COST_COLORS[idx % COST_COLORS.length]}
-                                        />
-                                    ))}
-                                </div>
+                                {cost_breakdown.map((item, idx) => (
+                                    <PrintProgressBar
+                                        key={idx}
+                                        label={item.name}
+                                        value={item.value}
+                                        max={kpis.total_project_costs || 1}
+                                        color={COST_COLORS[idx % COST_COLORS.length]}
+                                    />
+                                ))}
                             </Section>
                         )}
 
-                        {/* Revenue Breakdown - VISUAL */}
+                        {/* Revenue Breakdown */}
                         {revenue_breakdown && revenue_breakdown.length > 0 && (
                             <Section title={currentT.revenueBreakdown}>
-                                <div className="space-y-2">
-                                    {revenue_breakdown.map((item, idx) => (
-                                        <ProgressBar
-                                            key={idx}
-                                            label={item.name}
-                                            value={item.value}
-                                            max={kpis.gross_revenue || 1}
-                                            color={REVENUE_COLORS[idx % REVENUE_COLORS.length]}
-                                        />
-                                    ))}
-                                </div>
+                                {revenue_breakdown.map((item, idx) => (
+                                    <PrintProgressBar
+                                        key={idx}
+                                        label={item.name}
+                                        value={item.value}
+                                        max={kpis.gross_revenue || 1}
+                                        color={REVENUE_COLORS[idx % REVENUE_COLORS.length]}
+                                    />
+                                ))}
                             </Section>
                         )}
 
-                        {/* Cash Flow Timeline - VISUAL */}
+                        {/* Cash Flow Timeline */}
                         {cashFlowData && (
                             <Section title={currentT.cashFlowTimeline}>
-                                <CashFlowTimeline data={cashFlowData} t={currentT} />
+                                <PrintCashFlowTimeline data={cashFlowData} t={currentT} />
                             </Section>
                         )}
 
                         {/* Key Metrics */}
                         <Section title={currentT.keyMetrics}>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="text-center bg-gray-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.costPerM2}</div>
-                                    <div className="text-lg font-bold">{currencyFormatter(kpis.cost_per_m2 || 0)}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                                <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.costPerM2}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{currencyFormatter(kpis.cost_per_m2 || 0)}</div>
                                 </div>
-                                <div className="text-center bg-gray-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.revenuePerM2}</div>
-                                    <div className="text-lg font-bold">{currencyFormatter(kpis.revenue_per_m2 || 0)}</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.revenuePerM2}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{currencyFormatter(kpis.revenue_per_m2 || 0)}</div>
                                 </div>
-                                <div className="text-center bg-gray-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.profitPerM2}</div>
-                                    <div className="text-lg font-bold">{currencyFormatter(kpis.profit_per_m2 || 0)}</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.profitPerM2}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{currencyFormatter(kpis.profit_per_m2 || 0)}</div>
                                 </div>
-                                <div className="text-center bg-gray-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.breakEven}</div>
-                                    <div className="text-lg font-bold">{currencyFormatter(kpis.break_even_revenue || 0)}</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.breakEven}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{currencyFormatter(kpis.break_even_revenue || 0)}</div>
                                 </div>
-                                <div className="text-center bg-gray-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.breakEvenPct}</div>
-                                    <div className="text-lg font-bold">{percentFormatter(kpis.break_even_percentage || 0)}</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.breakEvenPct}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{percentFormatter(kpis.break_even_percentage || 0)}</div>
                                 </div>
-                                <div className="text-center bg-gray-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.netRevenue}</div>
-                                    <div className="text-lg font-bold">{currencyFormatter(kpis.net_revenue || 0)}</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.netRevenue}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{currencyFormatter(kpis.net_revenue || 0)}</div>
                                 </div>
                             </div>
                         </Section>
 
                         {/* Project Areas */}
                         <Section title={currentT.projectAreas}>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="text-center bg-blue-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.totalGFA}</div>
-                                    <div className="text-lg font-bold">{(kpis.total_gfa || 0).toLocaleString()} m²</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                                <div style={{ textAlign: 'center', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.totalGFA}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_gfa || 0).toLocaleString()} m²</div>
                                 </div>
-                                <div className="text-center bg-blue-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.totalNFA}</div>
-                                    <div className="text-lg font-bold">{(kpis.total_nfa || 0).toLocaleString()} m²</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.totalNFA}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_nfa || 0).toLocaleString()} m²</div>
                                 </div>
-                                <div className="text-center bg-blue-50 p-3 rounded">
-                                    <div className="text-xs text-gray-600">{currentT.totalSalesArea}</div>
-                                    <div className="text-lg font-bold">{(kpis.total_sales_area || 0).toLocaleString()} m²</div>
+                                <div style={{ textAlign: 'center', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.totalSalesArea}</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_sales_area || 0).toLocaleString()} m²</div>
                                 </div>
                             </div>
                         </Section>
@@ -546,8 +459,8 @@ export default function PDFReport({ projectData, results, language, user }) {
                         {/* VAT Analysis */}
                         {(kpis.vat_input !== undefined || kpis.vat_output !== undefined) && (
                             <Section title={currentT.vatAnalysis}>
-                                <div className="bg-yellow-50 p-4 rounded-lg">
-                                    <div className="grid grid-cols-2 gap-4">
+                                <div style={{ backgroundColor: '#fef3c7', padding: '12px', borderRadius: '8px', border: '1px solid #fcd34d' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                                         <KeyValue label={currentT.vatInput} value={currencyFormatter(kpis.vat_input || 0)} />
                                         <KeyValue label={currentT.vatOutput} value={currencyFormatter(kpis.vat_output || 0)} />
                                         <KeyValue label={currentT.vatBalance} value={currencyFormatter(kpis.vat_balance || 0)} isBold />
@@ -561,7 +474,7 @@ export default function PDFReport({ projectData, results, language, user }) {
                     /* RENTAL PROJECTS */
                     <>
                         <Section title={currentT.keyMetrics}>
-                            <div className="grid grid-cols-2 gap-x-12">
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
                                 <KeyValue label={currentT.totalInvestment} value={currencyFormatter(kpis.total_investment || 0)} isBold />
                                 <KeyValue label={currentT.downPayment} value={currencyFormatter(kpis.down_payment || 0)} isBold />
                                 
@@ -641,9 +554,9 @@ export default function PDFReport({ projectData, results, language, user }) {
                 )}
             </main>
 
-            <footer className="mt-12 pt-4 border-t text-center text-xs text-gray-500 page-break-inside-avoid">
+            <footer style={{ marginTop: '48px', paddingTop: '16px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '10px', color: '#6b7280', pageBreakInside: 'avoid' }}>
                 {user?.entity_type === 'PO' && user.company_name ? (
-                    <p className="font-bold">{user.company_name}</p>
+                    <p style={{ fontWeight: 'bold' }}>{user.company_name}</p>
                 ) : (
                     <p>Estivo.app - Smarter Property Investing.</p>
                 )}
@@ -659,6 +572,11 @@ export default function PDFReport({ projectData, results, language, user }) {
                     }
                     .print-container {
                         max-width: 100% !important;
+                    }
+                    * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
                     }
                 }
             `}</style>
