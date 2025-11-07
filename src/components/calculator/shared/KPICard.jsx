@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
-import InfoTooltip from '../InfoTooltip';
+import InfoTooltip from '../../shared/InfoTooltip';
 
 export default function KPICard({ title, value, description, tooltip, warning, good, excellent }) {
     // Determine status based on value and thresholds
