@@ -243,8 +243,8 @@ export default function Calculator() {
         type: data.type,
         country: data.country,
         project_info_data: data.project_info_data,
-        cost_data: data.cost_data, // As per outline
-        revenue_data: data.revenue_data, // As per outline
+        cost_data: data.cost_data, 
+        revenue_data: data.revenue_data, 
         financing_data: data.financing_data,
         results: data.results ? 'exists' : 'missing',
         property_data: data.property_data
@@ -258,8 +258,8 @@ export default function Calculator() {
           id: result.id,
           has_project_info_data: !!result.project_info_data,
           project_info_data: result.project_info_data,
-          has_cost_data: !!result.cost_data, // As per outline
-          has_revenue_data: !!result.revenue_data // As per outline
+          has_cost_data: !!result.cost_data, 
+          has_revenue_data: !!result.revenue_data 
         });
         return result;
       } catch (error) {
@@ -881,22 +881,57 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
           type: fetchedProject.type,
           has_project_info_data: !!fetchedProject.project_info_data,
           project_info_data: fetchedProject.project_info_data,
-          has_cost_data: !!fetchedProject.cost_data, // As per outline
-          has_revenue_data: !!fetchedProject.revenue_data, // As per outline
+          has_cost_data: !!fetchedProject.cost_data, 
+          has_revenue_data: !!fetchedProject.revenue_data, 
           has_results: !!fetchedProject.results
         });
         
         const initialData = getInitialData(fetchedProject.type, user);
-        // CRITICAL: Use spread to preserve all fetched data, only fill in missing defaults
+        // CRITICAL FIX: Deep merge nested objects instead of replacing them
         const data = {
           ...initialData,
           ...fetchedProject,
-          // Ensure nested objects are properly merged
-          project_info_data: fetchedProject.project_info_data || initialData.project_info_data || {},
-          cost_data: fetchedProject.cost_data || initialData.cost_data || {}, // As per outline
-          revenue_data: fetchedProject.revenue_data || initialData.revenue_data || {}, // As per outline
-          financing_data: fetchedProject.financing_data || initialData.financing_data || {},
-          property_data: fetchedProject.property_data || initialData.property_data || {},
+          // Deep merge nested objects - merge fields from both initialData and fetchedProject
+          project_info_data: {
+            ...(initialData.project_info_data || {}),
+            ...(fetchedProject.project_info_data || {})
+          },
+          cost_data: {
+            ...(initialData.cost_data || {}),
+            ...(fetchedProject.cost_data || {})
+          },
+          revenue_data: {
+            ...(initialData.revenue_data || {}),
+            ...(fetchedProject.revenue_data || {})
+          },
+          financing_data: {
+            ...(initialData.financing_data || {}),
+            ...(fetchedProject.financing_data || {})
+          },
+          property_data: {
+            ...(initialData.property_data || {}),
+            ...(fetchedProject.property_data || {})
+          },
+          initial_costs_data: {
+            ...(initialData.initial_costs_data || {}),
+            ...(fetchedProject.initial_costs_data || {})
+          },
+          operating_data: {
+            ...(initialData.operating_data || {}),
+            ...(fetchedProject.operating_data || {})
+          },
+          income_data: {
+            ...(initialData.income_data || {}),
+            ...(fetchedProject.income_data || {})
+          },
+          opex_data: {
+            ...(initialData.opex_data || {}),
+            ...(fetchedProject.opex_data || {})
+          },
+          assumptions_data: {
+            ...(initialData.assumptions_data || {}),
+            ...(fetchedProject.assumptions_data || {})
+          }
         };
         
         console.log('[Calculator] Merged project data:', {
@@ -905,8 +940,8 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
           type: data.type,
           project_info_data: data.project_info_data,
           project_info_keys: Object.keys(data.project_info_data || {}),
-          cost_data_keys: Object.keys(data.cost_data || {}), // As per outline
-          revenue_data_keys: Object.keys(data.revenue_data || {}) // As per outline
+          cost_data_keys: Object.keys(data.cost_data || {}), 
+          revenue_data_keys: Object.keys(data.revenue_data || {}) 
         });
         
         setProjectData(data);
