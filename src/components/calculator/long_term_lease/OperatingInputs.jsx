@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-<parameter name="input">import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Calculator, Sparkles } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 

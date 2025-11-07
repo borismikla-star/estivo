@@ -105,6 +105,8 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
       content: (
         <OperatingInputs
           data={projectData.operating_data || {}}
+          purchasePrice={projectData.property_data?.purchase_price || 0}
+          annualRent={(projectData.property_data?.monthly_rent || 0) * 12}
           countryPreset={countryPresets?.find(p => p.country_code === projectData.country)}
           language={language}
           onChange={(updatedData) => onBulkUpdate('operating_data', updatedData)}
