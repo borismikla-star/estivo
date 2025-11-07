@@ -238,21 +238,29 @@ export default function Calculator() {
       
       setSaveStatus('saving');
       console.log('[Calculator] Saving project:', data.id);
-      console.log('[Calculator] Project data to save:', {
+      console.log('[Calculator] Full project data structure:', {
         name: data.name,
-        hasResults: !!data.results,
-        hasAiSummary: !!data.ai_summary,
-        hasSensitivityData: !!data.sensitivity_data,
-        hasPropertyData: !!data.property_data, // Corrected from cost_data
-        hasFinancingData: !!data.financing_data, // Corrected from revenue_data
-        hasProjectInfoData: !!data.project_info_data
+        type: data.type,
+        country: data.country,
+        project_info_data: data.project_info_data,
+        cost_data: data.cost_data, // As per outline
+        revenue_data: data.revenue_data, // As per outline
+        financing_data: data.financing_data,
+        results: data.results ? 'exists' : 'missing',
+        property_data: data.property_data
       });
       
       const { id, created_by, created_date, updated_date, ...dataToSave } = data;
       
       try {
         const result = await base44.entities.Project.update(id, dataToSave);
-        console.log('[Calculator] Save successful:', result.id);
+        console.log('[Calculator] Save successful, saved data:', {
+          id: result.id,
+          has_project_info_data: !!result.project_info_data,
+          project_info_data: result.project_info_data,
+          has_cost_data: !!result.cost_data, // As per outline
+          has_revenue_data: !!result.revenue_data // As per outline
+        });
         return result;
       } catch (error) {
         console.error('[Calculator] Save failed:', error);
@@ -260,13 +268,16 @@ export default function Calculator() {
       }
     },
     onSuccess: (savedProject) => {
-      console.log('[Calculator] onSuccess called');
+      console.log('[Calculator] onSuccess - received saved project:', {
+        id: savedProject.id,
+        has_project_info_data: !!savedProject.project_info_data,
+        project_info_data: savedProject.project_info_data
+      });
       setSaveStatus('saved');
       setIsDirty(false);
       queryClient.invalidateQueries({ queryKey: ['userProjects'] });
       
-      // IMPORTANT: Update projectData with saved data to ensure UI is in sync
-      // Preserve local state for results, ai_summary, sensitivity_data if they were updated locally after the save began
+      // IMPORTANT: Update projectData with saved data
       setProjectData(prev => {
         if (!prev) return savedProject; // Should not happen for an update
         return {
@@ -864,19 +875,51 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
 
     if (projectIdFromUrl) {
       base44.entities.Project.get(projectIdFromUrl).then(fetchedProject => {
+        console.log('[Calculator] Loaded project from DB:', {
+          id: fetchedProject.id,
+          name: fetchedProject.name,
+          type: fetchedProject.type,
+          has_project_info_data: !!fetchedProject.project_info_data,
+          project_info_data: fetchedProject.project_info_data,
+          has_cost_data: !!fetchedProject.cost_data, // As per outline
+          has_revenue_data: !!fetchedProject.revenue_data, // As per outline
+          has_results: !!fetchedProject.results
+        });
+        
         const initialData = getInitialData(fetchedProject.type, user);
-        const data = defaultsDeep({}, fetchedProject, initialData);
+        // CRITICAL: Use spread to preserve all fetched data, only fill in missing defaults
+        const data = {
+          ...initialData,
+          ...fetchedProject,
+          // Ensure nested objects are properly merged
+          project_info_data: fetchedProject.project_info_data || initialData.project_info_data || {},
+          cost_data: fetchedProject.cost_data || initialData.cost_data || {}, // As per outline
+          revenue_data: fetchedProject.revenue_data || initialData.revenue_data || {}, // As per outline
+          financing_data: fetchedProject.financing_data || initialData.financing_data || {},
+          property_data: fetchedProject.property_data || initialData.property_data || {},
+        };
+        
+        console.log('[Calculator] Merged project data:', {
+          id: data.id,
+          name: data.name,
+          type: data.type,
+          project_info_data: data.project_info_data,
+          project_info_keys: Object.keys(data.project_info_data || {}),
+          cost_data_keys: Object.keys(data.cost_data || {}), // As per outline
+          revenue_data_keys: Object.keys(data.revenue_data || {}) // As per outline
+        });
+        
         setProjectData(data);
         setResults(data.results);
         setAiSummary(data.ai_summary);
         setSensitivityData(data.sensitivity_data);
         setIsInitializing(false);
         setSaveStatus('saved');
-        setIsDirty(false); // Reset dirty flag after loading existing project
+        setIsDirty(false);
       }).catch(error => {
         console.error("Failed to load project:", error);
-        setIsInitializing(false); // Ensure initialization ends even on error
-        navigate(createPageUrl("Dashboard")); // Redirect on load failure
+        setIsInitializing(false);
+        navigate(createPageUrl("Dashboard"));
       });
     } else if (templateIdFromUrl) {
         base44.entities.ProjectTemplate.get(templateIdFromUrl).then(template => {
