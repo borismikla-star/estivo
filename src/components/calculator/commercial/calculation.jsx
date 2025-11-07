@@ -74,19 +74,21 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const vacancyLoss = potentialGrossIncome * (vacancyRate / 100);
     const effectiveGrossIncome = potentialGrossIncome - vacancyLoss;
 
-    // === OPERATING EXPENSES ===
-    const propertyTax = num(opex_data.property_tax) || 0;
-    const insurance = num(opex_data.insurance) || 0;
-    const utilities = num(opex_data.utilities) || 0;
-    const maintenance = num(opex_data.maintenance) || 0;
-    const propertyManagement = num(opex_data.property_management) || 0;
-    const otherExpenses = num(opex_data.other_expenses) || 0;
+    // === OPERATING EXPENSES - FIXED! ===
+    // CRITICAL FIX: property_tax and maintenance are now FLAT ANNUAL AMOUNTS, not percentages
+    const propertyTax = num(opex_data.property_tax) || 0; // Annual flat amount in €
+    const insurance = num(opex_data.insurance) || 0; // Annual flat amount in €
+    const utilities = num(opex_data.utilities) || 0; // Annual flat amount in €
+    const maintenance = num(opex_data.maintenance) || 0; // Annual flat amount in €
+    const propertyManagementPercent = num(opex_data.property_management || opex_data.property_management_fee) || 0; // % of EGI
+    const otherExpenses = num(opex_data.other_expenses || opex_data.other_opex) || 0; // Annual flat amount in €
     
-    const annualPropertyTax = (price * propertyTax) / 100;
-    const annualInsurance = insurance;
-    const annualUtilities = utilities;
-    const annualMaintenance = (price * maintenance) / 100;
-    const annualPropertyManagement = (effectiveGrossIncome * propertyManagement) / 100;
+    // Calculate actual annual expenses
+    const annualPropertyTax = propertyTax; // ✅ FIXED: Direct flat amount
+    const annualInsurance = insurance; // Already correct
+    const annualUtilities = utilities; // Already correct
+    const annualMaintenance = maintenance; // ✅ FIXED: Direct flat amount
+    const annualPropertyManagement = (effectiveGrossIncome * propertyManagementPercent) / 100; // % of EGI - correct
     
     const totalAnnualOperatingExpenses = annualPropertyTax + annualInsurance + annualUtilities + 
                                          annualMaintenance + annualPropertyManagement + otherExpenses;
@@ -200,14 +202,14 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const exitDiscountFactor = Math.pow(1 + discountRate / 100, holdingPeriod);
     const npv = npvSum + (exitEquity / exitDiscountFactor) - totalEquity;
     
-    // Overall returns - CORRECTED IRR using Newton-Raphson
+    // Overall returns - IRR using Newton-Raphson
     const totalCashFlows = projections[holdingPeriod - 1].cumulative_cash_flow;
     const totalReturn = totalCashFlows + exitEquity;
     const overallROI = totalEquity > 0 ? ((totalReturn - totalEquity) / totalEquity) * 100 : 0;
     const irr = calculateIRR(cashFlowsForIRR);
     const equityMultiple = totalEquity > 0 ? totalReturn / totalEquity : 0;
 
-    // === EXPENSE BREAKDOWN FOR PIE CHART - WITH TRANSLATIONS ===
+    // === EXPENSE BREAKDOWN FOR CHARTS - WITH TRANSLATIONS ===
     const expenseLabels = {
         en: {
             property_tax: 'Property Tax',
@@ -224,6 +226,30 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             maintenance: 'Údržba',
             property_mgmt: 'Správa nehnuteľnosti',
             other: 'Ostatné'
+        },
+        pl: {
+            property_tax: 'Podatek od nieruchomości',
+            insurance: 'Ubezpieczenie',
+            utilities: 'Media',
+            maintenance: 'Konserwacja',
+            property_mgmt: 'Zarządzanie',
+            other: 'Inne'
+        },
+        hu: {
+            property_tax: 'Ingatlanadó',
+            insurance: 'Biztosítás',
+            utilities: 'Közművek',
+            maintenance: 'Karbantartás',
+            property_mgmt: 'Ingatlankezelés',
+            other: 'Egyéb'
+        },
+        de: {
+            property_tax: 'Grundsteuer',
+            insurance: 'Versicherung',
+            utilities: 'Nebenkosten',
+            maintenance: 'Instandhaltung',
+            property_mgmt: 'Hausverwaltung',
+            other: 'Sonstiges'
         }
     };
     
@@ -241,8 +267,12 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         { name: labels.other, value: otherExpenses, percentage: totalOpex > 0 ? ((otherExpenses / totalOpex) * 100).toFixed(1) : '0' }
     ].filter(item => item.value > 0);
 
+    // === ADDITIONAL KPIs FOR COMMERCIAL ===
+    const roi_10_year = overallROI;
+
     return {
         kpis: {
+            // Investment
             total_investment: totalInvestment,
             total_equity: totalEquity,
             down_payment: downPayment,
@@ -250,15 +280,27 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             monthly_mortgage_payment: monthlyMortgagePayment,
             annual_debt_service: annualDebtService,
             
+            // Income
             potential_gross_income: potentialGrossIncome,
             effective_gross_income: effectiveGrossIncome,
             vacancy_loss: vacancyLoss,
-            total_annual_operating_expenses: totalAnnualOperatingExpenses,
-            net_operating_income: netOperatingIncome,
+            annual_rent: annualRent,
             
+            // Expenses
+            total_annual_operating_expenses: totalAnnualOperatingExpenses,
+            annual_property_tax: annualPropertyTax,
+            annual_insurance: annualInsurance,
+            annual_utilities: annualUtilities,
+            annual_maintenance: annualMaintenance,
+            annual_management_fee: annualPropertyManagement,
+            annual_other_opex: otherExpenses,
+            
+            // Performance
+            net_operating_income: netOperatingIncome,
             annual_cash_flow: annualCashFlow,
             monthly_cash_flow: monthlyCashFlow,
             
+            // Key Ratios
             cap_rate: capRate,
             dscr: dscr,
             cash_on_cash_return: cashOnCashReturn,
@@ -266,14 +308,16 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             break_even_occupancy: breakEvenOccupancy,
             grm: grm,
             
+            // Long-term
             npv: npv,
             irr: irr,
+            roi_10_year: roi_10_year,
             exit_value: exitValue,
             exit_equity: exitEquity,
-            roi: overallROI,
             equity_multiple: equityMultiple,
         },
-        projections,
+        cashFlowProjection: projections,
+        equityBuildup: projections, // Same data, different visualization
         expense_breakdown: expenseBreakdown,
     };
 }
