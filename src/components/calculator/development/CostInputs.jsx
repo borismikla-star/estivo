@@ -226,6 +226,17 @@ export default function CostInputs({ data, projectData, language, onChange }) {
   const safeData = data || {};
   const safeProjectData = projectData || {};
 
+  // DEBUG LOGGING
+  React.useEffect(() => {
+    console.log('[CostInputs] Rendered with projectData:', {
+      has_projectData: !!projectData,
+      projectData_keys: projectData ? Object.keys(projectData) : [],
+      sales_area_apartments: projectData?.sales_area_apartments,
+      total_land_area: projectData?.total_land_area,
+      gfa_above: projectData?.gfa_above
+    });
+  }, [projectData]);
+
   // Calculate implementation costs based on mode
   const gfaAbove = safeProjectData.gfa_above || 0;
   const gfaBelow = safeProjectData.gfa_below || 0;
