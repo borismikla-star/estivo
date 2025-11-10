@@ -18,16 +18,16 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         if (autoMode && propertyData.rentable_area_m2 > 0) {
             const propertyType = propertyData.property_type || 'office';
             
-            // Market rates per m² per year by property type
-            const ratePerM2 = {
-                office: 150,      // €150/m²/year
-                retail: 200,      // €200/m²/year
-                industrial: 80,   // €80/m²/year
-                mixed: 150        // €150/m²/year
+            // Market rates per m² per MONTH by property type
+            const ratePerM2Monthly = {
+                office: 12.5,      // €12.5/m²/month
+                retail: 16.67,     // €16.67/m²/month
+                industrial: 6.67,  // €6.67/m²/month
+                mixed: 12.5        // €12.5/m²/month
             };
             
-            const rate = ratePerM2[propertyType] || 150;
-            const calculatedRent = propertyData.rentable_area_m2 * rate;
+            const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
+            const calculatedRent = propertyData.rentable_area_m2 * monthlyRate * 12; // Calculate annual rent
             
             if (calculatedRent !== localData.annual_rent) {
                 const updated = { 
@@ -61,14 +61,14 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         
         if (newAutoMode && propertyData.rentable_area_m2 > 0) {
             const propertyType = propertyData.property_type || 'office';
-            const ratePerM2 = {
-                office: 150,
-                retail: 200,
-                industrial: 80,
-                mixed: 150
+            const ratePerM2Monthly = {
+                office: 12.5,
+                retail: 16.67,
+                industrial: 6.67,
+                mixed: 12.5
             };
-            const rate = ratePerM2[propertyType] || 150;
-            const calculatedRent = propertyData.rentable_area_m2 * rate;
+            const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
+            const calculatedRent = propertyData.rentable_area_m2 * monthlyRate * 12;
             
             const updated = { 
                 ...localData, 
@@ -96,7 +96,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             other_income_desc: "Parking, signage, or other revenue",
             vacancy_rate: "Vacancy Rate (%)",
             vacancy_desc: "Expected percentage of vacant space",
-            rate_info: "Market rates: Office €150/m²/year, Retail €200/m²/year, Industrial €80/m²/year",
+            rate_info: "Market rates: Office €12.5/m²/month, Retail €16.67/m²/month, Industrial €6.67/m²/month",
         },
         sk: {
             annual_rent: "Ročné základné nájomné",
@@ -113,7 +113,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             other_income_desc: "Parkovanie, reklama alebo iné príjmy",
             vacancy_rate: "Miera neobsadenosti (%)",
             vacancy_desc: "Očakávané percento neobsadených priestorov",
-            rate_info: "Trhové sadzby: Kancelárie €150/m²/rok, Obchody €200/m²/rok, Priemysel €80/m²/rok",
+            rate_info: "Trhové sadzby: Kancelárie €12.5/m²/mesiac, Obchody €16.67/m²/mesiac, Priemysel €6.67/m²/mesiac",
         },
         pl: {
             annual_rent: "Roczny czynsz bazowy",
@@ -130,7 +130,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             other_income_desc: "Parking, reklama lub inne przychody",
             vacancy_rate: "Wskaźnik pustostanów (%)",
             vacancy_desc: "Oczekiwany procent pustych powierzchni",
-            rate_info: "Stawki rynkowe: Biura €150/m²/rok, Handel €200/m²/rok, Przemysł €80/m²/rok",
+            rate_info: "Stawki rynkowe: Biura €12.5/m²/miesiąc, Handel €16.67/m²/miesiąc, Przemysł €6.67/m²/miesiąc",
         },
         hu: {
             annual_rent: "Éves alap bérleti díj",
@@ -147,7 +147,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             other_income_desc: "Parkolás, reklám vagy más bevétel",
             vacancy_rate: "Üresedési arány (%)",
             vacancy_desc: "Várható üres terület százaléka",
-            rate_info: "Piaci árak: Iroda €150/m²/év, Kereskedelem €200/m²/év, Ipari €80/m²/év",
+            rate_info: "Piaci árak: Iroda €12.5/m²/hónap, Kereskedelem €16.67/m²/hónap, Ipari €6.67/m²/hónap",
         },
         de: {
             annual_rent: "Jährliche Grundmiete",
@@ -164,7 +164,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             other_income_desc: "Parkplatz, Werbung oder andere Einnahmen",
             vacancy_rate: "Leerstandsquote (%)",
             vacancy_desc: "Erwarteter Prozentsatz leerstehender Flächen",
-            rate_info: "Marktpreise: Büro €150/m²/Jahr, Einzelhandel €200/m²/Jahr, Industrie €80/m²/Jahr",
+            rate_info: "Marktpreise: Büro €12.5/m²/Monat, Einzelhandel €16.67/m²/Monat, Industrie €6.67/m²/Monat",
         }
     };
 
