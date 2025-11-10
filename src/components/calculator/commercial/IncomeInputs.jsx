@@ -12,7 +12,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
     const prevRentableAreaRef = useRef(propertyData.rentable_area_m2);
     const prevPropertyTypeRef = useRef(propertyData.property_type);
     const prevAutoModeRef = useRef(autoMode);
-    const isInitialMount = useRef(true);
+    const hasCalculatedInitial = useRef(false);
 
     // Sync autoMode when data changes from parent
     useEffect(() => {
@@ -21,16 +21,52 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         }
     }, [data.annual_rent_auto]);
 
+    // INITIAL calculation on mount if autoMode is enabled
+    useEffect(() => {
+        if (hasCalculatedInitial.current) return;
+        
+        console.log('[IncomeInputs] Initial mount check', {
+            autoMode,
+            hasRentableArea: !!propertyData.rentable_area_m2,
+            rentableArea: propertyData.rentable_area_m2,
+            currentRent: data.annual_rent
+        });
+        
+        if (autoMode && propertyData.rentable_area_m2 > 0 && !data.annual_rent) {
+            hasCalculatedInitial.current = true;
+            
+            const propertyType = propertyData.property_type || 'office';
+            const ratePerM2Monthly = {
+                office: 12.5,
+                retail: 16.67,
+                industrial: 6.67,
+                mixed: 12.5
+            };
+            
+            const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
+            const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12);
+            
+            console.log('[IncomeInputs] INITIAL calculation:', {
+                propertyType,
+                monthlyRate,
+                rentableArea: propertyData.rentable_area_m2,
+                calculatedRent
+            });
+            
+            onChange({ 
+                ...data, 
+                annual_rent: calculatedRent,
+                annual_rent_auto: true
+            });
+        } else {
+            hasCalculatedInitial.current = true;
+        }
+    }, []); // Run only once on mount
+
     // Auto-calculate annual rent when property data changes
     useEffect(() => {
-        // Skip on initial mount
-        if (isInitialMount.current) {
-            isInitialMount.current = false;
-            prevRentableAreaRef.current = propertyData.rentable_area_m2;
-            prevPropertyTypeRef.current = propertyData.property_type;
-            prevAutoModeRef.current = autoMode;
-            return;
-        }
+        // Skip if we haven't done initial calculation yet
+        if (!hasCalculatedInitial.current) return;
         
         if (!autoMode) {
             prevAutoModeRef.current = autoMode;
@@ -43,6 +79,16 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         const areaChanged = prevRentableAreaRef.current !== propertyData.rentable_area_m2;
         const typeChanged = prevPropertyTypeRef.current !== propertyData.property_type;
         const autoModeJustEnabled = !prevAutoModeRef.current && autoMode;
+        
+        console.log('[IncomeInputs] Change detection:', {
+            areaChanged,
+            typeChanged,
+            autoModeJustEnabled,
+            prevArea: prevRentableAreaRef.current,
+            newArea: propertyData.rentable_area_m2,
+            prevType: prevPropertyTypeRef.current,
+            newType: propertyData.property_type
+        });
         
         // Update refs BEFORE early return
         prevRentableAreaRef.current = propertyData.rentable_area_m2;
