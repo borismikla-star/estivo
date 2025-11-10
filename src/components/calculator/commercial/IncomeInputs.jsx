@@ -97,6 +97,8 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             vacancy_rate: "Vacancy Rate (%)",
             vacancy_desc: "Expected percentage of vacant space",
             rate_info: "Market rates: Office €12.5/m²/month, Retail €16.67/m²/month, Industrial €6.67/m²/month",
+            tip: "Tip: Enable auto-calculate for typical market rates, or enter your specific costs manually.",
+            reimbursements_title: "Reimbursements & Other Income",
         },
         sk: {
             annual_rent: "Ročné základné nájomné",
@@ -114,6 +116,8 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             vacancy_rate: "Miera neobsadenosti (%)",
             vacancy_desc: "Očakávané percento neobsadených priestorov",
             rate_info: "Trhové sadzby: Kancelárie €12.5/m²/mesiac, Obchody €16.67/m²/mesiac, Priemysel €6.67/m²/mesiac",
+            tip: "Tip: Zapnite automatický výpočet pre typické trhové sadzby alebo zadajte vlastné náklady manuálne.",
+            reimbursements_title: "Náhrady a ostatné príjmy",
         },
         pl: {
             annual_rent: "Roczny czynsz bazowy",
@@ -131,6 +135,8 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             vacancy_rate: "Wskaźnik pustostanów (%)",
             vacancy_desc: "Oczekiwany procent pustych powierzchni",
             rate_info: "Stawki rynkowe: Biura €12.5/m²/miesiąc, Handel €16.67/m²/miesiąc, Przemysł €6.67/m²/miesiąc",
+            tip: "Wskazówka: Włącz automatyczne obliczanie dla typowych stawek rynkowych lub wprowadź własne koszty ręcznie.",
+            reimbursements_title: "Zwroty i inne dochody",
         },
         hu: {
             annual_rent: "Éves alap bérleti díj",
@@ -148,6 +154,8 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             vacancy_rate: "Üresedési arány (%)",
             vacancy_desc: "Várható üres terület százaléka",
             rate_info: "Piaci árak: Iroda €12.5/m²/hónap, Kereskedelem €16.67/m²/hónap, Ipari €6.67/m²/hónap",
+            tip: "Tipp: Engedélyezze az automatikus számítást a tipikus piaci árakhoz, vagy adja meg saját költségeit manuálisan.",
+            reimbursements_title: "Megtérítések és egyéb bevételek",
         },
         de: {
             annual_rent: "Jährliche Grundmiete",
@@ -165,6 +173,8 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             vacancy_rate: "Leerstandsquote (%)",
             vacancy_desc: "Erwarteter Prozentsatz leerstehender Flächen",
             rate_info: "Marktpreise: Büro €12.5/m²/Monat, Einzelhandel €16.67/m²/Monat, Industrie €6.67/m²/Monat",
+            tip: "Tipp: Aktivieren Sie die automatische Berechnung für typische Marktpreise oder geben Sie Ihre spezifischen Kosten manuell ein.",
+            reimbursements_title: "Erstattungen & Sonstige Einnahmen",
         }
     };
 
@@ -242,7 +252,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             </div>
 
             <div className="border-t pt-4">
-                <h4 className="font-semibold mb-3 text-sm">Reimbursements & Other Income</h4>
+                <h4 className="font-semibold mb-3 text-sm">{t.reimbursements_title}</h4>
                 <div className="space-y-4">
                     <div>
                         <div className="flex items-center gap-2 mb-2">

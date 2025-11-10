@@ -19,6 +19,7 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
     const translations = {
         en: {
             title: "Capital Expenditures (CapEx)",
+            info_text: "Set aside annual reserves for major repairs and tenant improvements. Critical for commercial properties.",
             capex_reserve_percent: "CapEx Reserve (% of NOI)",
             capex_reserve_desc: "Annual reserve for major repairs and replacements (typically 5-15%)",
             roof_replacement: "Roof Replacement Reserve (annual)",
@@ -28,9 +29,11 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
             tenant_improvements: "Tenant Improvement Reserve (annual)",
             tenant_improvements_desc: "Budget for tenant buildouts and renovations",
             total_annual_capex: "Total Annual CapEx",
+            specific_reserves: "Specific Reserves (Optional)",
         },
         sk: {
             title: "Kapitálové výdavky (CapEx)",
+            info_text: "Odložte ročné rezervy na väčšie opravy a úpravy priestorov. Kľúčové pre komerčné nehnuteľnosti.",
             capex_reserve_percent: "Rezerva CapEx (% z NOI)",
             capex_reserve_desc: "Ročná rezerva na väčšie opravy a výmeny (typicky 5-15%)",
             roof_replacement: "Rezerva na výmenu strechy (ročne)",
@@ -40,9 +43,11 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
             tenant_improvements: "Rezerva na úpravy priestorov (ročne)",
             tenant_improvements_desc: "Rozpočet na úpravy priestorov pre nájomcov",
             total_annual_capex: "Celkový ročný CapEx",
+            specific_reserves: "Špecifické rezervy (voliteľné)",
         },
         pl: {
             title: "Wydatki kapitałowe (CapEx)",
+            info_text: "Odłóż roczne rezerwy na poważne naprawy i ulepszenia dla najemców. Kluczowe dla nieruchomości komercyjnych.",
             capex_reserve_percent: "Rezerwa CapEx (% NOI)",
             capex_reserve_desc: "Roczna rezerwa na poważne naprawy i wymiany (zazwyczaj 5-15%)",
             roof_replacement: "Rezerwa na wymianę dachu (rocznie)",
@@ -52,9 +57,11 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
             tenant_improvements: "Rezerwa na ulepszenia dla najemców (rocznie)",
             tenant_improvements_desc: "Budżet na adaptacje i remonty dla najemców",
             total_annual_capex: "Całkowity roczny CapEx",
+            specific_reserves: "Szczególne rezerwy (opcjonalnie)",
         },
         hu: {
             title: "Tőkekiadások (CapEx)",
+            info_text: "Tegyél félre éves tartalékokat nagyobb javításokra és bérlői fejlesztésekre. Kritikus kereskedelmi ingatlanoknál.",
             capex_reserve_percent: "CapEx tartalék (NOI %-a)",
             capex_reserve_desc: "Éves tartalék nagyobb javításokra és cserékre (általában 5-15%)",
             roof_replacement: "Tetőcsere tartalék (éves)",
@@ -64,9 +71,11 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
             tenant_improvements: "Bérlői fejlesztések tartaléka (éves)",
             tenant_improvements_desc: "Költségvetés bérlői átalakításokra és felújításokra",
             total_annual_capex: "Összes éves CapEx",
+            specific_reserves: "Különleges tartalékok (opcionális)",
         },
         de: {
             title: "Investitionsausgaben (CapEx)",
+            info_text: "Legen Sie jährliche Rücklagen für größere Reparaturen und Mieterausbauten an. Kritisch für Gewerbeimmobilien.",
             capex_reserve_percent: "CapEx-Rücklage (% des NOI)",
             capex_reserve_desc: "Jährliche Rücklage für größere Reparaturen und Austausch (normalerweise 5-15%)",
             roof_replacement: "Dachaustausch-Rücklage (jährlich)",
@@ -76,6 +85,7 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
             tenant_improvements: "Mieterausbau-Rücklage (jährlich)",
             tenant_improvements_desc: "Budget für Mieterausbauten und Renovierungen",
             total_annual_capex: "Gesamte jährliche CapEx",
+            specific_reserves: "Besondere Rücklagen (optional)",
         }
     };
 
@@ -89,7 +99,7 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
         <div className="space-y-4">
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-900">
-                    <strong>ℹ️ {t.title}:</strong> Set aside annual reserves for major repairs and tenant improvements. Critical for commercial properties.
+                    <strong>ℹ️ {t.title}:</strong> {t.info_text}
                 </p>
             </div>
 
@@ -108,7 +118,7 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
             </div>
 
             <div className="border-t pt-4">
-                <h4 className="font-semibold mb-3 text-sm">Specific Reserves (Optional)</h4>
+                <h4 className="font-semibold mb-3 text-sm">{t.specific_reserves}</h4>
                 <div className="space-y-4">
                     <div>
                         <div className="flex items-center gap-2 mb-2">

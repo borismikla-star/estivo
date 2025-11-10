@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import InfoTooltip from "../../shared/InfoTooltip";
 
 export default function AssumptionsInputs({ data, onChange, language = 'en' }) {
     const [localData, setLocalData] = useState(data);
@@ -84,8 +85,10 @@ export default function AssumptionsInputs({ data, onChange, language = 'en' }) {
         <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <Label>{t.holding_period}</Label>
-                    <p className="text-sm text-muted-foreground mb-2">{t.holding_desc}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label>{t.holding_period}</Label>
+                        <InfoTooltip content={t.holding_desc} />
+                    </div>
                     <Input
                         type="number"
                         value={localData.holding_period || 10}
@@ -93,8 +96,10 @@ export default function AssumptionsInputs({ data, onChange, language = 'en' }) {
                     />
                 </div>
                 <div>
-                    <Label>{t.annual_appreciation}</Label>
-                    <p className="text-sm text-muted-foreground mb-2">{t.appreciation_desc}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label>{t.annual_appreciation}</Label>
+                        <InfoTooltip content={t.appreciation_desc} />
+                    </div>
                     <Input
                         type="number"
                         step="0.1"
@@ -103,8 +108,10 @@ export default function AssumptionsInputs({ data, onChange, language = 'en' }) {
                     />
                 </div>
                 <div>
-                    <Label>{t.rent_growth}</Label>
-                    <p className="text-sm text-muted-foreground mb-2">{t.rent_growth_desc}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label>{t.rent_growth}</Label>
+                        <InfoTooltip content={t.rent_growth_desc} />
+                    </div>
                     <Input
                         type="number"
                         step="0.1"
@@ -113,8 +120,10 @@ export default function AssumptionsInputs({ data, onChange, language = 'en' }) {
                     />
                 </div>
                 <div>
-                    <Label>{t.exit_cap_rate}</Label>
-                    <p className="text-sm text-muted-foreground mb-2">{t.exit_cap_desc}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label>{t.exit_cap_rate}</Label>
+                        <InfoTooltip content={t.exit_cap_desc} />
+                    </div>
                     <Input
                         type="number"
                         step="0.01"
@@ -123,8 +132,10 @@ export default function AssumptionsInputs({ data, onChange, language = 'en' }) {
                     />
                 </div>
                 <div>
-                    <Label>{t.discount_rate}</Label>
-                    <p className="text-sm text-muted-foreground mb-2">{t.discount_desc}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label>{t.discount_rate}</Label>
+                        <InfoTooltip content={t.discount_desc} />
+                    </div>
                     <Input
                         type="number"
                         step="0.1"

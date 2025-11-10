@@ -104,6 +104,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management_desc: "% of Effective Gross Income (typically 5-10%)",
             other_expenses: "Other Operating Expenses",
             other_expenses_desc: "Accounting, legal, HOA fees, etc.",
+            tip: "Tip: Enable auto-calculate for typical market rates, or enter your specific costs manually.",
         },
         sk: {
             title: "Prevádzkové náklady (ročné)",
@@ -120,6 +121,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management_desc: "% z Efektívneho hrubého príjmu (typicky 5-10%)",
             other_expenses: "Ostatné prevádzkové náklady",
             other_expenses_desc: "Účtovníctvo, právne, poplatky HOA, atď.",
+            tip: "Tip: Zapnite automatický výpočet pre typické trhové sadzby alebo zadajte vlastné náklady manuálne.",
         },
         pl: {
             title: "Koszty operacyjne (roczne)",
@@ -136,6 +138,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management_desc: "% Efektywnego Dochodu Brutto (zazwyczaj 5-10%)",
             other_expenses: "Inne koszty operacyjne",
             other_expenses_desc: "Księgowość, prawne, opłaty HOA, itp.",
+            tip: "Wskazówka: Włącz automatyczne obliczanie dla typowych stawek rynkowych lub wprowadź własne koszty ręcznie.",
         },
         hu: {
             title: "Működési költségek (éves)",
@@ -152,6 +155,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management_desc: "% az Effektív Bruttó Bevételből (általában 5-10%)",
             other_expenses: "Egyéb működési költségek",
             other_expenses_desc: "Könyvelés, jogi, társasházi díjak, stb.",
+            tip: "Tipp: Engedélyezze az automatikus számítást a tipikus piaci árakhoz, vagy adja meg saját költségeit manuálisan.",
         },
         de: {
             title: "Betriebskosten (jährlich)",
@@ -168,6 +172,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management_desc: "% des Effektiven Bruttoeinkommens (normalerweise 5-10%)",
             other_expenses: "Sonstige Betriebskosten",
             other_expenses_desc: "Buchhaltung, Rechtsberatung, HOA-Gebühren, usw.",
+            tip: "Tipp: Aktivieren Sie die automatische Berechnung für typische Marktpreise oder geben Sie Ihre spezifischen Kosten manuell ein.",
         }
     };
 
@@ -214,7 +219,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
         <div className="space-y-4">
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-900">
-                    <strong>💡 Tip:</strong> Enable auto-calculate for typical market rates, or enter your specific costs manually.
+                    <strong>💡 {t.tip}</strong>
                 </p>
             </div>
 

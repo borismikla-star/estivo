@@ -1,6 +1,7 @@
-
 import React, { useCallback, useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import CountrySelector from "../CountrySelector";
 import PropertyInputs from "./PropertyInputs";
 import IncomeInputs from "./IncomeInputs";
@@ -21,6 +22,9 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           capex: "Capital Expenditures (CapEx)",
           financing: "Financing",
           assumptions: "Assumptions",
+          entity_type: "Entity Type",
+          entity_type_fo: "Individual (FO)",
+          entity_type_po: "Legal Entity (PO)",
       },
       sk: {
           accordion_property_details: "Detaily nehnuteľnosti",
@@ -29,6 +33,9 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           capex: "Kapitálové výdavky (CapEx)",
           financing: "Financovanie",
           assumptions: "Predpoklady",
+          entity_type: "Typ subjektu",
+          entity_type_fo: "Fyzická osoba (FO)",
+          entity_type_po: "Právnická osoba (PO)",
       },
       pl: {
           accordion_property_details: "Szczegóły nieruchomości",
@@ -37,6 +44,9 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           capex: "Wydatki kapitałowe (CapEx)",
           financing: "Finansowanie",
           assumptions: "Założenia",
+          entity_type: "Typ podmiotu",
+          entity_type_fo: "Osoba fizyczna (FO)",
+          entity_type_po: "Osoba prawna (PO)",
       },
       hu: {
           accordion_property_details: "Ingatlan részletek",
@@ -45,6 +55,9 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           capex: "Tőkekiadások (CapEx)",
           financing: "Finanszírozás",
           assumptions: "Feltételezések",
+          entity_type: "Entitás típusa",
+          entity_type_fo: "Magánszemély (FO)",
+          entity_type_po: "Jogi személy (PO)",
       },
       de: {
           accordion_property_details: "Immobiliendetails",
@@ -53,6 +66,9 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           capex: "Investitionsausgaben (CapEx)",
           financing: "Finanzierung",
           assumptions: "Annahmen",
+          entity_type: "Rechtsform",
+          entity_type_fo: "Natürliche Person (FO)",
+          entity_type_po: "Juristische Person (PO)",
       }
   };
 
@@ -126,12 +142,31 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
 
   return (
     <div className="space-y-6">
-      <CountrySelector
-        projectData={projectData}
-        onBulkUpdate={onBulkUpdate}
-        countryPresets={countryPresets}
-        language={language}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CountrySelector
+          projectData={projectData}
+          onBulkUpdate={onBulkUpdate}
+          countryPresets={countryPresets}
+          language={language}
+        />
+        
+        <div>
+          <Label className="mb-2 block">{t_calc.entity_type}</Label>
+          <Select 
+            value={projectData.entity_type || 'FO'} 
+            onValueChange={(value) => onBulkUpdate('entity_type', value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
+              <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <Accordion type="multiple" defaultValue={['item-1', 'item-2']} className="w-full space-y-4">
           {accordionItems.map(item => (
             <AccordionItem key={item.value} value={item.value} className="border rounded-lg bg-white shadow-sm">
