@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -11,6 +11,10 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
 
     useEffect(() => {
         setLocalData(data);
+        // Sync autoMode with data when component receives new data
+        if (data.annual_rent_auto !== undefined) {
+            setAutoMode(data.annual_rent_auto);
+        }
     }, [data]);
 
     // Auto-calculate annual rent when property data changes
@@ -29,19 +33,18 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
             const calculatedRent = propertyData.rentable_area_m2 * monthlyRate * 12; // Calculate annual rent
             
-            if (calculatedRent !== localData.annual_rent) {
-                const updated = { 
-                    ...localData, 
-                    annual_rent: calculatedRent,
-                    annual_rent_auto: true
-                };
-                setLocalData(updated);
-                onChange(updated);
-            }
+            // Always update if in auto mode
+            const updated = { 
+                ...localData, 
+                annual_rent: calculatedRent,
+                annual_rent_auto: true
+            };
+            setLocalData(updated);
+            onChange(updated);
         }
-    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode]);
+    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode, onChange, localData]);
 
-    const handleChange = (field, value) => {
+    const handleChange = useCallback((field, value) => {
         const updated = { 
             ...localData, 
             [field]: value,
@@ -50,12 +53,12 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         setLocalData(updated);
         onChange(updated);
         
-        if (field === 'annual_rent' && autoMode) {
+        if (field === 'annual_rent') {
             setAutoMode(false);
         }
-    };
+    }, [localData, onChange]);
 
-    const toggleAutoMode = () => {
+    const toggleAutoMode = useCallback(() => {
         const newAutoMode = !autoMode;
         setAutoMode(newAutoMode);
         
@@ -77,8 +80,16 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             };
             setLocalData(updated);
             onChange(updated);
+        } else {
+            // When disabling auto mode, just update the flag
+            const updated = { 
+                ...localData, 
+                annual_rent_auto: false
+            };
+            setLocalData(updated);
+            onChange(updated);
         }
-    };
+    }, [autoMode, propertyData, localData, onChange]);
 
     const translations = {
         en: {

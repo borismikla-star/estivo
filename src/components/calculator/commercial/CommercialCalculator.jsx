@@ -74,6 +74,10 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
 
   const t_calc = translations[language] || translations.en;
 
+  const handleEntityTypeChange = useCallback((value) => {
+    onBulkUpdate('entity_type', value);
+  }, [onBulkUpdate]);
+
   const accordionItems = useMemo(() => [
     { 
       value: "item-1", 
@@ -138,7 +142,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
         t={t} 
       /> 
     },
-  ], [t_calc, projectData, language, onBulkUpdate]);
+  ], [t_calc, projectData, language, onBulkUpdate, t]);
 
   return (
     <div className="space-y-6">
@@ -154,10 +158,10 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           <Label className="mb-2 block">{t_calc.entity_type}</Label>
           <Select 
             value={projectData.entity_type || 'FO'} 
-            onValueChange={(value) => onBulkUpdate('entity_type', value)}
+            onValueChange={handleEntityTypeChange}
           >
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder={t_calc.entity_type_fo} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
