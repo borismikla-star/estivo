@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -7,21 +6,20 @@ import { Calculator, Sparkles } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 
 export default function IncomeInputs({ data, onChange, language = 'en', propertyData = {} }) {
-    const [localData, setLocalData] = useState(data);
     const [autoMode, setAutoMode] = useState(data.annual_rent_auto !== false);
     
     // Use refs to track previous values and prevent unnecessary updates
     const prevRentableAreaRef = useRef(propertyData.rentable_area_m2);
     const prevPropertyTypeRef = useRef(propertyData.property_type);
+    const prevAutoModeRef = useRef(autoMode);
     const isInitialMount = useRef(true);
 
+    // Sync autoMode when data changes from parent
     useEffect(() => {
-        setLocalData(data);
-        // Sync autoMode with data
-        if (data.annual_rent_auto !== undefined) {
+        if (data.annual_rent_auto !== undefined && data.annual_rent_auto !== autoMode) {
             setAutoMode(data.annual_rent_auto);
         }
-    }, [data]);
+    }, [data.annual_rent_auto]);
 
     // Auto-calculate annual rent when property data changes
     useEffect(() => {
@@ -30,21 +28,29 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             isInitialMount.current = false;
             prevRentableAreaRef.current = propertyData.rentable_area_m2;
             prevPropertyTypeRef.current = propertyData.property_type;
+            prevAutoModeRef.current = autoMode;
             return;
         }
         
-        if (!autoMode) return;
+        if (!autoMode) {
+            prevAutoModeRef.current = autoMode;
+            return;
+        }
+        
         if (!propertyData.rentable_area_m2 || propertyData.rentable_area_m2 <= 0) return;
         
-        // Only recalculate if relevant values actually changed
+        // Check if relevant values actually changed
         const areaChanged = prevRentableAreaRef.current !== propertyData.rentable_area_m2;
         const typeChanged = prevPropertyTypeRef.current !== propertyData.property_type;
+        const autoModeJustEnabled = !prevAutoModeRef.current && autoMode;
         
-        if (!areaChanged && !typeChanged) return; // If neither changed, no need to recalculate
-        
-        // Update refs for the next render cycle
+        // Update refs BEFORE early return
         prevRentableAreaRef.current = propertyData.rentable_area_m2;
         prevPropertyTypeRef.current = propertyData.property_type;
+        prevAutoModeRef.current = autoMode;
+        
+        // Only proceed if something relevant changed
+        if (!areaChanged && !typeChanged && !autoModeJustEnabled) return;
         
         const propertyType = propertyData.property_type || 'office';
         
@@ -57,27 +63,31 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         };
         
         const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
-        const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12); // Calculate annual rent
+        const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12);
         
         // Only update if the value actually changed
-        if (calculatedRent !== localData.annual_rent) {
-            const updated = { 
-                ...localData, 
+        if (calculatedRent !== data.annual_rent) {
+            console.log('[IncomeInputs] Auto-calculating rent:', {
+                rentableArea: propertyData.rentable_area_m2,
+                propertyType,
+                monthlyRate,
+                calculatedRent
+            });
+            
+            onChange({ 
+                ...data, 
                 annual_rent: calculatedRent,
                 annual_rent_auto: true
-            };
-            setLocalData(updated);
-            onChange(updated);
+            });
         }
-    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode, localData, onChange]); // Added localData and onChange to dependencies
+    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode, data, onChange]);
 
     const handleChange = (field, value) => {
         const updated = { 
-            ...localData, 
+            ...data, 
             [field]: value,
             ...(field === 'annual_rent' && { annual_rent_auto: false })
         };
-        setLocalData(updated);
         onChange(updated);
         
         if (field === 'annual_rent') {
@@ -102,22 +112,25 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                 const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
                 const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12);
                 
-                const updated = { 
-                    ...localData, 
+                console.log('[IncomeInputs] Toggle ON - calculating rent:', calculatedRent);
+                
+                onChange({ 
+                    ...data, 
                     annual_rent: calculatedRent,
                     annual_rent_auto: true
-                };
-                setLocalData(updated);
-                onChange(updated);
+                });
+            } else {
+                onChange({ 
+                    ...data, 
+                    annual_rent_auto: true
+                });
             }
         } else {
             // When disabling, just update the flag
-            const updated = { 
-                ...localData, 
+            onChange({ 
+                ...data, 
                 annual_rent_auto: false
-            };
-            setLocalData(updated);
-            onChange(updated);
+            });
         }
     };
 
@@ -250,7 +263,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                 <div className="relative">
                     <Input
                         type="number"
-                        value={localData.annual_rent || ''}
+                        value={data.annual_rent || ''}
                         onChange={(e) => handleChange('annual_rent', parseFloat(e.target.value) || 0)}
                         disabled={autoMode}
                         className={autoMode ? 'bg-primary/5 border-primary/30' : ''}
@@ -272,7 +285,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                     <Input
                         type="number"
                         step="0.1"
-                        value={localData.rent_escalation_percent || ''}
+                        value={data.rent_escalation_percent || ''}
                         onChange={(e) => handleChange('rent_escalation_percent', parseFloat(e.target.value) || 2)}
                         placeholder="2.0"
                     />
@@ -285,7 +298,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                     <Input
                         type="number"
                         step="0.1"
-                        value={localData.vacancy_rate || ''}
+                        value={data.vacancy_rate || ''}
                         onChange={(e) => handleChange('vacancy_rate', parseFloat(e.target.value) || 5)}
                         placeholder="5"
                     />
@@ -302,7 +315,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                         </div>
                         <Input
                             type="number"
-                            value={localData.cam_reimbursements || ''}
+                            value={data.cam_reimbursements || ''}
                             onChange={(e) => handleChange('cam_reimbursements', parseFloat(e.target.value) || 0)}
                             placeholder="0"
                         />
@@ -315,7 +328,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                         </div>
                         <Input
                             type="number"
-                            value={localData.other_reimbursements || ''}
+                            value={data.other_reimbursements || ''}
                             onChange={(e) => handleChange('other_reimbursements', parseFloat(e.target.value) || 0)}
                             placeholder="0"
                         />
@@ -328,7 +341,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                         </div>
                         <Input
                             type="number"
-                            value={localData.other_income || ''}
+                            value={data.other_income || ''}
                             onChange={(e) => handleChange('other_income', parseFloat(e.target.value) || 0)}
                             placeholder="0"
                         />
