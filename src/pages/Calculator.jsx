@@ -200,7 +200,18 @@ export default function Calculator() {
     setProjectData(prev => {
         if (!prev) return prev;
         
-        // Special handling for country/entity changes which are top-level fields
+        // Special handling for top-level fields like country and entity_type
+        if (section === 'country' || section === 'entity_type') {
+            const newData = {
+                ...prev,
+                [section]: data
+            };
+            setIsDirty(true);
+            setSaveStatus('unsaved');
+            return newData;
+        }
+        
+        // Special handling for country/entity changes which are top-level fields when passed via property_data
         if (section === 'property_data' && (data.country !== undefined || data.entity_type !== undefined)) {
             const newData = {
                 ...prev,

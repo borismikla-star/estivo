@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -8,6 +9,11 @@ import InfoTooltip from "../../shared/InfoTooltip";
 export default function IncomeInputs({ data, onChange, language = 'en', propertyData = {} }) {
     const [localData, setLocalData] = useState(data);
     const [autoMode, setAutoMode] = useState(data.annual_rent_auto !== false);
+    
+    // Use refs to track previous values and prevent unnecessary updates
+    const prevRentableAreaRef = useRef(propertyData.rentable_area_m2);
+    const prevPropertyTypeRef = useRef(propertyData.property_type);
+    const isInitialMount = useRef(true);
 
     useEffect(() => {
         setLocalData(data);
@@ -19,8 +25,26 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
 
     // Auto-calculate annual rent when property data changes
     useEffect(() => {
+        // Skip on initial mount
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            prevRentableAreaRef.current = propertyData.rentable_area_m2;
+            prevPropertyTypeRef.current = propertyData.property_type;
+            return;
+        }
+        
         if (!autoMode) return;
         if (!propertyData.rentable_area_m2 || propertyData.rentable_area_m2 <= 0) return;
+        
+        // Only recalculate if relevant values actually changed
+        const areaChanged = prevRentableAreaRef.current !== propertyData.rentable_area_m2;
+        const typeChanged = prevPropertyTypeRef.current !== propertyData.property_type;
+        
+        if (!areaChanged && !typeChanged) return; // If neither changed, no need to recalculate
+        
+        // Update refs for the next render cycle
+        prevRentableAreaRef.current = propertyData.rentable_area_m2;
+        prevPropertyTypeRef.current = propertyData.property_type;
         
         const propertyType = propertyData.property_type || 'office';
         
@@ -45,7 +69,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             setLocalData(updated);
             onChange(updated);
         }
-    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode]);
+    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode, localData, onChange]); // Added localData and onChange to dependencies
 
     const handleChange = (field, value) => {
         const updated = { 
