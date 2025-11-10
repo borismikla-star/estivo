@@ -7,16 +7,11 @@ import { Sparkles, Calculator } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 
 export default function PropertyInputs({ data, onChange, language = 'en' }) {
-    const [localData, setLocalData] = useState(data);
     const [autoMode, setAutoMode] = useState(data.rentable_area_auto !== false);
     
     // Track last calculated values to prevent unnecessary updates
     const lastCalculatedTotalAreaRef = useRef(null);
     const lastCalculatedRentableAreaRef = useRef(null);
-
-    useEffect(() => {
-        setLocalData(data);
-    }, [data]);
 
     // Sync autoMode when data changes from parent
     useEffect(() => {
@@ -27,8 +22,8 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
 
     // Auto-calculate rentable area when total area changes
     useEffect(() => {
-        const totalArea = localData.size_m2;
-        const currentRentableArea = localData.rentable_area_m2;
+        const totalArea = data.size_m2;
+        const currentRentableArea = data.rentable_area_m2;
         
         console.log('[PropertyInputs] Checking for rentable area calculation', {
             autoMode,
@@ -78,24 +73,20 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
         lastCalculatedTotalAreaRef.current = totalArea;
         lastCalculatedRentableAreaRef.current = calculatedRentableArea;
         
-        // Update the data
-        const updated = { 
-            ...localData, 
+        // CRITICAL: Update the data and call onChange immediately
+        onChange({ 
+            ...data, 
             rentable_area_m2: calculatedRentableArea,
             rentable_area_auto: true
-        };
-        setLocalData(updated);
-        onChange(updated);
-    }, [localData.size_m2, autoMode, localData.rentable_area_m2]);
+        });
+    }, [data.size_m2, autoMode, data.rentable_area_m2, data, onChange]);
 
     const handleChange = (field, value) => {
         const updated = { 
-            ...localData, 
+            ...data, 
             [field]: value,
             ...(field === 'rentable_area_m2' && { rentable_area_auto: false })
         };
-        setLocalData(updated);
-        onChange(updated);
         
         if (field === 'rentable_area_m2') {
             setAutoMode(false);
@@ -103,6 +94,8 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
             lastCalculatedTotalAreaRef.current = null;
             lastCalculatedRentableAreaRef.current = null;
         }
+        
+        onChange(updated);
     };
 
     const toggleAutoMode = () => {
@@ -111,40 +104,34 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
         
         if (newAutoMode) {
             // Calculate immediately when enabling auto mode
-            if (localData.size_m2 > 0) {
-                const calculatedRentableArea = Math.round(localData.size_m2 * 0.85);
+            if (data.size_m2 > 0) {
+                const calculatedRentableArea = Math.round(data.size_m2 * 0.85);
                 
                 console.log('[PropertyInputs] Toggle ON - calculating rentable area:', calculatedRentableArea);
                 
                 // Update tracking
-                lastCalculatedTotalAreaRef.current = localData.size_m2;
+                lastCalculatedTotalAreaRef.current = data.size_m2;
                 lastCalculatedRentableAreaRef.current = calculatedRentableArea;
                 
-                const updated = { 
-                    ...localData, 
+                onChange({ 
+                    ...data, 
                     rentable_area_m2: calculatedRentableArea,
                     rentable_area_auto: true
-                };
-                setLocalData(updated);
-                onChange(updated);
+                });
             } else {
-                const updated = { 
-                    ...localData, 
+                onChange({ 
+                    ...data, 
                     rentable_area_auto: true
-                };
-                setLocalData(updated);
-                onChange(updated);
+                });
             }
         } else {
             // When disabling, clear tracking and just update the flag
             lastCalculatedTotalAreaRef.current = null;
             lastCalculatedRentableAreaRef.current = null;
-            const updated = { 
-                ...localData, 
+            onChange({ 
+                ...data, 
                 rentable_area_auto: false
-            };
-            setLocalData(updated);
-            onChange(updated);
+            });
         }
     };
 
@@ -266,7 +253,7 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                     <Label>{t.price}</Label>
                     <Input
                         type="number"
-                        value={localData.price || ''}
+                        value={data.price || ''}
                         onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
                     />
                 </div>
@@ -274,7 +261,7 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                     <Label>{t.size}</Label>
                     <Input
                         type="number"
-                        value={localData.size_m2 || ''}
+                        value={data.size_m2 || ''}
                         onChange={(e) => handleChange('size_m2', parseFloat(e.target.value) || 0)}
                     />
                 </div>
@@ -302,11 +289,11 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                     <div className="relative">
                         <Input
                             type="number"
-                            value={localData.rentable_area_m2 || ''}
+                            value={data.rentable_area_m2 || ''}
                             onChange={(e) => handleChange('rentable_area_m2', parseFloat(e.target.value) || 0)}
                             disabled={autoMode}
                             className={autoMode ? 'bg-primary/5 border-primary/30' : ''}
-                            placeholder={localData.size_m2 ? Math.round(localData.size_m2 * 0.85).toString() : '0'}
+                            placeholder={data.size_m2 ? Math.round(data.size_m2 * 0.85).toString() : '0'}
                         />
                         {autoMode && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -322,7 +309,7 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                     </div>
                     <Input
                         type="number"
-                        value={localData.number_of_units || ''}
+                        value={data.number_of_units || ''}
                         onChange={(e) => handleChange('number_of_units', parseInt(e.target.value) || 1)}
                         placeholder="1"
                     />
@@ -333,7 +320,7 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                 <div>
                     <Label>{t.property_type}</Label>
                     <Select
-                        value={localData.property_type || 'office'}
+                        value={data.property_type || 'office'}
                         onValueChange={(value) => handleChange('property_type', value)}
                     >
                         <SelectTrigger>
@@ -354,7 +341,7 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                     </div>
                     <Input
                         type="number"
-                        value={localData.avg_lease_term_years || ''}
+                        value={data.avg_lease_term_years || ''}
                         onChange={(e) => handleChange('avg_lease_term_years', parseFloat(e.target.value) || 5)}
                         placeholder="5"
                     />
@@ -366,7 +353,7 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
                 <p className="text-sm text-muted-foreground mb-2">{t.acquisition_desc}</p>
                 <Input
                     type="number"
-                    value={localData.acquisition_costs || 0}
+                    value={data.acquisition_costs || 0}
                     onChange={(e) => handleChange('acquisition_costs', parseFloat(e.target.value) || 0)}
                 />
             </div>
