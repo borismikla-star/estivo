@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,97 +9,49 @@ import InfoTooltip from "../../shared/InfoTooltip";
 export default function IncomeInputs({ data, onChange, language = 'en', propertyData = {} }) {
     const [autoMode, setAutoMode] = useState(data.annual_rent_auto !== false);
     
-    // Use refs to track previous values and prevent unnecessary updates
-    const prevRentableAreaRef = useRef(propertyData.rentable_area_m2);
-    const prevPropertyTypeRef = useRef(propertyData.property_type);
-    const prevAutoModeRef = useRef(autoMode);
-    const hasCalculatedInitial = useRef(false);
+    // Track if we've already calculated based on current rentable area
+    const lastCalculatedAreaRef = useRef(null);
+    const lastCalculatedTypeRef = useRef(null);
 
     // Sync autoMode when data changes from parent
     useEffect(() => {
         if (data.annual_rent_auto !== undefined && data.annual_rent_auto !== autoMode) {
             setAutoMode(data.annual_rent_auto);
         }
-    }, [data.annual_rent_auto]);
+    }, [data.annual_rent_auto, autoMode]); // Added autoMode to dependencies to avoid stale closure issues
 
-    // INITIAL calculation on mount if autoMode is enabled
+    // Auto-calculate when rentable area becomes available or changes
     useEffect(() => {
-        if (hasCalculatedInitial.current) return;
-        
-        console.log('[IncomeInputs] Initial mount check', {
+        console.log('[IncomeInputs] Checking for calculation', {
             autoMode,
-            hasRentableArea: !!propertyData.rentable_area_m2,
             rentableArea: propertyData.rentable_area_m2,
-            currentRent: data.annual_rent
+            propertyType: propertyData.property_type,
+            currentRent: data.annual_rent,
+            lastCalculatedArea: lastCalculatedAreaRef.current,
+            lastCalculatedType: lastCalculatedTypeRef.current
         });
         
-        if (autoMode && propertyData.rentable_area_m2 > 0 && !data.annual_rent) {
-            hasCalculatedInitial.current = true;
-            
-            const propertyType = propertyData.property_type || 'office';
-            const ratePerM2Monthly = {
-                office: 12.5,
-                retail: 16.67,
-                industrial: 6.67,
-                mixed: 12.5
-            };
-            
-            const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
-            const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12);
-            
-            console.log('[IncomeInputs] INITIAL calculation:', {
-                propertyType,
-                monthlyRate,
-                rentableArea: propertyData.rentable_area_m2,
-                calculatedRent
-            });
-            
-            onChange({ 
-                ...data, 
-                annual_rent: calculatedRent,
-                annual_rent_auto: true
-            });
-        } else {
-            hasCalculatedInitial.current = true;
-        }
-    }, []); // Run only once on mount
-
-    // Auto-calculate annual rent when property data changes
-    useEffect(() => {
-        // Skip if we haven't done initial calculation yet
-        if (!hasCalculatedInitial.current) return;
-        
         if (!autoMode) {
-            prevAutoModeRef.current = autoMode;
+            console.log('[IncomeInputs] Auto mode is OFF, skipping');
             return;
         }
         
-        if (!propertyData.rentable_area_m2 || propertyData.rentable_area_m2 <= 0) return;
-        
-        // Check if relevant values actually changed
-        const areaChanged = prevRentableAreaRef.current !== propertyData.rentable_area_m2;
-        const typeChanged = prevPropertyTypeRef.current !== propertyData.property_type;
-        const autoModeJustEnabled = !prevAutoModeRef.current && autoMode;
-        
-        console.log('[IncomeInputs] Change detection:', {
-            areaChanged,
-            typeChanged,
-            autoModeJustEnabled,
-            prevArea: prevRentableAreaRef.current,
-            newArea: propertyData.rentable_area_m2,
-            prevType: prevPropertyTypeRef.current,
-            newType: propertyData.property_type
-        });
-        
-        // Update refs BEFORE early return
-        prevRentableAreaRef.current = propertyData.rentable_area_m2;
-        prevPropertyTypeRef.current = propertyData.property_type;
-        prevAutoModeRef.current = autoMode;
-        
-        // Only proceed if something relevant changed
-        if (!areaChanged && !typeChanged && !autoModeJustEnabled) return;
+        if (!propertyData.rentable_area_m2 || propertyData.rentable_area_m2 <= 0) {
+            console.log('[IncomeInputs] No rentable area yet, skipping');
+            return;
+        }
         
         const propertyType = propertyData.property_type || 'office';
+        
+        // Check if we need to recalculate
+        const areaChanged = lastCalculatedAreaRef.current !== propertyData.rentable_area_m2;
+        const typeChanged = lastCalculatedTypeRef.current !== propertyType;
+        const neverCalculated = lastCalculatedAreaRef.current === null;
+        
+        if (!areaChanged && !typeChanged && !neverCalculated) {
+            console.log('[IncomeInputs] No relevant changes, skipping calculation');
+            return;
+        }
         
         // Market rates per m² per MONTH by property type
         const ratePerM2Monthly = {
@@ -111,21 +64,24 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
         const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12);
         
-        // Only update if the value actually changed
-        if (calculatedRent !== data.annual_rent) {
-            console.log('[IncomeInputs] Auto-calculating rent:', {
-                rentableArea: propertyData.rentable_area_m2,
-                propertyType,
-                monthlyRate,
-                calculatedRent
-            });
-            
-            onChange({ 
-                ...data, 
-                annual_rent: calculatedRent,
-                annual_rent_auto: true
-            });
-        }
+        console.log('[IncomeInputs] AUTO-CALCULATING rent:', {
+            rentableArea: propertyData.rentable_area_m2,
+            propertyType,
+            monthlyRate,
+            calculatedRent,
+            reason: neverCalculated ? 'first calculation' : (areaChanged ? 'area changed' : 'type changed')
+        });
+        
+        // Update our tracking refs
+        lastCalculatedAreaRef.current = propertyData.rentable_area_m2;
+        lastCalculatedTypeRef.current = propertyType;
+        
+        // Update the data
+        onChange({ 
+            ...data, 
+            annual_rent: calculatedRent,
+            annual_rent_auto: true
+        });
     }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode, data, onChange]);
 
     const handleChange = (field, value) => {
@@ -138,6 +94,9 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         
         if (field === 'annual_rent') {
             setAutoMode(false);
+            // Clear tracking so manual input takes precedence
+            lastCalculatedAreaRef.current = null;
+            lastCalculatedTypeRef.current = null;
         }
     };
 
@@ -160,6 +119,10 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                 
                 console.log('[IncomeInputs] Toggle ON - calculating rent:', calculatedRent);
                 
+                // Update tracking
+                lastCalculatedAreaRef.current = propertyData.rentable_area_m2;
+                lastCalculatedTypeRef.current = propertyType;
+                
                 onChange({ 
                     ...data, 
                     annual_rent: calculatedRent,
@@ -172,7 +135,9 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
                 });
             }
         } else {
-            // When disabling, just update the flag
+            // When disabling, clear tracking and just update the flag
+            lastCalculatedAreaRef.current = null;
+            lastCalculatedTypeRef.current = null;
             onChange({ 
                 ...data, 
                 annual_rent_auto: false
