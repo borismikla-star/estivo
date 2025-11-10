@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -11,7 +11,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
 
     useEffect(() => {
         setLocalData(data);
-        // Sync autoMode with data when component receives new data
+        // Sync autoMode with data
         if (data.annual_rent_auto !== undefined) {
             setAutoMode(data.annual_rent_auto);
         }
@@ -19,21 +19,24 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
 
     // Auto-calculate annual rent when property data changes
     useEffect(() => {
-        if (autoMode && propertyData.rentable_area_m2 > 0) {
-            const propertyType = propertyData.property_type || 'office';
-            
-            // Market rates per m² per MONTH by property type
-            const ratePerM2Monthly = {
-                office: 12.5,      // €12.5/m²/month
-                retail: 16.67,     // €16.67/m²/month
-                industrial: 6.67,  // €6.67/m²/month
-                mixed: 12.5        // €12.5/m²/month
-            };
-            
-            const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
-            const calculatedRent = propertyData.rentable_area_m2 * monthlyRate * 12; // Calculate annual rent
-            
-            // Always update if in auto mode
+        if (!autoMode) return;
+        if (!propertyData.rentable_area_m2 || propertyData.rentable_area_m2 <= 0) return;
+        
+        const propertyType = propertyData.property_type || 'office';
+        
+        // Market rates per m² per MONTH by property type
+        const ratePerM2Monthly = {
+            office: 12.5,      // €12.5/m²/month
+            retail: 16.67,     // €16.67/m²/month
+            industrial: 6.67,  // €6.67/m²/month
+            mixed: 12.5        // €12.5/m²/month
+        };
+        
+        const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
+        const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12); // Calculate annual rent
+        
+        // Only update if the value actually changed
+        if (calculatedRent !== localData.annual_rent) {
             const updated = { 
                 ...localData, 
                 annual_rent: calculatedRent,
@@ -42,9 +45,9 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             setLocalData(updated);
             onChange(updated);
         }
-    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode, onChange, localData]);
+    }, [propertyData.rentable_area_m2, propertyData.property_type, autoMode]);
 
-    const handleChange = useCallback((field, value) => {
+    const handleChange = (field, value) => {
         const updated = { 
             ...localData, 
             [field]: value,
@@ -56,32 +59,35 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         if (field === 'annual_rent') {
             setAutoMode(false);
         }
-    }, [localData, onChange]);
+    };
 
-    const toggleAutoMode = useCallback(() => {
+    const toggleAutoMode = () => {
         const newAutoMode = !autoMode;
         setAutoMode(newAutoMode);
         
-        if (newAutoMode && propertyData.rentable_area_m2 > 0) {
-            const propertyType = propertyData.property_type || 'office';
-            const ratePerM2Monthly = {
-                office: 12.5,
-                retail: 16.67,
-                industrial: 6.67,
-                mixed: 12.5
-            };
-            const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
-            const calculatedRent = propertyData.rentable_area_m2 * monthlyRate * 12;
-            
-            const updated = { 
-                ...localData, 
-                annual_rent: calculatedRent,
-                annual_rent_auto: true
-            };
-            setLocalData(updated);
-            onChange(updated);
+        if (newAutoMode) {
+            // Calculate immediately when enabling auto mode
+            if (propertyData.rentable_area_m2 > 0) {
+                const propertyType = propertyData.property_type || 'office';
+                const ratePerM2Monthly = {
+                    office: 12.5,
+                    retail: 16.67,
+                    industrial: 6.67,
+                    mixed: 12.5
+                };
+                const monthlyRate = ratePerM2Monthly[propertyType] || 12.5;
+                const calculatedRent = Math.round(propertyData.rentable_area_m2 * monthlyRate * 12);
+                
+                const updated = { 
+                    ...localData, 
+                    annual_rent: calculatedRent,
+                    annual_rent_auto: true
+                };
+                setLocalData(updated);
+                onChange(updated);
+            }
         } else {
-            // When disabling auto mode, just update the flag
+            // When disabling, just update the flag
             const updated = { 
                 ...localData, 
                 annual_rent_auto: false
@@ -89,7 +95,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             setLocalData(updated);
             onChange(updated);
         }
-    }, [autoMode, propertyData, localData, onChange]);
+    };
 
     const translations = {
         en: {

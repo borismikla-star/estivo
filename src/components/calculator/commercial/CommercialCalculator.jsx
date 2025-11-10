@@ -144,6 +144,9 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
     },
   ], [t_calc, projectData, language, onBulkUpdate, t]);
 
+  // Get current entity type label
+  const currentEntityLabel = projectData.entity_type === 'PO' ? t_calc.entity_type_po : t_calc.entity_type_fo;
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -161,7 +164,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
             onValueChange={handleEntityTypeChange}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t_calc.entity_type_fo} />
+              <SelectValue>{currentEntityLabel}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
