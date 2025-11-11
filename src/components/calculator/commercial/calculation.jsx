@@ -41,10 +41,24 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         return isNaN(parsed) ? 0 : parsed;
     };
 
+    // === VAT SETTINGS ===
+    const isVatPayer = assumptions_data.vat_payer || false;
+    const vatRate = num(preset?.vat_rate) || 20;
+    const vatMultiplier = 1 + (vatRate / 100);
+
     // === PROPERTY & INVESTMENT ===
-    const price = num(property_data.price);
-    const acquisitionCosts = num(property_data.acquisition_costs);
+    const priceGross = num(property_data.price);
+    const acquisitionCostsGross = num(property_data.acquisition_costs);
+    
+    // If VAT payer, calculate net amounts (can deduct input VAT)
+    const price = isVatPayer ? priceGross / vatMultiplier : priceGross;
+    const acquisitionCosts = isVatPayer ? acquisitionCostsGross / vatMultiplier : acquisitionCostsGross;
     const totalInvestment = price + acquisitionCosts;
+    
+    // VAT amounts (for display)
+    const vatOnPurchase = isVatPayer ? priceGross - price : 0;
+    const vatOnAcquisition = isVatPayer ? acquisitionCostsGross - acquisitionCosts : 0;
+    const totalVatDeductible = vatOnPurchase + vatOnAcquisition;
 
     // === FINANCING - CORRECTED ===
     const downPaymentPercent = num(financing_data.down_payment_percent) || 25;
@@ -279,11 +293,20 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         kpis: {
             // Investment
             total_investment: totalInvestment,
+            total_investment_gross: isVatPayer ? priceGross + acquisitionCostsGross : totalInvestment,
             total_equity: totalEquity,
             down_payment: downPayment,
             loan_amount: loanAmount,
             monthly_mortgage_payment: monthlyMortgagePayment,
             annual_debt_service: annualDebtService,
+            
+            // VAT Analysis (NEW!)
+            is_vat_payer: isVatPayer,
+            vat_rate: vatRate,
+            vat_on_purchase: vatOnPurchase,
+            vat_on_acquisition: vatOnAcquisition,
+            total_vat_deductible: totalVatDeductible,
+            net_investment_after_vat: totalInvestment,
             
             // Income
             potential_gross_income: potentialGrossIncome,
