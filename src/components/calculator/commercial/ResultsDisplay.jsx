@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card'; // Added Card and CardContent
-import { FileText, CheckCircle } from 'lucide-react'; // Added icons
+import { Card, CardContent } from '@/components/ui/card';
+import { FileText, CheckCircle } from 'lucide-react';
 import { currencyFormatter, percentFormatter } from '../../lib/formatters';
 import ResultsHeader from '../ResultsHeader';
 import KPICard from '../shared/KPICard';
@@ -21,7 +21,7 @@ export default function CommercialResults({ results, currency = '€', language 
 
     const translations = {
         en: {
-            commercial_results: "Commercial Property Analysis Results", // Added for ResultsHeader
+            commercial_results: "Commercial Property Analysis Results",
             overview: "Overview",
             details: "Details",
             projections: "10-Year Projections",
@@ -94,9 +94,40 @@ export default function CommercialResults({ results, currency = '€', language 
             net_investment_desc: "Actual investment after VAT deduction",
             vat_benefit: "VAT Benefit",
             vat_benefit_desc: "Cash flow benefit from VAT deduction",
+
+            // TAX ANALYSIS (NEW!)
+            tax_analysis: "Tax Analysis",
+            tax_status: "Tax Status",
+            entity_type_fo: "Individual (FO)",
+            entity_type_po: "Legal Entity (PO)",
+            effective_tax_rate: "Effective Tax Rate",
+            taxable_income: "Taxable Income",
+            taxable_income_desc: "Income subject to taxation after deductions",
+            annual_income_tax: "Annual Income Tax",
+            annual_income_tax_desc: "Tax liability on rental income",
+            depreciation: "Annual Depreciation",
+            depreciation_desc: "Building depreciation (tax deductible)",
+            interest_deduction: "Interest Deduction",
+            interest_deduction_desc: "Mortgage interest (tax deductible)",
+            tax_benefits: "Tax Benefits",
+            tax_benefit_from_interest: "Benefit from Interest",
+            tax_benefit_from_depreciation: "Benefit from Depreciation",
+            total_tax_benefit: "Total Tax Benefits",
+            total_tax_benefit_desc: "Total tax savings from deductions",
+            before_tax: "Before Tax",
+            after_tax: "After Tax",
+            cash_flow_comparison: "Cash Flow Comparison",
+            cash_on_cash_after_tax: "Cash-on-Cash (After Tax)",
+            cash_on_cash_after_tax_desc: "Annual return on equity after taxes",
+            irr_after_tax: "IRR (After Tax)",
+            irr_after_tax_desc: "Return including tax impact",
+            npv_after_tax: "NPV (After Tax)",
+            npv_after_tax_desc: "Present value after tax",
+            roi_after_tax: "ROI (After Tax)",
+            roi_after_tax_desc: "Total return after tax",
         },
         sk: {
-            commercial_results: "Výsledky analýzy komerčnej nehnuteľnosti", // Added for ResultsHeader
+            commercial_results: "Výsledky analýzy komerčnej nehnuteľnosti",
             overview: "Prehľad",
             details: "Detaily",
             projections: "10-ročné projekcie",
@@ -169,9 +200,40 @@ export default function CommercialResults({ results, currency = '€', language 
             net_investment_desc: "Skutočná investícia po odpočítaní DPH",
             vat_benefit: "Benefit z DPH",
             vat_benefit_desc: "Cash flow benefit z odpočtu DPH",
+
+            // TAX ANALYSIS (NEW!)
+            tax_analysis: "Daňová analýza",
+            tax_status: "Daňový status",
+            entity_type_fo: "Fyzická osoba (FO)",
+            entity_type_po: "Právnická osoba (PO)",
+            effective_tax_rate: "Efektívna daňová sadzba",
+            taxable_income: "Zdaniteľný príjem",
+            taxable_income_desc: "Príjem podliehajúci zdaneniu po odpočtoch",
+            annual_income_tax: "Ročná daň z príjmu",
+            annual_income_tax_desc: "Daňová povinnosť z príjmov z prenájmu",
+            depreciation: "Ročné odpisy",
+            depreciation_desc: "Odpisy budovy (daňovo odpočítateľné)",
+            interest_deduction: "Odpočet úrokov",
+            interest_deduction_desc: "Úroky z hypotéky (daňovo odpočítateľné)",
+            tax_benefits: "Daňové benefity",
+            tax_benefit_from_interest: "Benefit z úrokov",
+            tax_benefit_from_depreciation: "Benefit z odpisov",
+            total_tax_benefit: "Celkové daňové benefity",
+            total_tax_benefit_desc: "Celkové daňové úspory z odpočtov",
+            before_tax: "Pred zdanením",
+            after_tax: "Po zdanení",
+            cash_flow_comparison: "Porovnanie Cash Flow",
+            cash_on_cash_after_tax: "Cash-on-Cash (Po zdanení)",
+            cash_on_cash_after_tax_desc: "Ročná návratnosť vlastného kapitálu po zdanení",
+            irr_after_tax: "IRR (Po zdanení)",
+            irr_after_tax_desc: "Návratnosť vrátane vplyvu daní",
+            npv_after_tax: "NPV (Po zdanení)",
+            npv_after_tax_desc: "Súčasná hodnota po zdanení",
+            roi_after_tax: "ROI (Po zdanení)",
+            roi_after_tax_desc: "Celková návratnosť po zdanení",
         },
         pl: {
-            commercial_results: "Wyniki analizy nieruchomości komercyjnej", // Added for ResultsHeader
+            commercial_results: "Wyniki analizy nieruchomości komercyjnej",
             overview: "Przegląd",
             details: "Szczegóły",
             projections: "Projekcje 10-letnie",
@@ -248,9 +310,40 @@ export default function CommercialResults({ results, currency = '€', language 
             net_investment_desc: "Rzeczywista inwestycja po odliczeniu VAT",
             vat_benefit: "Korzyść z VAT",
             vat_benefit_desc: "Korzyść cash flow z odliczenia VAT",
+
+            // TAX ANALYSIS (NEW!)
+            tax_analysis: "Analiza Podatkowa",
+            tax_status: "Status Podatkowy",
+            entity_type_fo: "Osoba fizyczna (FO)",
+            entity_type_po: "Osoba prawna (PO)",
+            effective_tax_rate: "Efektywna stopa podatkowa",
+            taxable_income: "Dochód podlegający opodatkowaniu",
+            taxable_income_desc: "Dochód podlegający opodatkowaniu po odliczeniach",
+            annual_income_tax: "Roczny podatek dochodowy",
+            annual_income_tax_desc: "Zobowiązanie podatkowe od dochodów z najmu",
+            depreciation: "Roczna amortyzacja",
+            depreciation_desc: "Amortyzacja budynku (odliczalna od podatku)",
+            interest_deduction: "Odliczenie odsetek",
+            interest_deduction_desc: "Odsetki od kredytu hipotecznego (odliczalne od podatku)",
+            tax_benefits: "Korzyści podatkowe",
+            tax_benefit_from_interest: "Korzyść z odsetek",
+            tax_benefit_from_depreciation: "Korzyść z amortyzacji",
+            total_tax_benefit: "Całkowite korzyści podatkowe",
+            total_tax_benefit_desc: "Całkowite oszczędności podatkowe z odliczeń",
+            before_tax: "Przed opodatkowaniem",
+            after_tax: "Po opodatkowaniu",
+            cash_flow_comparison: "Porównanie przepływów pieniężnych",
+            cash_on_cash_after_tax: "Cash-on-Cash (po opodatkowaniu)",
+            cash_on_cash_after_tax_desc: "Roczny zwrot z kapitału własnego po opodatkowaniu",
+            irr_after_tax: "IRR (po opodatkowaniu)",
+            irr_after_tax_desc: "Zwrot uwzględniający wpływ podatków",
+            npv_after_tax: "NPV (po opodatkowaniu)",
+            npv_after_tax_desc: "Wartość bieżąca netto po opodatkowaniu",
+            roi_after_tax: "ROI (po opodatkowaniu)",
+            roi_after_tax_desc: "Całkowity zwrot po opodatkowaniu",
         },
         hu: {
-            commercial_results: "Kereskedelmi ingatlan elemzési eredmények", // Added for ResultsHeader
+            commercial_results: "Kereskedelmi ingatlan elemzési eredmények",
             overview: "Áttekintés",
             details: "Részletek",
             projections: "10 éves előrejelzések",
@@ -298,7 +391,7 @@ export default function CommercialResults({ results, currency = '€', language 
             noi_tooltip: "Teljes bevétel mínusz működési költségek és tőkekiadások",
             
             monthly_cash_flow: "Havi Cash Flow",
-            monthly_cash_flow_desc: "Átlagos havi profit",
+            monthly_cash_flow_flow_desc: "Átlagos havi profit",
             
             pgi: "Potenciális bruttó bevétel",
             pgi_desc: "Teljes bevétel üresedés előtt",
@@ -327,9 +420,40 @@ export default function CommercialResults({ results, currency = '€', language 
             net_investment_desc: "Tényleges befektetés ÁFA levonás után",
             vat_benefit: "ÁFA előny",
             vat_benefit_desc: "Cash flow előny az ÁFA levonásból",
+
+            // TAX ANALYSIS (NEW!)
+            tax_analysis: "Adóelemzés",
+            tax_status: "Adó státusz",
+            entity_type_fo: "Magánszemély (FO)",
+            entity_type_po: "Jogi személy (PO)",
+            effective_tax_rate: "Effektív adókulcs",
+            taxable_income: "Adózás előtti jövedelem",
+            taxable_income_desc: "Levonások után adóköteles jövedelem",
+            annual_income_tax: "Éves jövedelemadó",
+            annual_income_tax_desc: "Adókötelezettség bérleti díjból származó jövedelemre",
+            depreciation: "Éves értékcsökkenés",
+            depreciation_desc: "Épület értékcsökkenése (adóalap-csökkentő)",
+            interest_deduction: "Kamattalap-csökkentés",
+            interest_deduction_desc: "Hitelkamatok (adóalap-csökkentő)",
+            tax_benefits: "Adókedvezmények",
+            tax_benefit_from_interest: "Kamattalap-csökkentésből eredő előny",
+            tax_benefit_from_depreciation: "Értékcsökkenésből eredő előny",
+            total_tax_benefit: "Összes adókedvezmény",
+            total_tax_benefit_desc: "Összes adómegtakarítás a levonásokból",
+            before_tax: "Adózás előtt",
+            after_tax: "Adózás után",
+            cash_flow_comparison: "Cash Flow összehasonlítás",
+            cash_on_cash_after_tax: "Cash-on-Cash (adózás után)",
+            cash_on_cash_after_tax_desc: "Éves hozam a saját tőkéből adózás után",
+            irr_after_tax: "IRR (adózás után)",
+            irr_after_tax_desc: "Megtérülés az adók hatásával együtt",
+            npv_after_tax: "NPV (adózás után)",
+            npv_after_tax_desc: "Nettó jelenérték adózás után",
+            roi_after_tax: "ROI (adózás után)",
+            roi_after_tax_desc: "Teljes megtérülés adózás után",
         },
         de: {
-            commercial_results: "Ergebnisse der Gewerbeimmobilienanalyse", // Added for ResultsHeader
+            commercial_results: "Ergebnisse der Gewerbeimmobilienanalyse",
             overview: "Übersicht",
             details: "Details",
             projections: "10-Jahres-Prognosen",
@@ -406,6 +530,37 @@ export default function CommercialResults({ results, currency = '€', language 
             net_investment_desc: "Tatsächliche Investition nach Vorsteuerabzug",
             vat_benefit: "Umsatzsteuervorteil",
             vat_benefit_desc: "Cashflow-Vorteil aus Vorsteuerabzug",
+
+            // TAX ANALYSIS (NEW!)
+            tax_analysis: "Steueranalyse",
+            tax_status: "Steuerstatus",
+            entity_type_fo: "Einzelperson (FO)",
+            entity_type_po: "Juristische Person (PO)",
+            effective_tax_rate: "Effektiver Steuersatz",
+            taxable_income: "Zu versteuerndes Einkommen",
+            taxable_income_desc: "Einkommen, das nach Abzügen der Besteuerung unterliegt",
+            annual_income_tax: "Jährliche Einkommensteuer",
+            annual_income_tax_desc: "Steuerpflicht auf Mieteinnahmen",
+            depreciation: "Jährliche Abschreibung",
+            depreciation_desc: "Gebäudeabschreibung (steuerlich absetzbar)",
+            interest_deduction: "Zinsabzug",
+            interest_deduction_desc: "Hypothekenzinsen (steuerlich absetzbar)",
+            tax_benefits: "Steuervorteile",
+            tax_benefit_from_interest: "Vorteil aus Zinsen",
+            tax_benefit_from_depreciation: "Vorteil aus Abschreibung",
+            total_tax_benefit: "Gesamte Steuervorteile",
+            total_tax_benefit_desc: "Gesamte Steuerersparnisse durch Abzüge",
+            before_tax: "Vor Steuern",
+            after_tax: "Nach Steuern",
+            cash_flow_comparison: "Cashflow-Vergleich",
+            cash_on_cash_after_tax: "Cash-on-Cash (nach Steuern)",
+            cash_on_cash_after_tax_desc: "Jährliche Eigenkapitalrendite nach Steuern",
+            irr_after_tax: "IRR (nach Steuern)",
+            irr_after_tax_desc: "Rendite unter Berücksichtigung der Steuern",
+            npv_after_tax: "NPV (nach Steuern)",
+            npv_after_tax_desc: "Nettobarwert nach Steuern",
+            roi_after_tax: "ROI (nach Steuern)",
+            roi_after_tax_desc: "Gesamtrendite nach Steuern",
         }
     };
 
@@ -457,11 +612,11 @@ export default function CommercialResults({ results, currency = '€', language 
     return (
         <Card className="bg-card">
             <ResultsHeader 
-                title={t.commercial_results} // Changed to use title prop
+                title={t.commercial_results}
             />
             <CardContent className="p-3 sm:p-6">
                 <Tabs defaultValue="overview" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 mb-6"> {/* Added mb-6 */}
+                    <TabsList className="grid w-full grid-cols-3 mb-6">
                         <TabsTrigger value="overview">{t.overview}</TabsTrigger>
                         <TabsTrigger value="details">{t.details}</TabsTrigger>
                         <TabsTrigger value="projections">{t.projections}</TabsTrigger>
@@ -480,7 +635,7 @@ export default function CommercialResults({ results, currency = '€', language 
                                     <div className="flex items-center gap-2 mb-3">
                                         <CheckCircle className="w-5 h-5 text-green-600" />
                                         <span className="font-semibold text-green-800">{t.vat_payer_status}</span>
-                                        <span className="text-sm text-gray-600">({t.vat_rate_label}: {percentFormatter(kpis.vat_rate)})</span> {/* Changed kpis.vat_rate to percentFormatter */}
+                                        <span className="text-sm text-gray-600">({t.vat_rate_label}: {percentFormatter(kpis.vat_rate)})</span>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <KPICard
@@ -523,7 +678,101 @@ export default function CommercialResults({ results, currency = '€', language 
                             </div>
                         )}
 
-                        {/* Investment Overview */}
+                        {/* TAX ANALYSIS SECTION (NEW!) */}
+                        {kpis.effective_tax_rate !== undefined && (
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
+                                    <FileText className="w-5 h-5" />
+                                    {t.tax_analysis}
+                                </h3>
+                                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                    {/* Entity Type Badge */}
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <CheckCircle className="w-5 h-5 text-amber-600" />
+                                        <span className="font-semibold text-amber-800">
+                                            {kpis.entity_type === 'PO' ? t.entity_type_po : t.entity_type_fo}
+                                        </span>
+                                        <span className="text-sm text-gray-600">
+                                            ({t.effective_tax_rate}: {percentFormatter(kpis.effective_tax_rate)})
+                                        </span>
+                                    </div>
+                                    
+                                    {/* Tax Calculation Details */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <KPICard
+                                            title={t.depreciation}
+                                            value={currencyFormatter(kpis.annual_depreciation, currency, currencySymbol, 0)}
+                                            description={t.depreciation_desc}
+                                        />
+                                        <KPICard
+                                            title={t.interest_deduction}
+                                            value={currencyFormatter(kpis.annual_interest_deduction, currency, currencySymbol, 0)}
+                                            description={t.interest_deduction_desc}
+                                        />
+                                        <KPICard
+                                            title={t.taxable_income}
+                                            value={currencyFormatter(kpis.taxable_income, currency, currencySymbol, 0)}
+                                            description={t.taxable_income_desc}
+                                        />
+                                        <KPICard
+                                            title={t.annual_income_tax}
+                                            value={currencyFormatter(kpis.annual_income_tax, currency, currencySymbol, 0)}
+                                            description={t.annual_income_tax_desc}
+                                            status="warning"
+                                        />
+                                    </div>
+                                    
+                                    {/* Tax Benefits Box */}
+                                    <div className="p-4 bg-orange-50 rounded-lg border border-orange-200 mb-4">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-sm font-semibold text-orange-800">
+                                                💰 {t.tax_benefits}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3 mb-3">
+                                            <div className="text-sm">
+                                                <span className="text-gray-600">{t.tax_benefit_from_interest}:</span>
+                                                <div className="font-bold text-green-600">
+                                                    {currencyFormatter(kpis.tax_benefit_from_interest, currency, currencySymbol, 0)}
+                                                </div>
+                                            </div>
+                                            <div className="text-sm">
+                                                <span className="text-gray-600">{t.tax_benefit_from_depreciation}:</span>
+                                                <div className="font-bold text-green-600">
+                                                    {currencyFormatter(kpis.tax_benefit_from_depreciation, currency, currencySymbol, 0)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="pt-3 border-t border-orange-200 text-center">
+                                            <span className="text-sm text-gray-600">{t.total_tax_benefit}: </span>
+                                            <span className="text-lg font-bold text-green-600">
+                                                {currencyFormatter(kpis.total_tax_benefit, currency, currencySymbol, 0)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Before/After Tax Comparison */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-blue-50 p-4 rounded-lg text-center border border-blue-200">
+                                            <div className="text-xs text-blue-600 mb-1">{t.before_tax}</div>
+                                            <div className="text-xl font-bold text-blue-900">
+                                                {currencyFormatter(kpis.annual_cash_flow, currency, currencySymbol, 0)}
+                                            </div>
+                                            <div className="text-xs text-blue-600 mt-1">Annual Cash Flow</div>
+                                        </div>
+                                        <div className="bg-green-50 p-4 rounded-lg text-center border border-green-200">
+                                            <div className="text-xs text-green-600 mb-1">{t.after_tax}</div>
+                                            <div className="text-xl font-bold text-green-900">
+                                                {currencyFormatter(kpis.annual_cash_flow_after_tax, currency, currencySymbol, 0)}
+                                            </div>
+                                            <div className="text-xs text-green-600 mt-1">Annual Cash Flow</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Investment Overview - UPDATED with After Tax Metrics */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <KPICard
                                 title={t.total_investment}
@@ -531,6 +780,8 @@ export default function CommercialResults({ results, currency = '€', language 
                                 description={t.total_investment_desc}
                                 tooltip={t.total_investment_tooltip}
                             />
+                            
+                            {/* ROI - Show both */}
                             <KPICard
                                 title={t.roi}
                                 value={percentFormatter(kpis.roi_10_year, 1)}
@@ -540,15 +791,34 @@ export default function CommercialResults({ results, currency = '€', language 
                                 excellent={getROIStatus(kpis.roi_10_year) === 'excellent'}
                                 good={getROIStatus(kpis.roi_10_year) === 'good'}
                             />
+                            {kpis.roi_10_year_after_tax !== undefined && (
+                                <KPICard
+                                    title={t.roi_after_tax}
+                                    value={percentFormatter(kpis.roi_10_year_after_tax, 1)}
+                                    description={t.roi_after_tax_desc}
+                                    status={getROIStatus(kpis.roi_10_year_after_tax)}
+                                />
+                            )}
+                            
+                            {/* Cash-on-Cash - Show both before and after tax */}
                             <KPICard
                                 title={t.cash_on_cash}
                                 value={percentFormatter(kpis.cash_on_cash_return, 2)}
-                                description={t.cash_on_cash_desc}
+                                description={`${t.cash_on_cash_desc} (${t.before_tax})`}
                                 tooltip={t.cash_on_cash_tooltip}
                                 warning={getCashOnCashStatus(kpis.cash_on_cash_return) === 'warning' ? t.cash_on_cash_warning : null}
                                 excellent={getCashOnCashStatus(kpis.cash_on_cash_return) === 'excellent'}
                                 good={getCashOnCashStatus(kpis.cash_on_cash_return) === 'good'}
                             />
+                            {kpis.cash_on_cash_return_after_tax !== undefined && (
+                                <KPICard
+                                    title={t.cash_on_cash_after_tax}
+                                    value={percentFormatter(kpis.cash_on_cash_return_after_tax, 2)}
+                                    description={t.cash_on_cash_after_tax_desc}
+                                    status={getCashOnCashStatus(kpis.cash_on_cash_return_after_tax)}
+                                />
+                            )}
+                            
                             <KPICard
                                 title={t.cap_rate}
                                 value={percentFormatter(kpis.cap_rate, 2)}
@@ -558,24 +828,49 @@ export default function CommercialResults({ results, currency = '€', language 
                                 excellent={getCapRateStatus(kpis.cap_rate) === 'excellent'}
                                 good={getCapRateStatus(kpis.cap_rate) === 'good'}
                             />
+                            
+                            {/* NPV - Show both */}
                             <KPICard
                                 title={t.npv}
                                 value={currencyFormatter(kpis.npv, currency, currencySymbol, 0)}
                                 description={t.npv_desc}
                                 tooltip={t.npv_tooltip}
                                 warning={kpis.npv < 0 ? t.npv_warning : null}
-                                excellent={kpis.npv > (kpis.total_equity * 0.5)} // Arbitrary threshold for excellent NPV
+                                excellent={kpis.npv > (kpis.total_equity * 0.5)}
                                 good={kpis.npv > 0}
                             />
+                            {kpis.npv_after_tax !== undefined && (
+                                <KPICard
+                                    title={t.npv_after_tax}
+                                    value={currencyFormatter(kpis.npv_after_tax, currency, currencySymbol, 0)}
+                                    description={t.npv_after_tax_desc}
+                                    warning={kpis.npv_after_tax < 0 ? t.npv_warning : null}
+                                    excellent={kpis.npv_after_tax > (kpis.total_equity * 0.5)}
+                                    good={kpis.npv_after_tax > 0}
+                                />
+                            )}
+                            
+                            {/* IRR - Show both */}
                             <KPICard
                                 title={t.irr}
                                 value={percentFormatter(kpis.irr, 2)}
                                 description={t.irr_desc}
                                 tooltip={t.irr_tooltip}
-                                warning={kpis.irr < 8 ? t.irr_warning : null} // Assuming 8% is a low IRR for commercial real estate
-                                excellent={kpis.irr > 15} // Assuming 15% is excellent
-                                good={kpis.irr > 10} // Assuming 10% is good
+                                warning={kpis.irr < 8 ? t.irr_warning : null}
+                                excellent={kpis.irr > 15}
+                                good={kpis.irr > 10}
                             />
+                            {kpis.irr_after_tax !== undefined && (
+                                <KPICard
+                                    title={t.irr_after_tax}
+                                    value={percentFormatter(kpis.irr_after_tax, 2)}
+                                    description={t.irr_after_tax_desc}
+                                    warning={kpis.irr_after_tax < 8 ? t.irr_warning : null}
+                                    excellent={kpis.irr_after_tax > 15}
+                                    good={kpis.irr_after_tax > 10}
+                                />
+                            )}
+                            
                             <KPICard
                                 title={t.dscr}
                                 value={kpis.dscr ? kpis.dscr.toFixed(2) : 'N/A'}
@@ -590,7 +885,7 @@ export default function CommercialResults({ results, currency = '€', language 
                                 value={currencyFormatter(kpis.annual_cash_flow, currency, currencySymbol, 0)}
                                 description={t.annual_cash_flow_desc}
                                 tooltip={t.annual_cash_flow_tooltip}
-                                excellent={kpis.annual_cash_flow > (kpis.total_equity * 0.1)} // Arbitrary: 10% cash flow on equity
+                                excellent={kpis.annual_cash_flow > (kpis.total_equity * 0.1)}
                                 good={kpis.annual_cash_flow > 0}
                             />
                             <KPICard
