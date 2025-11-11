@@ -1,4 +1,3 @@
-
 // Helper function to calculate IRR using Newton-Raphson method
 function calculateIRR(cashFlows, guess = 0.1) {
     const maxIterations = 100;
@@ -33,7 +32,7 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         financing_data = {},
         initial_costs_data = {},
         operating_data = {},
-        entity_type
+        entity_type = 'FO',
     } = projectData;
 
     // Helper function to ensure number
@@ -106,13 +105,50 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     const annualCashFlow = netOperatingIncome - annualDebtService;
     const monthlyCashFlow = annualCashFlow / 12;
     
+    // === TAX CALCULATIONS (NEW!) ===
+    const corporateTaxRate = num(preset?.corporate_tax_rate) || 21;
+    const incomeTaxRateFO = num(preset?.income_tax_rate_fo) || 25;
+    const depreciationRate = num(preset?.depreciation_rate) || 2;
+    
+    // Annual depreciation
+    const annualDepreciation = purchasePrice * (depreciationRate / 100);
+    
+    // First year interest (changes each year as principal is paid down)
+    let firstYearInterest = 0;
+    if (loanAmount > 0 && monthlyInterestRate > 0) {
+        let balance = loanAmount;
+        for (let month = 1; month <= 12; month++) {
+            const interest = balance * monthlyInterestRate;
+            firstYearInterest += interest;
+            const principal = monthlyMortgagePayment - interest;
+            balance -= principal;
+        }
+    }
+    
+    // Taxable income = NOI - Interest - Depreciation
+    const taxableIncome = Math.max(0, netOperatingIncome - firstYearInterest - annualDepreciation);
+    
+    // Tax rate based on entity type
+    const effectiveTaxRate = entity_type === 'PO' ? corporateTaxRate : incomeTaxRateFO;
+    const annualIncomeTax = taxableIncome * (effectiveTaxRate / 100);
+    
+    // Cash flow after tax
+    const annualCashFlowAfterTax = annualCashFlow - annualIncomeTax;
+    const monthlyCashFlowAfterTax = annualCashFlowAfterTax / 12;
+    
+    // Tax benefits
+    const taxBenefitFromInterest = firstYearInterest * (effectiveTaxRate / 100);
+    const taxBenefitFromDepreciation = annualDepreciation * (effectiveTaxRate / 100);
+    const totalTaxBenefit = taxBenefitFromInterest + taxBenefitFromDepreciation;
+    
     // === ADVANCED METRICS ===
     
     // 1. Cap Rate (Capitalization Rate)
     const capRate = purchasePrice > 0 ? (netOperatingIncome / purchasePrice) * 100 : 0;
     
-    // 2. Cash-on-Cash Return (Year 1) - based on TOTAL EQUITY (down payment + initial costs)
+    // 2. Cash-on-Cash Return (Year 1) - based on TOTAL EQUITY
     const cashOnCashReturn = totalEquity > 0 ? (annualCashFlow / totalEquity) * 100 : 0;
+    const cashOnCashReturnAfterTax = totalEquity > 0 ? (annualCashFlowAfterTax / totalEquity) * 100 : 0;
     
     // 3. Debt Service Coverage Ratio (DSCR)
     const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : 0;
@@ -126,14 +162,16 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     // 6. Break-Even Occupancy
     const breakEvenOccupancy = annualRent > 0 ? ((totalAnnualOperatingExpenses + annualDebtService) / annualRent) * 100 : 0;
     
-    // === 10-YEAR PROJECTIONS ===
+    // === 10-YEAR PROJECTIONS WITH TAX ===
     const appreciationRate = num(operating_data.appreciation_rate) || 2;
     const rentGrowthRate = num(operating_data.rent_growth_rate) || 2;
     const expenseGrowthRate = 2;
     
     const projections = [];
-    const cashFlowsForIRR = [-totalEquity]; // Year 0: initial investment (negative)
+    const cashFlowsForIRR = [-totalEquity];
+    const cashFlowsForIRRAfterTax = [-totalEquity];
     let cumulativeCashFlow = 0;
+    let cumulativeCashFlowAfterTax = 0;
     let remainingLoanBalance = loanAmount;
     let currentPropertyValue = purchasePrice;
     let currentRent = annualRent;
@@ -151,6 +189,22 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         const yearCashFlow = yearNOI - annualDebtService;
         cumulativeCashFlow += yearCashFlow;
         
+        // Tax calculation for this year
+        let yearInterest = 0;
+        let tempBalance = remainingLoanBalance;
+        for (let month = 1; month <= 12; month++) {
+            const interest = tempBalance * monthlyInterestRate;
+            yearInterest += interest;
+            const principal = monthlyMortgagePayment - interest;
+            tempBalance -= principal;
+        }
+        
+        const yearDepreciation = purchasePrice * (depreciationRate / 100);
+        const yearTaxableIncome = Math.max(0, yearNOI - yearInterest - yearDepreciation);
+        const yearIncomeTax = yearTaxableIncome * (effectiveTaxRate / 100);
+        const yearCashFlowAfterTax = yearCashFlow - yearIncomeTax;
+        cumulativeCashFlowAfterTax += yearCashFlowAfterTax;
+        
         let yearPrincipalPaid = 0;
         let tempLoanBalance = remainingLoanBalance;
         if (monthlyMortgagePayment > 0 && monthlyInterestRate > 0) {
@@ -165,6 +219,7 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         
         const equity = currentPropertyValue - remainingLoanBalance;
         const cumulativeROI = totalEquity > 0 ? (cumulativeCashFlow / totalEquity) * 100 : 0;
+        const cumulativeROIAfterTax = totalEquity > 0 ? (cumulativeCashFlowAfterTax / totalEquity) * 100 : 0;
         
         projections.push({
             year,
@@ -172,34 +227,44 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
             operating_expenses: currentOpex,
             debt_service: annualDebtService,
             net_cash_flow: yearCashFlow,
+            income_tax: yearIncomeTax,
+            net_cash_flow_after_tax: yearCashFlowAfterTax,
             cumulative_cash_flow: cumulativeCashFlow,
+            cumulative_cash_flow_after_tax: cumulativeCashFlowAfterTax,
             property_value: currentPropertyValue,
             loan_balance: remainingLoanBalance,
             equity: equity,
             principal_paid: yearPrincipalPaid,
-            cumulative_roi: cumulativeROI
+            cumulative_roi: cumulativeROI,
+            cumulative_roi_after_tax: cumulativeROIAfterTax
         });
         
-        // For IRR calculation: Years 1-9 are just cash flows, Year 10 includes sale proceeds
+        // For IRR: Years 1-9 are just cash flows, Year 10 includes exit
         if (year < 10) {
             cashFlowsForIRR.push(yearCashFlow);
+            cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax);
         } else {
-            // Year 10: cash flow + equity from sale (property value - remaining loan)
+            // Year 10: cash flow + exit equity
             cashFlowsForIRR.push(yearCashFlow + equity);
+            cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax + equity);
         }
     }
     
     // === OVERALL ROI & IRR ===
     const year10 = projections[9];
     const totalCashFlows = year10.cumulative_cash_flow;
+    const totalCashFlowsAfterTax = year10.cumulative_cash_flow_after_tax;
     const finalEquity = year10.equity;
     const totalReturn = totalCashFlows + finalEquity;
+    const totalReturnAfterTax = totalCashFlowsAfterTax + finalEquity;
     const overallROI = totalEquity > 0 ? ((totalReturn - totalEquity) / totalEquity) * 100 : 0;
+    const overallROIAfterTax = totalEquity > 0 ? ((totalReturnAfterTax - totalEquity) / totalEquity) * 100 : 0;
     
-    // CORRECTED IRR CALCULATION using Newton-Raphson method
     const irr = calculateIRR(cashFlowsForIRR);
+    const irrAfterTax = calculateIRR(cashFlowsForIRRAfterTax);
     
     const equityMultiple = totalEquity > 0 ? totalReturn / totalEquity : 0;
+    const equityMultipleAfterTax = totalEquity > 0 ? totalReturnAfterTax / totalEquity : 0;
     
     let paybackPeriod = null;
     for (let i = 0; i < projections.length; i++) {
@@ -268,16 +333,33 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
             annual_cash_flow: annualCashFlow,
             monthly_cash_flow: monthlyCashFlow,
             
+            // TAX ANALYSIS (NEW!)
+            entity_type: entity_type,
+            effective_tax_rate: effectiveTaxRate,
+            annual_depreciation: annualDepreciation,
+            annual_interest_deduction: firstYearInterest,
+            taxable_income: taxableIncome,
+            annual_income_tax: annualIncomeTax,
+            tax_benefit_from_interest: taxBenefitFromInterest,
+            tax_benefit_from_depreciation: taxBenefitFromDepreciation,
+            total_tax_benefit: totalTaxBenefit,
+            annual_cash_flow_after_tax: annualCashFlowAfterTax,
+            monthly_cash_flow_after_tax: monthlyCashFlowAfterTax,
+            
             cap_rate: capRate,
             cash_on_cash_return: cashOnCashReturn,
+            cash_on_cash_return_after_tax: cashOnCashReturnAfterTax,
             dscr: dscr,
             gross_rental_yield: grossRentalYield,
             net_rental_yield: netRentalYield,
             break_even_occupancy: breakEvenOccupancy,
             
             roi_10_year: overallROI,
+            roi_10_year_after_tax: overallROIAfterTax,
             irr: irr,
+            irr_after_tax: irrAfterTax,
             equity_multiple: equityMultiple,
+            equity_multiple_after_tax: equityMultipleAfterTax,
             payback_period: paybackPeriod,
 
             annual_property_tax: annualPropertyTax,
