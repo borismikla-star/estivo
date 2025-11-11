@@ -21,7 +21,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           opex: "Operating Expenses",
           capex: "Capital Expenditures (CapEx)",
           financing: "Financing",
-          assumptions: "Assumptions",
+          assumptions: "Assumptions & Tax Settings",
           entity_type: "Entity Type",
           entity_type_fo: "Individual (FO)",
           entity_type_po: "Legal Entity (PO)",
@@ -32,7 +32,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           opex: "Prevádzkové náklady",
           capex: "Kapitálové výdavky (CapEx)",
           financing: "Financovanie",
-          assumptions: "Predpoklady",
+          assumptions: "Predpoklady a daňové nastavenia",
           entity_type: "Typ subjektu",
           entity_type_fo: "Fyzická osoba (FO)",
           entity_type_po: "Právnická osoba (PO)",
@@ -43,7 +43,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           opex: "Koszty operacyjne",
           capex: "Wydatki kapitałowe (CapEx)",
           financing: "Finansowanie",
-          assumptions: "Założenia",
+          assumptions: "Założenia i ustawienia podatkowe",
           entity_type: "Typ podmiotu",
           entity_type_fo: "Osoba fizyczna (FO)",
           entity_type_po: "Osoba prawna (PO)",
@@ -54,7 +54,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           opex: "Működési költségek",
           capex: "Tőkekiadások (CapEx)",
           financing: "Finanszírozás",
-          assumptions: "Feltételezések",
+          assumptions: "Feltételezések és adóbeállítások",
           entity_type: "Entitás típusa",
           entity_type_fo: "Magánszemély (FO)",
           entity_type_po: "Jogi személy (PO)",
@@ -65,7 +65,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           opex: "Betriebskosten",
           capex: "Investitionsausgaben (CapEx)",
           financing: "Finanzierung",
-          assumptions: "Annahmen",
+          assumptions: "Annahmen & Steuereinstellungen",
           entity_type: "Rechtsform",
           entity_type_fo: "Natürliche Person (FO)",
           entity_type_po: "Juristische Person (PO)",
@@ -77,6 +77,8 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
   const handleEntityTypeChange = useCallback((value) => {
     onBulkUpdate('entity_type', value);
   }, [onBulkUpdate]);
+
+  const currentCountryPreset = countryPresets?.find(p => p.country_code === projectData.country);
 
   const accordionItems = useMemo(() => [
     { 
@@ -138,11 +140,12 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
       content: <AssumptionsInputs 
         data={projectData.assumptions_data || {}} 
         language={language} 
+        countryPreset={currentCountryPreset}
         onChange={(updatedData) => onBulkUpdate("assumptions_data", updatedData)} 
         t={t} 
       /> 
     },
-  ], [t_calc, projectData, language, onBulkUpdate, t]);
+  ], [t_calc, projectData, language, onBulkUpdate, t, currentCountryPreset]);
 
   // Get current entity type label
   const currentEntityLabel = projectData.entity_type === 'PO' ? t_calc.entity_type_po : t_calc.entity_type_fo;
