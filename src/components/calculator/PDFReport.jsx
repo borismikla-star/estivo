@@ -59,7 +59,7 @@ const PrintCashFlowTimeline = ({ data, t }) => {
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
                         <tbody>
                             <tr>
-                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '500' }}>{t.costs}</td>
+                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '500' }}>{t.costs || 'Costs'}</td>
                                 <td style={{ width: '70%', padding: '4px' }}>
                                     <span style={{ 
                                         backgroundColor: '#fee2e2', 
@@ -74,7 +74,7 @@ const PrintCashFlowTimeline = ({ data, t }) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '500' }}>{t.revenue}</td>
+                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '500' }}>{t.revenue || 'Revenue'}</td>
                                 <td style={{ width: '70%', padding: '4px' }}>
                                     <span style={{ 
                                         backgroundColor: '#d1fae5', 
@@ -89,7 +89,7 @@ const PrintCashFlowTimeline = ({ data, t }) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '600' }}>{t.cumulative}</td>
+                                <td style={{ width: '30%', padding: '4px', color: '#6b7280', fontWeight: '600' }}>{t.cumulative || 'Cumulative'}</td>
                                 <td style={{ width: '70%', padding: '4px' }}>
                                     <span style={{ 
                                         backgroundColor: '#dbeafe', 
@@ -114,8 +114,8 @@ const PrintCashFlowTimeline = ({ data, t }) => {
 export default function PDFReport({ projectData, results, language, user }) {
     if (!projectData || !results) return null;
 
-    const { kpis, cost_breakdown, revenue_breakdown } = results;
-    const { name, type, country, property_data } = projectData;
+    const { kpis, cost_breakdown, revenue_breakdown, expense_breakdown } = results;
+    const { name, type, country, property_data, income_data, assumptions_data } = projectData;
 
     const t = {
         en: {
@@ -124,10 +124,11 @@ export default function PDFReport({ projectData, results, language, user }) {
             projectName: "Project Name",
             projectType: "Project Type",
             country: "Country",
+            entityType: "Entity Type",
             keyMetrics: "Key Financial Metrics",
             
             totalInvestment: "Total Investment",
-            downPayment: "Down Payment",
+            downPayment: "Down Payment / Equity",
             loanAmount: "Loan Amount",
             roi: "Return on Investment (ROI)",
             irr: "Internal Rate of Return (IRR)",
@@ -139,12 +140,55 @@ export default function PDFReport({ projectData, results, language, user }) {
             grossYield: "Gross Yield",
             netYield: "Net Yield",
             monthlyCashFlow: "Avg. Monthly Cash Flow",
-            annualCashFlow: "Avg. Annual Cash Flow",
+            annualCashFlow: "Annual Cash Flow",
             propertyDetails: "Property & Income",
             purchasePrice: "Purchase Price",
+            totalArea: "Total Area",
+            rentableArea: "Rentable Area",
+            propertyType: "Property Type",
+            numberOfUnits: "Number of Units",
             monthlyRent: "Monthly Rent",
-            annualRent: "Annual Rent",
+            annualRent: "Annual Base Rent",
             noi: "Net Operating Income",
+            egi: "Effective Gross Income",
+            pgi: "Potential Gross Income",
+            vacancyRate: "Vacancy Rate",
+            
+            // Commercial specific
+            incomeReimbursements: "Income & Reimbursements",
+            camReimbursements: "CAM Reimbursements",
+            otherReimbursements: "Other Reimbursements",
+            otherIncome: "Other Income",
+            operatingExpenses: "Operating Expenses (Annual)",
+            totalOpex: "Total Operating Expenses",
+            propertyTax: "Property Tax",
+            insurance: "Insurance",
+            maintenance: "Maintenance & Repairs",
+            utilities: "Utilities",
+            propertyManagement: "Property Management",
+            capexReserve: "CapEx Reserve",
+            
+            // VAT Analysis for Commercial
+            vatAnalysisCommercial: "VAT Analysis",
+            vatStatus: "VAT Status",
+            vatPayer: "VAT Payer",
+            nonVatPayer: "Not VAT Payer",
+            vatRate: "VAT Rate",
+            grossInvestment: "Gross Investment (incl. VAT)",
+            netInvestment: "Net Investment (excl. VAT)",
+            totalVatDeductible: "Total VAT Deductible",
+            vatBenefit: "VAT Benefit",
+            
+            // Investment breakdown
+            investmentBreakdown: "Investment Breakdown",
+            acquisitionCosts: "Acquisition Costs",
+            
+            // Assumptions
+            assumptions: "Investment Assumptions",
+            holdingPeriod: "Holding Period",
+            exitCapRate: "Exit Cap Rate",
+            annualAppreciation: "Annual Appreciation",
+            rentGrowth: "Annual Rent Growth",
             
             developmentMetrics: "Development Metrics",
             totalProjectCosts: "Total Project Costs",
@@ -173,6 +217,7 @@ export default function PDFReport({ projectData, results, language, user }) {
             
             costBreakdown: "Cost Breakdown",
             revenueBreakdown: "Revenue Breakdown",
+            expenseBreakdown: "Expense Breakdown",
             cashFlowTimeline: "Cash Flow Timeline",
             vatAnalysis: "VAT Analysis",
             period: "Period",
@@ -180,12 +225,14 @@ export default function PDFReport({ projectData, results, language, user }) {
             revenue: "Revenue",
             cumulative: "Cumulative",
             months: "months",
+            years: "years",
             vatInput: "VAT Input",
             vatOutput: "VAT Output",
             vatBalance: "VAT Balance",
             netProfitAfterVAT: "Net Profit after VAT",
             financingBreakdown: "Financing Breakdown",
             summary: "Executive Summary",
+            performance: "Performance Metrics",
         },
         sk: {
             reportTitle: "Správa o investičnej analýze",
@@ -193,10 +240,11 @@ export default function PDFReport({ projectData, results, language, user }) {
             projectName: "Názov projektu",
             projectType: "Typ projektu",
             country: "Krajina",
+            entityType: "Typ subjektu",
             keyMetrics: "Kľúčové finančné ukazovatele",
             
             totalInvestment: "Celková investícia",
-            downPayment: "Vlastné zdroje",
+            downPayment: "Vlastné zdroje / Equity",
             loanAmount: "Výška úveru",
             roi: "Návratnosť investície (ROI)",
             irr: "Vnútorná miera návratnosti (IRR)",
@@ -208,12 +256,55 @@ export default function PDFReport({ projectData, results, language, user }) {
             grossYield: "Hrubý výnos",
             netYield: "Čistý výnos",
             monthlyCashFlow: "Priem. mesačný Cash Flow",
-            annualCashFlow: "Priem. ročný Cash Flow",
+            annualCashFlow: "Ročný Cash Flow",
             propertyDetails: "Nehnuteľnosť a príjem",
             purchasePrice: "Kúpna cena",
+            totalArea: "Celková plocha",
+            rentableArea: "Prenajímateľná plocha",
+            propertyType: "Typ nehnuteľnosti",
+            numberOfUnits: "Počet jednotiek",
             monthlyRent: "Mesačný nájom",
-            annualRent: "Ročný nájom",
+            annualRent: "Ročné základné nájomné",
             noi: "Čistý prevádzkový príjem",
+            egi: "Efektívny hrubý príjem",
+            pgi: "Potenciálny hrubý príjem",
+            vacancyRate: "Miera neobsadenosti",
+            
+            // Commercial specific
+            incomeReimbursements: "Príjmy a náhrady",
+            camReimbursements: "Náhrady za správu",
+            otherReimbursements: "Ostatné náhrady",
+            otherIncome: "Ostatné príjmy",
+            operatingExpenses: "Prevádzkové náklady (ročne)",
+            totalOpex: "Celkové prevádzkové náklady",
+            propertyTax: "Daň z nehnuteľnosti",
+            insurance: "Poistenie",
+            maintenance: "Údržba a opravy",
+            utilities: "Energie",
+            propertyManagement: "Správa nehnuteľnosti",
+            capexReserve: "CapEx rezerva",
+            
+            // VAT Analysis for Commercial
+            vatAnalysisCommercial: "Analýza DPH",
+            vatStatus: "DPH Status",
+            vatPayer: "Platca DPH",
+            nonVatPayer: "Nie platca DPH",
+            vatRate: "Sadzba DPH",
+            grossInvestment: "Hrubá investícia (vrátane DPH)",
+            netInvestment: "Čistá investícia (bez DPH)",
+            totalVatDeductible: "Celková odpočítateľná DPH",
+            vatBenefit: "Benefit z DPH",
+            
+            // Investment breakdown
+            investmentBreakdown: "Rozloženie investície",
+            acquisitionCosts: "Transakčné náklady",
+            
+            // Assumptions
+            assumptions: "Investičné predpoklady",
+            holdingPeriod: "Doba držby",
+            exitCapRate: "Výstupný Cap Rate",
+            annualAppreciation: "Ročná apreciácia",
+            rentGrowth: "Ročný rast nájmu",
             
             developmentMetrics: "Ukazovatele developmentu",
             totalProjectCosts: "Celkové náklady projektu",
@@ -242,6 +333,7 @@ export default function PDFReport({ projectData, results, language, user }) {
             
             costBreakdown: "Rozloženie nákladov",
             revenueBreakdown: "Rozloženie príjmov",
+            expenseBreakdown: "Rozloženie nákladov",
             cashFlowTimeline: "Časová os Cash Flow",
             vatAnalysis: "Analýza DPH",
             period: "Obdobie",
@@ -249,29 +341,32 @@ export default function PDFReport({ projectData, results, language, user }) {
             revenue: "Príjmy",
             cumulative: "Kumulatívne",
             months: "mesiacov",
+            years: "rokov",
             vatInput: "DPH na vstupe",
             vatOutput: "DPH na výstupe",
             vatBalance: "Saldo DPH",
             netProfitAfterVAT: "Čistý zisk po DPH",
             financingBreakdown: "Rozloženie financovania",
             summary: "Zhrnutie",
+            performance: "Výkonnostné metriky",
         }
     };
     const currentT = t[language] || t.en;
     
     const formatPaybackPeriod = (value) => {
         if (typeof value === 'string') return value;
-        if (typeof value === 'number') return `${value.toFixed(1)} years`;
+        if (typeof value === 'number') return `${value.toFixed(1)} ${currentT.years}`;
         return 'N/A';
     };
     
     const formatDuration = (months) => {
         if (months === undefined || months === null) return 'N/A';
         const years = (months / 12).toFixed(1);
-        return `${months} ${currentT.months} (${years} years)`;
+        return `${months} ${currentT.months} (${years} ${currentT.years})`;
     };
     
     const isDevelopment = type === 'development';
+    const isCommercial = type === 'commercial';
     
     const generateCashFlowData = () => {
         if (!isDevelopment || !kpis.total_project_costs || !kpis.gross_revenue) return null;
@@ -291,6 +386,15 @@ export default function PDFReport({ projectData, results, language, user }) {
     
     const COST_COLORS = ['#003E7E', '#004C97', '#0066CC', '#0080FF', '#33A3FF', '#66BBFF', '#99D6FF'];
     const REVENUE_COLORS = ['#00B894', '#00D1A0', '#4ECCA3', '#78E4C8', '#A8F5E5'];
+    const EXPENSE_COLORS = ['#E53935', '#EF5350', '#F44336', '#E57373', '#EF9A9A', '#FFCDD2', '#FFEBEE'];
+
+    // Get entity type label
+    const getEntityTypeLabel = () => {
+        const entityType = projectData.entity_type || 'FO';
+        return entityType === 'PO' ? 
+            (language === 'sk' ? 'Právnická osoba (PO)' : 'Legal Entity (PO)') : 
+            (language === 'sk' ? 'Fyzická osoba (FO)' : 'Individual (FO)');
+    };
 
     return (
         <div className="hidden print:block print-container p-6 font-sans bg-white" style={{ padding: '24px', fontFamily: 'Arial, sans-serif', fontSize: '12px', backgroundColor: 'white' }}>
@@ -311,6 +415,7 @@ export default function PDFReport({ projectData, results, language, user }) {
                     <KeyValue label={currentT.projectName} value={name} />
                     <KeyValue label={currentT.projectType} value={type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} />
                     <KeyValue label={currentT.country} value={country} />
+                    <KeyValue label={currentT.entityType} value={getEntityTypeLabel()} />
                 </Section>
                 
                 {isDevelopment ? (
@@ -471,13 +576,156 @@ export default function PDFReport({ projectData, results, language, user }) {
                             </Section>
                         )}
                     </>
+                ) : isCommercial ? (
+                    /* COMMERCIAL PROJECT */
+                    <>
+                        {/* Executive Summary */}
+                        <Section title={currentT.summary}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', backgroundColor: '#eff6ff', padding: '12px', borderRadius: '8px' }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.totalInvestment}</div>
+                                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{currencyFormatter(kpis.total_investment || 0)}</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.capRate}</div>
+                                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#2563eb' }}>{percentFormatter(kpis.cap_rate || 0)}</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>{currentT.cashOnCash}</div>
+                                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#059669' }}>{percentFormatter(kpis.cash_on_cash_return || 0)}</div>
+                                </div>
+                            </div>
+                        </Section>
+
+                        {/* VAT Analysis - ONLY if VAT payer */}
+                        {kpis.is_vat_payer && (
+                            <Section title={currentT.vatAnalysisCommercial}>
+                                <div style={{ backgroundColor: '#dbeafe', padding: '12px', borderRadius: '8px', border: '1px solid #93c5fd', marginBottom: '12px' }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '8px', padding: '6px', backgroundColor: '#bfdbfe', borderRadius: '4px' }}>
+                                        <span style={{ fontWeight: 'bold', color: '#1e40af' }}>✓ {currentT.vatPayer}</span>
+                                        <span style={{ marginLeft: '8px', color: '#3b82f6' }}>({currentT.vatRate}: {kpis.vat_rate}%)</span>
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                        <KeyValue label={currentT.grossInvestment} value={currencyFormatter(kpis.total_investment_gross || 0)} />
+                                        <KeyValue label={currentT.totalVatDeductible} value={currencyFormatter(kpis.total_vat_deductible || 0)} isBold />
+                                        <KeyValue label={currentT.netInvestment} value={currencyFormatter(kpis.net_investment_after_vat || 0)} isBold />
+                                        <KeyValue label={currentT.vatBenefit} value={`-${currencyFormatter(kpis.total_vat_deductible || 0)}`} isBold />
+                                    </div>
+                                </div>
+                            </Section>
+                        )}
+
+                        {/* Property Details */}
+                        <Section title={currentT.propertyDetails}>
+                            <KeyValue label={currentT.purchasePrice} value={currencyFormatter(property_data?.price || 0)} isBold />
+                            {property_data?.size_m2 && (
+                                <KeyValue label={currentT.totalArea} value={`${property_data.size_m2.toLocaleString()} m²`} />
+                            )}
+                            {property_data?.rentable_area_m2 && (
+                                <KeyValue label={currentT.rentableArea} value={`${property_data.rentable_area_m2.toLocaleString()} m²`} />
+                            )}
+                            {property_data?.property_type && (
+                                <KeyValue label={currentT.propertyType} value={property_data.property_type.charAt(0).toUpperCase() + property_data.property_type.slice(1)} />
+                            )}
+                            {property_data?.number_of_units && (
+                                <KeyValue label={currentT.numberOfUnits} value={property_data.number_of_units} />
+                            )}
+                        </Section>
+
+                        {/* Income & Reimbursements */}
+                        <Section title={currentT.incomeReimbursements}>
+                            <KeyValue label={currentT.annualRent} value={currencyFormatter(income_data?.annual_rent || 0)} isBold />
+                            {income_data?.cam_reimbursements > 0 && (
+                                <KeyValue label={currentT.camReimbursements} value={currencyFormatter(income_data.cam_reimbursements)} />
+                            )}
+                            {income_data?.other_reimbursements > 0 && (
+                                <KeyValue label={currentT.otherReimbursements} value={currencyFormatter(income_data.other_reimbursements)} />
+                            )}
+                            {income_data?.other_income > 0 && (
+                                <KeyValue label={currentT.otherIncome} value={currencyFormatter(income_data.other_income)} />
+                            )}
+                            <KeyValue label={currentT.pgi} value={currencyFormatter(kpis.potential_gross_income || 0)} />
+                            {income_data?.vacancy_rate !== undefined && (
+                                <KeyValue label={currentT.vacancyRate} value={percentFormatter(income_data.vacancy_rate)} />
+                            )}
+                            <KeyValue label={currentT.egi} value={currencyFormatter(kpis.effective_gross_income || 0)} isBold />
+                        </Section>
+
+                        {/* Operating Expenses */}
+                        {expense_breakdown && expense_breakdown.length > 0 && (
+                            <Section title={currentT.operatingExpenses}>
+                                {expense_breakdown.map((item, idx) => (
+                                    <KeyValue key={idx} label={item.name} value={currencyFormatter(item.value)} />
+                                ))}
+                                <KeyValue label={currentT.totalOpex} value={currencyFormatter((kpis.total_annual_operating_expenses || 0) + (kpis.annual_capex || 0))} isBold />
+                            </Section>
+                        )}
+
+                        {/* Performance Metrics */}
+                        <Section title={currentT.performance}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
+                                <KeyValue label={currentT.noi} value={currencyFormatter(kpis.net_operating_income || 0)} isBold />
+                                <KeyValue label={currentT.annualCashFlow} value={currencyFormatter(kpis.annual_cash_flow || 0)} isBold />
+                                <KeyValue label={currentT.capRate} value={percentFormatter(kpis.cap_rate || 0)} />
+                                <KeyValue label={currentT.cashOnCash} value={percentFormatter(kpis.cash_on_cash_return || 0)} />
+                                {kpis.dscr !== undefined && (
+                                    <KeyValue label={currentT.dscr} value={kpis.dscr ? kpis.dscr.toFixed(2) : 'N/A'} />
+                                )}
+                                {kpis.irr !== undefined && (
+                                    <KeyValue label={currentT.irr} value={percentFormatter(kpis.irr)} />
+                                )}
+                                {kpis.npv !== undefined && (
+                                    <KeyValue label={currentT.npv} value={currencyFormatter(kpis.npv)} />
+                                )}
+                                {kpis.roi_10_year !== undefined && (
+                                    <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi_10_year)} />
+                                )}
+                            </div>
+                        </Section>
+
+                        {/* Investment Breakdown */}
+                        <Section title={currentT.investmentBreakdown}>
+                            <PrintProgressBar 
+                                label={currentT.downPayment} 
+                                value={kpis.total_equity || 0} 
+                                max={kpis.total_investment || 1}
+                                color="#00B894"
+                            />
+                            <PrintProgressBar 
+                                label={currentT.loanAmount} 
+                                value={kpis.loan_amount || 0} 
+                                max={kpis.total_investment || 1}
+                                color="#E53935"
+                            />
+                        </Section>
+
+                        {/* Assumptions */}
+                        {assumptions_data && (
+                            <Section title={currentT.assumptions}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
+                                    {assumptions_data.holding_period && (
+                                        <KeyValue label={currentT.holdingPeriod} value={`${assumptions_data.holding_period} ${currentT.years}`} />
+                                    )}
+                                    {assumptions_data.exit_cap_rate !== undefined && (
+                                        <KeyValue label={currentT.exitCapRate} value={percentFormatter(assumptions_data.exit_cap_rate)} />
+                                    )}
+                                    {assumptions_data.annual_appreciation !== undefined && (
+                                        <KeyValue label={currentT.annualAppreciation} value={percentFormatter(assumptions_data.annual_appreciation)} />
+                                    )}
+                                    {income_data?.rent_escalation_percent !== undefined && (
+                                        <KeyValue label={currentT.rentGrowth} value={percentFormatter(income_data.rent_escalation_percent)} />
+                                    )}
+                                </div>
+                            </Section>
+                        )}
+                    </>
                 ) : (
-                    /* RENTAL PROJECTS */
+                    /* RENTAL PROJECTS (long_term_lease, airbnb) */
                     <>
                         <Section title={currentT.keyMetrics}>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
                                 <KeyValue label={currentT.totalInvestment} value={currencyFormatter(kpis.total_investment || 0)} isBold />
-                                <KeyValue label={currentT.downPayment} value={currencyFormatter(kpis.down_payment || 0)} isBold />
+                                <KeyValue label={currentT.downPayment} value={currencyFormatter(kpis.down_payment || kpis.total_equity || 0)} isBold />
                                 
                                 {kpis.roi_10_year !== undefined && (
                                     <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi_10_year)} isBold />
