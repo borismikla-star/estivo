@@ -34,6 +34,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         opex_data = {},
         capex_data = {},
         assumptions_data = {},
+        entity_type = 'FO',
     } = projectData;
 
     const num = (value) => {
@@ -126,10 +127,47 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const annualCashFlow = netOperatingIncome - annualDebtService;
     const monthlyCashFlow = annualCashFlow / 12;
 
+    // === TAX CALCULATIONS (NEW!) ===
+    const corporateTaxRate = num(preset?.corporate_tax_rate) || 21;
+    const incomeTaxRateFO = num(preset?.income_tax_rate_fo) || 25;
+    const depreciationRate = num(preset?.depreciation_rate) || 2; // Default 2% annual depreciation
+    
+    // Annual depreciation (reduces taxable income)
+    const annualDepreciation = price * (depreciationRate / 100);
+    
+    // Annual interest paid (tax deductible)
+    let firstYearInterest = 0;
+    if (loanAmount > 0 && monthlyInterestRate > 0) {
+        let balance = loanAmount;
+        for (let month = 1; month <= 12; month++) {
+            const interest = balance * monthlyInterestRate;
+            firstYearInterest += interest;
+            const principal = monthlyMortgagePayment - interest;
+            balance -= principal;
+        }
+    }
+    
+    // Taxable income = NOI - Interest - Depreciation
+    const taxableIncome = Math.max(0, netOperatingIncome - firstYearInterest - annualDepreciation);
+    
+    // Income tax based on entity type
+    const effectiveTaxRate = entity_type === 'PO' ? corporateTaxRate : incomeTaxRateFO;
+    const annualIncomeTax = taxableIncome * (effectiveTaxRate / 100);
+    
+    // Cash flow after tax
+    const annualCashFlowAfterTax = annualCashFlow - annualIncomeTax;
+    const monthlyCashFlowAfterTax = annualCashFlowAfterTax / 12;
+    
+    // Tax benefits from deductions
+    const taxBenefitFromInterest = firstYearInterest * (effectiveTaxRate / 100);
+    const taxBenefitFromDepreciation = annualDepreciation * (effectiveTaxRate / 100);
+    const totalTaxBenefit = taxBenefitFromInterest + taxBenefitFromDepreciation;
+
     // === ADVANCED METRICS ===
     const capRate = price > 0 ? (netOperatingIncome / price) * 100 : 0;
     const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : 0;
     const cashOnCashReturn = totalEquity > 0 ? (annualCashFlow / totalEquity) * 100 : 0;
+    const cashOnCashReturnAfterTax = totalEquity > 0 ? (annualCashFlowAfterTax / totalEquity) * 100 : 0;
     const opexRatio = effectiveGrossIncome > 0 ? (totalAnnualOperatingExpenses / effectiveGrossIncome) * 100 : 0;
     const breakEvenOccupancy = potentialGrossIncome > 0 ? 
         ((totalAnnualOperatingExpenses + totalAnnualCapEx + annualDebtService) / potentialGrossIncome) * 100 : 0;
@@ -145,20 +183,22 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     // Project cash flows with RENT ESCALATION
     const projections = [];
     const cashFlowsForIRR = [-totalEquity];
+    const cashFlowsForIRRAfterTax = [-totalEquity];
     let cumulativeCashFlow = 0;
+    let cumulativeCashFlowAfterTax = 0;
     let remainingLoanBalance = loanAmount;
     let currentPropertyValue = price;
     let currentRent = annualRent;
     let currentOpex = totalAnnualOperatingExpenses;
     let currentCapEx = totalAnnualCapEx;
     let npvSum = 0;
+    let npvSumAfterTax = 0;
     
     for (let year = 1; year <= holdingPeriod; year++) {
         if (year > 1) {
             currentPropertyValue *= (1 + appreciationRate / 100);
-            currentRent *= (1 + rentEscalationPercent / 100); // Use rent escalation from input
+            currentRent *= (1 + rentEscalationPercent / 100);
             currentOpex *= (1 + expenseGrowthRate / 100);
-            // CapEx grows with OpEx growth
             currentCapEx *= (1 + expenseGrowthRate / 100);
         }
         
@@ -169,8 +209,25 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         const yearCashFlow = yearNOI - annualDebtService;
         cumulativeCashFlow += yearCashFlow;
         
+        // Tax calculation for this year
+        let yearInterest = 0;
+        let tempBalance = remainingLoanBalance;
+        for (let month = 1; month <= 12; month++) {
+            const interest = tempBalance * monthlyInterestRate;
+            yearInterest += interest;
+            const principal = monthlyMortgagePayment - interest;
+            tempBalance -= principal;
+        }
+        
+        const yearDepreciation = price * (depreciationRate / 100);
+        const yearTaxableIncome = Math.max(0, yearNOI - yearInterest - yearDepreciation);
+        const yearIncomeTax = yearTaxableIncome * (effectiveTaxRate / 100);
+        const yearCashFlowAfterTax = yearCashFlow - yearIncomeTax;
+        cumulativeCashFlowAfterTax += yearCashFlowAfterTax;
+        
         const discountFactor = Math.pow(1 + discountRate / 100, year);
         npvSum += yearCashFlow / discountFactor;
+        npvSumAfterTax += yearCashFlowAfterTax / discountFactor;
         
         let yearPrincipalPaid = 0;
         let tempLoanBalance = remainingLoanBalance;
@@ -186,6 +243,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         
         const equity = currentPropertyValue - remainingLoanBalance;
         const cumulativeROI = totalEquity > 0 ? (cumulativeCashFlow / totalEquity) * 100 : 0;
+        const cumulativeROIAfterTax = totalEquity > 0 ? (cumulativeCashFlowAfterTax / totalEquity) * 100 : 0;
         
         projections.push({
             year,
@@ -195,20 +253,26 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             noi: yearNOI,
             debt_service: annualDebtService,
             net_cash_flow: yearCashFlow,
+            income_tax: yearIncomeTax,
+            net_cash_flow_after_tax: yearCashFlowAfterTax,
             cumulative_cash_flow: cumulativeCashFlow,
+            cumulative_cash_flow_after_tax: cumulativeCashFlowAfterTax,
             property_value: currentPropertyValue,
             loan_balance: remainingLoanBalance,
             equity: equity,
-            cumulative_roi: cumulativeROI
+            cumulative_roi: cumulativeROI,
+            cumulative_roi_after_tax: cumulativeROIAfterTax
         });
         
         if (year < holdingPeriod) {
             cashFlowsForIRR.push(yearCashFlow);
+            cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax);
         } else {
             const finalYearNOI = yearNOI;
             const exitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : currentPropertyValue;
             const exitEquity = exitValue - remainingLoanBalance;
             cashFlowsForIRR.push(yearCashFlow + exitEquity);
+            cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax + exitEquity);
         }
     }
     
@@ -217,12 +281,18 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const exitEquity = exitValue - projections[holdingPeriod - 1].loan_balance;
     const exitDiscountFactor = Math.pow(1 + discountRate / 100, holdingPeriod);
     const npv = npvSum + (exitEquity / exitDiscountFactor) - totalEquity;
+    const npvAfterTax = npvSumAfterTax + (exitEquity / exitDiscountFactor) - totalEquity;
     
     const totalCashFlows = projections[holdingPeriod - 1].cumulative_cash_flow;
+    const totalCashFlowsAfterTax = projections[holdingPeriod - 1].cumulative_cash_flow_after_tax;
     const totalReturn = totalCashFlows + exitEquity;
+    const totalReturnAfterTax = totalCashFlowsAfterTax + exitEquity;
     const overallROI = totalEquity > 0 ? ((totalReturn - totalEquity) / totalEquity) * 100 : 0;
+    const overallROIAfterTax = totalEquity > 0 ? ((totalReturnAfterTax - totalEquity) / totalEquity) * 100 : 0;
     const irr = calculateIRR(cashFlowsForIRR);
+    const irrAfterTax = calculateIRR(cashFlowsForIRRAfterTax);
     const equityMultiple = totalEquity > 0 ? totalReturn / totalEquity : 0;
+    const equityMultipleAfterTax = totalEquity > 0 ? totalReturnAfterTax / totalEquity : 0;
 
     // === EXPENSE BREAKDOWN FOR CHARTS ===
     const expenseLabels = {
@@ -288,6 +358,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     ].filter(item => item.value > 0);
 
     const roi_10_year = overallROI;
+    const roi_10_year_after_tax = overallROIAfterTax;
 
     return {
         kpis: {
@@ -300,7 +371,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             monthly_mortgage_payment: monthlyMortgagePayment,
             annual_debt_service: annualDebtService,
             
-            // VAT Analysis (NEW!)
+            // VAT Analysis
             is_vat_payer: isVatPayer,
             vat_rate: vatRate,
             vat_on_purchase: vatOnPurchase,
@@ -331,21 +402,39 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             annual_cash_flow: annualCashFlow,
             monthly_cash_flow: monthlyCashFlow,
             
+            // TAX ANALYSIS (NEW!)
+            entity_type: entity_type,
+            effective_tax_rate: effectiveTaxRate,
+            annual_depreciation: annualDepreciation,
+            annual_interest_deduction: firstYearInterest,
+            taxable_income: taxableIncome,
+            annual_income_tax: annualIncomeTax,
+            tax_benefit_from_interest: taxBenefitFromInterest,
+            tax_benefit_from_depreciation: taxBenefitFromDepreciation,
+            total_tax_benefit: totalTaxBenefit,
+            annual_cash_flow_after_tax: annualCashFlowAfterTax,
+            monthly_cash_flow_after_tax: monthlyCashFlowAfterTax,
+            
             // Key Ratios
             cap_rate: capRate,
             dscr: dscr,
             cash_on_cash_return: cashOnCashReturn,
+            cash_on_cash_return_after_tax: cashOnCashReturnAfterTax,
             opex_ratio: opexRatio,
             break_even_occupancy: breakEvenOccupancy,
             grm: grm,
             
             // Long-term
             npv: npv,
+            npv_after_tax: npvAfterTax,
             irr: irr,
+            irr_after_tax: irrAfterTax,
             roi_10_year: roi_10_year,
+            roi_10_year_after_tax: roi_10_year_after_tax,
             exit_value: exitValue,
             exit_equity: exitEquity,
             equity_multiple: equityMultiple,
+            equity_multiple_after_tax: equityMultipleAfterTax,
         },
         cashFlowProjection: projections,
         equityBuildup: projections,
