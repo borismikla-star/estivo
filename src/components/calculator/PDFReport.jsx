@@ -429,6 +429,7 @@ export default function PDFReport({ projectData, results, language, user }) {
     
     const isDevelopment = type === 'development';
     const isCommercial = type === 'commercial';
+    const isRental = type === 'long_term_lease' || type === 'airbnb';
     
     const generateCashFlowData = () => {
         if (!isDevelopment || !kpis.total_project_costs || !kpis.gross_revenue) return null;
@@ -865,35 +866,124 @@ export default function PDFReport({ projectData, results, language, user }) {
                             </Section>
                         )}
                     </>
-                ) : (
-                    /* RENTAL PROJECTS (long_term_lease, airbnb) */
+                ) : isRental ? (
+                    /* RENTAL PROJECTS (long_term_lease, airbnb) - WITH TAX ANALYSIS */
                     <>
+                        {/* TAX ANALYSIS (NEW!) */}
+                        {kpis.effective_tax_rate !== undefined && (
+                            <Section title={currentT.taxAnalysis}>
+                                <div style={{ backgroundColor: '#fef3c7', padding: '12px', borderRadius: '8px', border: '1px solid #fcd34d', marginBottom: '12px' }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '8px', padding: '6px', backgroundColor: '#fef9c3', borderRadius: '4px' }}>
+                                        <span style={{ fontWeight: 'bold', color: '#92400e' }}>
+                                            {kpis.entity_type === 'PO' ? currentT.entityTypePO : currentT.entityTypeFO}
+                                        </span>
+                                        <span style={{ marginLeft: '8px', color: '#ca8a04' }}>
+                                            ({currentT.effectiveTaxRate}: {percentFormatter(kpis.effective_tax_rate)})
+                                        </span>
+                                    </div>
+                                    
+                                    {/* Tax Calculation Breakdown */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                                        <KeyValue label={currentT.depreciation} value={currencyFormatter(kpis.annual_depreciation || 0)} />
+                                        <KeyValue label={currentT.interestDeduction} value={currencyFormatter(kpis.annual_interest_deduction || 0)} />
+                                        <KeyValue label={currentT.taxableIncome} value={currencyFormatter(kpis.taxable_income || 0)} isBold />
+                                        <KeyValue label={currentT.annualIncomeTax} value={currencyFormatter(kpis.annual_income_tax || 0)} isBold />
+                                    </div>
+                                    
+                                    {/* Tax Benefits Section */}
+                                    <div style={{ backgroundColor: '#fff7ed', padding: '10px', borderRadius: '6px', border: '1px solid #fed7aa' }}>
+                                        <div style={{ fontSize: '11px', fontWeight: '600', color: '#9a3412', marginBottom: '6px' }}>
+                                            💰 {currentT.taxBenefits}
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                                            <div style={{ fontSize: '10px' }}>
+                                                <span style={{ color: '#78716c' }}>{currentT.taxBenefitFromInterest}:</span>
+                                                <span style={{ fontWeight: 'bold', marginLeft: '4px', color: '#059669' }}>
+                                                    {currencyFormatter(kpis.tax_benefit_from_interest || 0)}
+                                                </span>
+                                            </div>
+                                            <div style={{ fontSize: '10px' }}>
+                                                <span style={{ color: '#78716c' }}>{currentT.taxBenefitFromDepreciation}:</span>
+                                                <span style={{ fontWeight: 'bold', marginLeft: '4px', color: '#059669' }}>
+                                                    {currencyFormatter(kpis.tax_benefit_from_depreciation || 0)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px solid #fed7aa', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '10px', color: '#78716c' }}>{currentT.totalTaxBenefit}: </span>
+                                            <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#059669' }}>
+                                                {currencyFormatter(kpis.total_tax_benefit || 0)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Before/After Tax Comparison */}
+                                    <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                        <div style={{ backgroundColor: '#e0f2fe', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', color: '#0369a1', marginBottom: '4px' }}>{currentT.beforeTax}</div>
+                                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#0c4a6e' }}>
+                                                {currencyFormatter(kpis.annual_cash_flow || 0)}
+                                            </div>
+                                            <div style={{ fontSize: '9px', color: '#0369a1' }}>{currentT.annualCashFlow}</div>
+                                        </div>
+                                        <div style={{ backgroundColor: '#dcfce7', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', color: '#15803d', marginBottom: '4px' }}>{currentT.afterTax}</div>
+                                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#166534' }}>
+                                                {currencyFormatter(kpis.annual_cash_flow_after_tax || 0)}
+                                            </div>
+                                            <div style={{ fontSize: '9px', color: '#15803d' }}>{currentT.annualCashFlow}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Section>
+                        )}
+
                         <Section title={currentT.keyMetrics}>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
                                 <KeyValue label={currentT.totalInvestment} value={currencyFormatter(kpis.total_investment || 0)} isBold />
                                 <KeyValue label={currentT.downPayment} value={currencyFormatter(kpis.down_payment || kpis.total_equity || 0)} isBold />
                                 
-                                {kpis.roi_10_year !== undefined && (
-                                    <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi_10_year)} isBold />
-                                )}
-                                {kpis.roi !== undefined && (
-                                    <KeyValue label={currentT.roi} value={percentFormatter(kpis.roi)} isBold />
-                                )}
-                                
+                                {/* Cash-on-Cash - Before and After Tax */}
                                 {kpis.cash_on_cash_return !== undefined && (
-                                    <KeyValue label={currentT.cashOnCash} value={percentFormatter(kpis.cash_on_cash_return)} />
+                                    <>
+                                        <KeyValue label={currentT.cashOnCashBeforeTax} value={percentFormatter(kpis.cash_on_cash_return)} />
+                                        {kpis.cash_on_cash_return_after_tax !== undefined && (
+                                            <KeyValue label={currentT.cashOnCashAfterTax} value={percentFormatter(kpis.cash_on_cash_return_after_tax)} isBold />
+                                        )}
+                                    </>
                                 )}
                                 
+                                {/* ROI - Before and After Tax */}
+                                {kpis.roi_10_year !== undefined && (
+                                    <>
+                                        <KeyValue label={currentT.roiBeforeTax} value={percentFormatter(kpis.roi_10_year)} />
+                                        {kpis.roi_10_year_after_tax !== undefined && (
+                                            <KeyValue label={currentT.roiAfterTax} value={percentFormatter(kpis.roi_10_year_after_tax)} isBold />
+                                        )}
+                                    </>
+                                )}
+                                
+                                {/* IRR - Before and After Tax */}
                                 {kpis.irr !== undefined && (
-                                    <KeyValue label={currentT.irr} value={percentFormatter(kpis.irr)} />
-                                )}
-                                
-                                {kpis.npv !== undefined && (
-                                    <KeyValue label={currentT.npv} value={currencyFormatter(kpis.npv)} />
+                                    <>
+                                        <KeyValue label={currentT.irrBeforeTax} value={percentFormatter(kpis.irr)} />
+                                        {kpis.irr_after_tax !== undefined && (
+                                            <KeyValue label={currentT.irrAfterTax} value={percentFormatter(kpis.irr_after_tax)} isBold />
+                                        )}
+                                    </>
                                 )}
                                 
                                 {kpis.payback_period !== undefined && (
                                     <KeyValue label={currentT.payback} value={formatPaybackPeriod(kpis.payback_period)} />
+                                )}
+                                
+                                {kpis.npv !== undefined && (
+                                    <>
+                                        <KeyValue label={currentT.npvBeforeTax} value={currencyFormatter(kpis.npv)} />
+                                        {kpis.npv_after_tax !== undefined && (
+                                            <KeyValue label={currentT.npvAfterTax} value={currencyFormatter(kpis.npv_after_tax)} isBold />
+                                        )}
+                                    </>
                                 )}
                                 
                                 {kpis.cap_rate !== undefined && (
@@ -946,7 +1036,7 @@ export default function PDFReport({ projectData, results, language, user }) {
                             )}
                         </Section>
                     </>
-                )}
+                ) : null}
             </main>
 
             <footer style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#6b7280', pageBreakInside: 'avoid', pageBreakBefore: 'avoid' }}>
