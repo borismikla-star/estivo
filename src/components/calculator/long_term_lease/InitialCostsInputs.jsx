@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import InfoTooltip from '../../shared/InfoTooltip';
 
 export default function InitialCostsInputs({ data, onChange, language = 'en' }) {
     const [localData, setLocalData] = useState(data);
@@ -17,54 +18,54 @@ export default function InitialCostsInputs({ data, onChange, language = 'en' }) 
 
     const translations = {
         en: {
-            acquisition_costs: "Acquisition Costs (€)",
-            acquisition_desc: "Transfer tax, notary, registration fees",
-            renovation: "Renovation/Repair Costs (€)",
-            renovation_desc: "Initial improvements before renting",
-            furnishing: "Furnishing Costs (€)",
-            furnishing_desc: "If property needs furniture",
-            other_costs: "Other Initial Costs (€)",
-            other_desc: "Any additional upfront expenses",
+            acquisition_costs: "Acquisition Costs",
+            acquisition_tooltip: "Transfer tax, notary fees, registration fees, legal fees",
+            renovation: "Renovation/Repair Costs",
+            renovation_tooltip: "Initial improvements and repairs before renting out the property",
+            furnishing: "Furnishing Costs",
+            furnishing_tooltip: "Furniture, appliances, and equipment if property needs to be furnished",
+            other_costs: "Other Initial Costs",
+            other_tooltip: "Any additional upfront expenses (inspection, moving costs, etc.)",
         },
         sk: {
-            acquisition_costs: "Transakčné náklady (€)",
-            acquisition_desc: "Daň z prevodu, notár, registrácia",
-            renovation: "Náklady na rekonštrukciu (€)",
-            renovation_desc: "Počiatočné úpravy pred prenájmom",
-            furnishing: "Náklady na zariadenie (€)",
-            furnishing_desc: "Ak nehnuteľnosť potrebuje nábytok",
-            other_costs: "Ostatné počiatočné náklady (€)",
-            other_desc: "Akékoľvek ďalšie vstupné náklady",
+            acquisition_costs: "Transakčné náklady",
+            acquisition_tooltip: "Daň z prevodu, notárske poplatky, poplatky za registráciu, právne poplatky",
+            renovation: "Náklady na rekonštrukciu",
+            renovation_tooltip: "Počiatočné úpravy a opravy pred prenájmom nehnuteľnosti",
+            furnishing: "Náklady na zariadenie",
+            furnishing_tooltip: "Nábytok, spotrebiče a vybavenie, ak je potrebné zariadiť nehnuteľnosť",
+            other_costs: "Ostatné počiatočné náklady",
+            other_tooltip: "Akékoľvek ďalšie vstupné výdavky (inšpekcia, náklady na sťahovanie, atď.)",
         },
         pl: {
-            acquisition_costs: "Koszty nabycia (€)",
-            acquisition_desc: "Podatek od transakcji, notariusz, opłaty rejestracyjne",
-            renovation: "Koszty renowacji/naprawy (€)",
-            renovation_desc: "Początkowe ulepszenia przed wynajmem",
-            furnishing: "Koszty umeblowania (€)",
-            furnishing_desc: "Jeśli nieruchomość wymaga mebli",
-            other_costs: "Inne koszty początkowe (€)",
-            other_desc: "Wszelkie dodatkowe wydatki z góry",
+            acquisition_costs: "Koszty nabycia",
+            acquisition_tooltip: "Podatek od transakcji, opłaty notarialne, opłaty rejestracyjne, opłaty prawne",
+            renovation: "Koszty renowacji/naprawy",
+            renovation_tooltip: "Początkowe ulepszenia i naprawy przed wynajmem nieruchomości",
+            furnishing: "Koszty umeblowania",
+            furnishing_tooltip: "Meble, urządzenia i wyposażenie, jeśli nieruchomość wymaga umeblowania",
+            other_costs: "Inne koszty początkowe",
+            other_tooltip: "Wszelkie dodatkowe wydatki z góry (inspekcja, koszty przeprowadzki, itp.)",
         },
         hu: {
-            acquisition_costs: "Vásárlási költségek (€)",
-            acquisition_desc: "Illeték, közjegyző, bejegyzési díjak",
-            renovation: "Felújítási/javítási költségek (€)",
-            renovation_desc: "Kezdeti fejlesztések a bérbeadás előtt",
-            furnishing: "Bútorozási költségek (€)",
-            furnishing_desc: "Ha az ingatlan bútort igényel",
-            other_costs: "Egyéb kezdeti költségek (€)",
-            other_desc: "Bármilyen további előzetes kiadás",
+            acquisition_costs: "Vásárlási költségek",
+            acquisition_tooltip: "Illeték, közjegyzői díjak, bejegyzési díjak, jogi díjak",
+            renovation: "Felújítási/javítási költségek",
+            renovation_tooltip: "Kezdeti fejlesztések és javítások a bérbeadás előtt",
+            furnishing: "Bútorozási költségek",
+            furnishing_tooltip: "Bútorok, készülékek és felszerelés, ha az ingatlan bútorozást igényel",
+            other_costs: "Egyéb kezdeti költségek",
+            other_tooltip: "Bármilyen további előzetes kiadás (szemle, költözködési költségek stb.)",
         },
         de: {
-            acquisition_costs: "Erwerbsnebenkosten (€)",
-            acquisition_desc: "Grunderwerbsteuer, Notar, Grundbucheintrag",
-            renovation: "Renovierungs-/Reparaturkosten (€)",
-            renovation_desc: "Anfängliche Verbesserungen vor Vermietung",
-            furnishing: "Möblierungskosten (€)",
-            furnishing_desc: "Falls Immobilie Möbel benötigt",
-            other_costs: "Sonstige Anfangskosten (€)",
-            other_desc: "Alle zusätzlichen Vorabkosten",
+            acquisition_costs: "Erwerbsnebenkosten",
+            acquisition_tooltip: "Grunderwerbsteuer, Notargebühren, Grundbuchgebühren, Rechtsgebühren",
+            renovation: "Renovierungs-/Reparaturkosten",
+            renovation_tooltip: "Anfängliche Verbesserungen und Reparaturen vor Vermietung der Immobilie",
+            furnishing: "Möblierungskosten",
+            furnishing_tooltip: "Möbel, Geräte und Ausstattung, falls die Immobilie möbliert werden muss",
+            other_costs: "Sonstige Anfangskosten",
+            other_tooltip: "Alle zusätzlichen Vorabkosten (Inspektion, Umzugskosten usw.)",
         }
     };
 
@@ -73,8 +74,10 @@ export default function InitialCostsInputs({ data, onChange, language = 'en' }) 
     return (
         <div className="space-y-4">
             <div>
-                <Label>{t.acquisition_costs}</Label>
-                <p className="text-sm text-muted-foreground mb-2">{t.acquisition_desc}</p>
+                <div className="flex items-center gap-2 mb-2">
+                    <Label>{t.acquisition_costs}</Label>
+                    <InfoTooltip content={t.acquisition_tooltip} />
+                </div>
                 <Input
                     type="number"
                     value={localData.acquisition_costs || 0}
@@ -82,8 +85,10 @@ export default function InitialCostsInputs({ data, onChange, language = 'en' }) 
                 />
             </div>
             <div>
-                <Label>{t.renovation}</Label>
-                <p className="text-sm text-muted-foreground mb-2">{t.renovation_desc}</p>
+                <div className="flex items-center gap-2 mb-2">
+                    <Label>{t.renovation}</Label>
+                    <InfoTooltip content={t.renovation_tooltip} />
+                </div>
                 <Input
                     type="number"
                     value={localData.renovation_costs || 0}
@@ -91,8 +96,10 @@ export default function InitialCostsInputs({ data, onChange, language = 'en' }) 
                 />
             </div>
             <div>
-                <Label>{t.furnishing}</Label>
-                <p className="text-sm text-muted-foreground mb-2">{t.furnishing_desc}</p>
+                <div className="flex items-center gap-2 mb-2">
+                    <Label>{t.furnishing}</Label>
+                    <InfoTooltip content={t.furnishing_tooltip} />
+                </div>
                 <Input
                     type="number"
                     value={localData.furnishing_costs || 0}
@@ -100,8 +107,10 @@ export default function InitialCostsInputs({ data, onChange, language = 'en' }) 
                 />
             </div>
             <div>
-                <Label>{t.other_costs}</Label>
-                <p className="text-sm text-muted-foreground mb-2">{t.other_desc}</p>
+                <div className="flex items-center gap-2 mb-2">
+                    <Label>{t.other_costs}</Label>
+                    <InfoTooltip content={t.other_tooltip} />
+                </div>
                 <Input
                     type="number"
                     value={localData.other_initial_costs || 0}
