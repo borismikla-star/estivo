@@ -22,9 +22,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
         if (purchasePrice > 0) {
             const updates = {};
             
-            // Property Tax: 0.1-0.5% of property value annually
+            // Property Tax: 0.2% of property value annually
             if (autoMode.property_tax) {
-                updates.property_tax = (purchasePrice * 0.002) / 100; // 0.2% as percentage for calculation
+                updates.property_tax = 0.2; // 0.2% (stored as percentage number)
                 updates.property_tax_auto = true;
             }
             
@@ -68,9 +68,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
         
         if (newAutoMode[field] && purchasePrice > 0) {
             let autoValue = 0;
-            if (field === 'property_tax') autoValue = (purchasePrice * 0.002) / 100;
+            if (field === 'property_tax') autoValue = 0.2; // 0.2%
             if (field === 'insurance') autoValue = purchasePrice > 300000 ? 70 : 40;
-            if (field === 'maintenance') autoValue = 1;
+            if (field === 'maintenance') autoValue = 1; // 1%
             
             const updated = { 
                 ...localData, 
@@ -240,7 +240,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                     label={t.property_tax}
                     description={t.property_tax_desc}
                     value={localData.property_tax}
-                    step="0.001"
+                    step="0.01"
                     suffix="%"
                 />
 
