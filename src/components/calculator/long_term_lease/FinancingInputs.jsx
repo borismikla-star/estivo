@@ -94,46 +94,51 @@ export default function FinancingInputs({ data, purchasePrice, onChange, languag
 
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <Label htmlFor="purchase_price">{t.purchase_price}</Label>
-                        <InfoTooltip content={t.purchase_price_tooltip} />
+                        <Label>{t.down_payment}</Label>
+                        <InfoTooltip content={t.down_payment_tooltip} />
                     </div>
                     <Input
-                        id="purchase_price"
                         type="number"
-                        value={localData.purchase_price || ''}
-                        onChange={(e) => handleChange('purchase_price', parseFloat(e.target.value) || 0)}
+                        value={localData.down_payment_percent || 20}
+                        onChange={(e) => handleChange('down_payment_percent', parseFloat(e.target.value) || 0)}
                     />
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <Label htmlFor="property_size">{t.property_size}</Label>
-                        <InfoTooltip content={t.property_size_tooltip} />
+                        <Label>{t.loan_term}</Label>
+                        <InfoTooltip content={t.loan_term_tooltip} />
                     </div>
                     <Input
-                        id="property_size"
                         type="number"
-                        value={localData.size_m2 || ''}
-                        onChange={(e) => handleChange('size_m2', parseFloat(e.target.value) || 0)}
+                        value={localData.loan_term || 30}
+                        onChange={(e) => handleChange('loan_term', parseInt(e.target.value) || 0)}
+                    />
+                </div>
+                <div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label>{t.interest_rate}</Label>
+                        <InfoTooltip content={t.interest_rate_tooltip} />
+                    </div>
+                    <Input
+                        type="number"
+                        step="0.1"
+                        value={localData.interest_rate || 0}
+                        onChange={(e) => handleChange('interest_rate', parseFloat(e.target.value) || 0)}
                     />
                 </div>
             </div>
 
-            <div>
-                <div className="flex items-center gap-2 mb-2">
-                    <Label htmlFor="monthly_rent">{t.monthly_rent}</Label>
-                    <InfoTooltip content={t.monthly_rent_tooltip} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                <div>
+                    <Label className="text-muted-foreground">{t.loan_amount}</Label>
+                    <div className="text-2xl font-bold">€{Math.round(loanAmount).toLocaleString()}</div>
                 </div>
-                <div className="flex gap-2">
-                    <Input
-                        id="monthly_rent"
-                        type="number"
-                        value={localData.monthly_rent || ''}
-                        onChange={(e) => handleChange('monthly_rent', parseFloat(e.target.value) || 0)}
-                        className="flex-1"
-                    />
+                <div>
+                    <Label className="text-muted-foreground">{t.monthly_payment}</Label>
+                    <div className="text-2xl font-bold">€{Math.round(monthlyPayment).toLocaleString()}</div>
                 </div>
             </div>
         </div>
