@@ -30,9 +30,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             revenue_growth_tooltip: "Expected yearly increase in nightly rates and revenue",
             comparable_long_term_rent: "Comparable Long-Term Rent (monthly)",
             comparable_long_term_tooltip: "What this property would rent for on long-term basis - for comparison",
-            cleaning_fee: "Cleaning Fee (per stay)",
-            extra_guest_fee: "Extra Guest Fee (per guest/night)",
             annual_revenue: "Estimated Annual Revenue",
+            annual_revenue_tooltip: "Projected gross annual revenue based on nightly rate and occupancy",
         },
         sk: {
             nightly_rate: "Priemerná cena za noc",
@@ -47,9 +46,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             revenue_growth_tooltip: "Očakávaný ročný nárast cien za noc a príjmov",
             comparable_long_term_rent: "Porovnateľný dlhodobý nájom (mesačne)",
             comparable_long_term_tooltip: "Za koľko by sa táto nehnuteľnosť prenajala dlhodobo - pre porovnanie",
-            cleaning_fee: "Poplatok za upratovanie (za pobyt)",
-            extra_guest_fee: "Poplatok za extra hosťa (za hosťa/noc)",
             annual_revenue: "Odhadovaný ročný príjem",
+            annual_revenue_tooltip: "Odhadovaný hrubý ročný príjem na základe ceny za noc a obsadenosti",
         },
         pl: {
             nightly_rate: "Średnia cena za noc",
@@ -64,9 +62,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             revenue_growth_tooltip: "Oczekiwany roczny wzrost cen za noc i przychodów",
             comparable_long_term_rent: "Porównywalny długoterminowy czynsz (miesięczny)",
             comparable_long_term_tooltip: "Za ile ta nieruchomość wynajmowałaby się długoterminowo - do porównania",
-            cleaning_fee: "Opłata za sprzątanie (za pobyt)",
-            extra_guest_fee: "Opłata za dodatkowego gościa (za gościa/noc)",
             annual_revenue: "Szacowany roczny przychód",
+            annual_revenue_tooltip: "Przewidywany roczny przychód brutto na podstawie ceny za noc i obłożenia",
         },
         hu: {
             nightly_rate: "Átlagos éjszakai díj",
@@ -81,9 +78,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             revenue_growth_tooltip: "Várható éves növekedés az éjszakai árakban és bevételekben",
             comparable_long_term_rent: "Összehasonlítható hosszú távú bérleti díj (havi)",
             comparable_long_term_tooltip: "Mennyiért bérelhető lenne ez az ingatlan hosszú távon - összehasonlításhoz",
-            cleaning_fee: "Takarítási díj (tartózkodásonként)",
-            extra_guest_fee: "Extra vendégdíj (vendégenként/éjszaka)",
             annual_revenue: "Becsült éves bevétel",
+            annual_revenue_tooltip: "Várható éves bruttó bevétel az éjszakai ár és kihasználtság alapján",
         },
         de: {
             nightly_rate: "Durchschnittlicher Übernachtungspreis",
@@ -98,9 +94,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             revenue_growth_tooltip: "Erwartete jährliche Steigerung der Übernachtungspreise und Einnahmen",
             comparable_long_term_rent: "Vergleichbare Langzeitmiete (monatlich)",
             comparable_long_term_tooltip: "Wofür diese Immobilie langfristig vermietet würde - zum Vergleich",
-            cleaning_fee: "Reinigungsgebühr (pro Aufenthalt)",
-            extra_guest_fee: "Zusätzliche Gästegebühr (pro Gast/Nacht)",
             annual_revenue: "Geschätzter Jahresumsatz",
+            annual_revenue_tooltip: "Prognostizierter jährlicher Bruttoumsatz basierend auf Übernachtungspreis und Auslastung",
         }
     };
 
@@ -118,23 +113,31 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                         <Label>{t.nightly_rate}</Label>
                         <InfoTooltip content={t.nightly_rate_tooltip} />
                     </div>
-                    <Input
-                        type="number"
-                        value={localData.avg_nightly_rate || ''}
-                        onChange={(e) => handleChange('avg_nightly_rate', parseFloat(e.target.value) || 0)}
-                    />
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            value={localData.avg_nightly_rate || ''}
+                            onChange={(e) => handleChange('avg_nightly_rate', parseFloat(e.target.value) || 0)}
+                            placeholder="80"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€</span>
+                    </div>
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <Label>{t.occupancy}</Label>
                         <InfoTooltip content={t.occupancy_tooltip} />
                     </div>
-                    <Input
-                        type="number"
-                        step="0.1"
-                        value={localData.occupancy_rate || 70}
-                        onChange={(e) => handleChange('occupancy_rate', parseFloat(e.target.value) || 0)}
-                    />
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            step="0.1"
+                            value={localData.occupancy_rate || 70}
+                            onChange={(e) => handleChange('occupancy_rate', parseFloat(e.target.value) || 0)}
+                            placeholder="70"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                    </div>
                 </div>
             </div>
 
@@ -144,25 +147,31 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                         <Label>{t.avg_length_of_stay}</Label>
                         <InfoTooltip content={t.avg_length_tooltip} />
                     </div>
-                    <Input
-                        type="number"
-                        value={localData.avg_length_of_stay || 3}
-                        onChange={(e) => handleChange('avg_length_of_stay', parseFloat(e.target.value) || 1)}
-                        placeholder="3"
-                    />
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            value={localData.avg_length_of_stay || 3}
+                            onChange={(e) => handleChange('avg_length_of_stay', parseFloat(e.target.value) || 1)}
+                            placeholder="3"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">nights</span>
+                    </div>
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <Label>{t.platform_fee_rate}</Label>
                         <InfoTooltip content={t.platform_fee_tooltip} />
                     </div>
-                    <Input
-                        type="number"
-                        step="0.1"
-                        value={localData.platform_fee_rate || 3}
-                        onChange={(e) => handleChange('platform_fee_rate', parseFloat(e.target.value) || 0)}
-                        placeholder="3"
-                    />
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            step="0.1"
+                            value={localData.platform_fee_rate || 3}
+                            onChange={(e) => handleChange('platform_fee_rate', parseFloat(e.target.value) || 0)}
+                            placeholder="3"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                    </div>
                 </div>
             </div>
 
@@ -172,32 +181,51 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                         <Label>{t.revenue_growth_rate}</Label>
                         <InfoTooltip content={t.revenue_growth_tooltip} />
                     </div>
-                    <Input
-                        type="number"
-                        step="0.1"
-                        value={localData.revenue_growth_rate || 3}
-                        onChange={(e) => handleChange('revenue_growth_rate', parseFloat(e.target.value) || 0)}
-                        placeholder="3"
-                    />
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            step="0.1"
+                            value={localData.revenue_growth_rate || 3}
+                            onChange={(e) => handleChange('revenue_growth_rate', parseFloat(e.target.value) || 0)}
+                            placeholder="3"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                    </div>
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <Label>{t.comparable_long_term_rent}</Label>
                         <InfoTooltip content={t.comparable_long_term_tooltip} />
                     </div>
-                    <Input
-                        type="number"
-                        value={localData.comparable_long_term_rent || ''}
-                        onChange={(e) => handleChange('comparable_long_term_rent', parseFloat(e.target.value) || 0)}
-                        placeholder="1000"
-                    />
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            value={localData.comparable_long_term_rent || ''}
+                            onChange={(e) => handleChange('comparable_long_term_rent', parseFloat(e.target.value) || 0)}
+                            placeholder="1000"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="pt-4 border-t">
-                <Label className="text-muted-foreground">{t.annual_revenue}</Label>
-                <div className="text-2xl font-bold text-primary">€{Math.round(annualRevenue).toLocaleString()}</div>
-            </div>
+            {/* Estimated Annual Revenue Display */}
+            {nightlyRate > 0 && (
+                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Label className="text-green-800 font-semibold">{t.annual_revenue}</Label>
+                            <InfoTooltip content={t.annual_revenue_tooltip} />
+                        </div>
+                        <div className="text-2xl font-bold text-green-700">
+                            €{Math.round(annualRevenue).toLocaleString()}
+                        </div>
+                    </div>
+                    <div className="text-xs text-green-600 mt-1">
+                        {nightlyRate.toLocaleString()}€ × 365 nights × {(occupancyPercentage * 100).toFixed(0)}% occupancy
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
