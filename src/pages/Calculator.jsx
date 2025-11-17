@@ -76,6 +76,11 @@ export default function Calculator() {
   const hasInitialized = useRef(false);
   const isCreatingProject = useRef(false);
 
+  // Refs for tracking changes - initialize as null to detect first value assignment
+  const previousEntityType = useRef(null);
+  const previousCountry = useRef(null);
+  const previousLanguage = useRef(null);
+
   // Rate limit protection
   const [aiCooldown, setAiCooldown] = useState(() => {
     const stored = localStorage.getItem('estivo_ai_cooldown');
@@ -105,26 +110,23 @@ export default function Calculator() {
   const language = user?.preferred_language || 'en';
   
   // Clear AI analysis when language changes AND recalculate results to update graph labels
-  const previousLanguage = React.useRef(language);
-  
   React.useEffect(() => {
     // Only proceed if the language has actually changed from a previous value
-    if (previousLanguage.current && previousLanguage.current !== language) {
-      console.log("Language changed, clearing AI and potentially recalculating results.");
+    if (previousLanguage.current !== null && previousLanguage.current !== language) {
+      console.log("Language changed, clearing AI and recalculating results.");
 
       // 1. Clear AI analysis and sensitivity from local state
       setAiSummary(null);
       setSensitivityData(null);
 
-      // 2. Update projectData to clear AI fields and mark as dirty
-      // This is done regardless of whether results exist or not, as AI analysis is language-dependent
+      // 2. Update projectData to clear AI fields
       setProjectData(prev => {
-        if (!prev) return prev; // Should not happen if projectData is already loaded
+        if (!prev) return prev;
         return {
           ...prev,
           ai_summary: null,
           sensitivity_data: null,
-          results: prev.results // Keep existing results in projectData for now
+          results: prev.results
         };
       });
       setIsDirty(true);
@@ -148,7 +150,6 @@ export default function Calculator() {
                 recalculatedResults = calculateAirbnb(projectData, preset, language);
                 break;
               case 'development':
-                // Dynamic import for development calculation
                 const { calculateDevelopment } = await import('../components/calculator/development/calculation');
                 recalculatedResults = calculateDevelopment(projectData, preset, language);
                 break;
@@ -158,19 +159,14 @@ export default function Calculator() {
             }
             
             if (recalculatedResults) {
-              // Update local results state
               setResults(recalculatedResults);
-              // Update projectData to include the newly recalculated results
-              // AI fields are already cleared by the previous setProjectData call
               setProjectData(prev => ({
                 ...prev,
                 results: recalculatedResults
               }));
-              // Dirty state and save status are already handled above.
             }
           } catch (error) {
             console.error("Error recalculating results on language change:", error);
-            // Consider displaying a user-friendly message for recalculation failure
           }
         };
         recalculateProjectOnLanguageChange();
@@ -181,21 +177,21 @@ export default function Calculator() {
   }, [language, projectData, results, countryPresets]);
 
   // NEW: Auto-recalculate when entity_type or country changes (if results exist)
-  const previousEntityType = React.useRef(projectData?.entity_type);
-  const previousCountry = React.useRef(projectData?.country);
-  
   React.useEffect(() => {
     // Only recalculate if:
     // 1. We have projectData, results, and countryPresets
-    // 2. entity_type or country has actually changed from a previous value
+    // 2. entity_type or country has actually changed from a previous non-null value
     // 3. We're not in the initial loading phase
     if (!projectData || !results || !countryPresets || isInitializing) return;
     
-    const entityTypeChanged = previousEntityType.current && previousEntityType.current !== projectData.entity_type;
-    const countryChanged = previousCountry.current && previousCountry.current !== projectData.country;
+    const entityTypeChanged = previousEntityType.current !== null && previousEntityType.current !== projectData.entity_type;
+    const countryChanged = previousCountry.current !== null && previousCountry.current !== projectData.country;
     
     if (entityTypeChanged || countryChanged) {
-      console.log(`[Calculator] ${entityTypeChanged ? 'Entity type' : 'Country'} changed, auto-recalculating results`);
+      console.log(`[Calculator] ${entityTypeChanged ? 'Entity type' : 'Country'} changed, auto-recalculating results`, {
+        previous: entityTypeChanged ? previousEntityType.current : previousCountry.current,
+        current: entityTypeChanged ? projectData.entity_type : projectData.country
+      });
       
       const recalculateOnEntityOrCountryChange = async () => {
         const preset = countryPresets.find(p => p.country_code === projectData.country);
@@ -243,7 +239,7 @@ export default function Calculator() {
       recalculateOnEntityOrCountryChange();
     }
     
-    // Update refs
+    // Update refs - always update them when projectData changes
     previousEntityType.current = projectData.entity_type;
     previousCountry.current = projectData.country;
   }, [projectData?.entity_type, projectData?.country, projectData, results, countryPresets, language, isInitializing]);
@@ -358,11 +354,10 @@ export default function Calculator() {
       
       // IMPORTANT: Update projectData with saved data
       setProjectData(prev => {
-        if (!prev) return savedProject; // Should not happen for an update
+        if (!prev) return savedProject;
         return {
           ...prev,
           ...savedProject,
-          // Preserve local state that might have changed during save, if they are newer
           results: prev.results || savedProject.results,
           ai_summary: prev.ai_summary || savedProject.ai_summary,
           sensitivity_data: prev.sensitivity_data || savedProject.sensitivity_data
@@ -372,7 +367,6 @@ export default function Calculator() {
     onError: (error) => {
       console.error('[Calculator] onError called:', error);
       setSaveStatus('unsaved');
-      // Show error to user
       const errorMessages = {
         sk: 'Nepodarilo sa uložiť projekt. Skúste to prosím znova.',
         en: 'Failed to save project. Please try again.',
@@ -387,20 +381,25 @@ export default function Calculator() {
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Project.create(data),
     onSuccess: (savedProject) => {
-        isCreatingProject.current = false; // Reset flag after successful creation
+        isCreatingProject.current = false;
         queryClient.invalidateQueries({ queryKey: ['userProjects'] });
         const newUrl = createPageUrl(`Calculator?id=${savedProject.id}`);
         window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
         setProjectData(savedProject);
+        
+        // Initialize refs for new project
+        previousEntityType.current = savedProject.entity_type;
+        previousCountry.current = savedProject.country;
+        previousLanguage.current = language;
+        
         setSaveStatus('saved');
         setIsDirty(false);
         setIsInitializing(false);
     },
     onError: (error) => {
-        isCreatingProject.current = false; // Reset flag even on error
+        isCreatingProject.current = false;
         console.error("Failed to create project:", error);
         setIsInitializing(false);
-        // Show user-friendly error and redirect
         alert("Failed to create project. Please try again.");
         navigate(createPageUrl("Dashboard"));
     }
@@ -418,10 +417,8 @@ export default function Calculator() {
   });
 
   const handleSaveAsTemplate = useCallback((name) => {
-    // CHECK PRO PLAN BEFORE ALLOWING TEMPLATE SAVE
     const hasProPlan = user?.plan === 'pro' || user?.plan === 'business';
     if (!hasProPlan) {
-        // Use the globally defined 'language' variable
         const alertMessages = {
             sk: "Ukladanie šablón je funkcia Pro plánu. Prosím, prejdite na Pro.",
             en: "Save as Template is a Pro feature. Please upgrade to Pro.",
@@ -463,12 +460,11 @@ export default function Calculator() {
 
   const runSensitivityAnalysis = useCallback(async (baseResults, preset) => {
     try {
-        if (!projectData) return; // Ensure projectData is available
+        if (!projectData) return;
         const projectType = projectData.type;
         let scenarios = [];
         
         if (projectType === 'development') {
-            // Development-specific sensitivity scenarios
             const devScenarios = {
                 sk: [
                     { name: 'Predajná cena +10%', change: 15 },
@@ -508,7 +504,6 @@ export default function Calculator() {
             };
             scenarios = devScenarios[language] || devScenarios.en;
         } else if (projectType === 'airbnb') {
-            // Airbnb-specific scenarios
             const airbnbScenarios = {
                 sk: [
                     { name: 'Obsadenosť +10%', change: 12 },
@@ -543,7 +538,6 @@ export default function Calculator() {
             };
             scenarios = airbnbScenarios[language] || airbnbScenarios.en;
         } else {
-            // Long-term lease & Commercial scenarios
             const generalScenarios = {
                 sk: [
                     { name: 'Kúpna cena +10%', change: -10 },
@@ -581,12 +575,10 @@ export default function Calculator() {
         
         setSensitivityData(scenarios);
         
-        // Update local projectData state to store sensitivity_data
         setProjectData(prev => ({
             ...prev,
             sensitivity_data: scenarios
         }));
-        // Mark as dirty and unsaved, as this data should be saved with the project
         setIsDirty(true);
         setSaveStatus('unsaved');
         
@@ -630,7 +622,6 @@ export default function Calculator() {
         
         let prompt = '';
         
-        // Different prompts for different project types and languages
         if (projectType === 'development') {
             const prompts = {
                 sk: `Si profesionálny analytik developerských projektov. Analyzuj tento developerský projekt a poskytni:
@@ -764,7 +755,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
             };
             prompt = prompts[language] || prompts.en;
         } else {
-            // Rental properties prompt (long_term_lease, commercial, airbnb)
             const prompts = {
                 sk: `Si profesionálny analytik nehnuteľností. Analyzuj túto investíciu typu ${projectType.replace(/_/g, ' ')} a poskytni:
 
@@ -892,12 +882,10 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
 
         setAiSummary(response);
         
-        // Update local projectData state to store AI summary
         setProjectData(prev => ({
             ...prev,
             ai_summary: response
         }));
-        // Mark as dirty and unsaved, as this data should be saved with the project
         setIsDirty(true);
         setSaveStatus('unsaved');
         
@@ -943,13 +931,10 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
   }, [results, projectData, countryPresets, aiCooldown, rateLimitUntil, runSensitivityAnalysis, language]);
 
   useEffect(() => {
-    // Prevent duplicate initialization calls, especially during strict mode or fast re-renders
     if (hasInitialized.current) return;
     if (isUserLoading || arePresetsLoading) return;
-    // Ensure user and countryPresets are loaded before proceeding
     if (!user || !countryPresets) return;
 
-    // Mark as initialized to prevent re-running this block
     hasInitialized.current = true;
 
     if (projectIdFromUrl) {
@@ -958,19 +943,14 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
           id: fetchedProject.id,
           name: fetchedProject.name,
           type: fetchedProject.type,
-          has_project_info_data: !!fetchedProject.project_info_data,
-          project_info_data: fetchedProject.project_info_data,
-          has_cost_data: !!fetchedProject.cost_data, 
-          has_revenue_data: !!fetchedProject.revenue_data, 
+          entity_type: fetchedProject.entity_type,
           has_results: !!fetchedProject.results
         });
         
         const initialData = getInitialData(fetchedProject.type, user);
-        // CRITICAL FIX: Deep merge nested objects instead of replacing them
         const data = {
           ...initialData,
           ...fetchedProject,
-          // Deep merge nested objects - merge fields from both initialData and fetchedProject
           project_info_data: {
             ...(initialData.project_info_data || {}),
             ...(fetchedProject.project_info_data || {})
@@ -1013,27 +993,19 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
           }
         };
         
-        console.log('[Calculator] Merged project data:', {
-          id: data.id,
-          name: data.name,
-          type: data.type,
-          project_info_data: data.project_info_data,
-          project_info_keys: Object.keys(data.project_info_data || {}),
-          cost_data_keys: Object.keys(data.cost_data || {}), 
-          revenue_data_keys: Object.keys(data.revenue_data || {}) 
-        });
-        
         setProjectData(data);
         setResults(data.results);
         setAiSummary(data.ai_summary);
         setSensitivityData(data.sensitivity_data);
+        
+        // Initialize refs AFTER setting projectData
+        previousEntityType.current = data.entity_type;
+        previousCountry.current = data.country;
+        previousLanguage.current = language;
+        
         setIsInitializing(false);
         setSaveStatus('saved');
         setIsDirty(false);
-
-        // Set initial values for entity_type and country refs for auto-recalculation
-        previousEntityType.current = data.entity_type;
-        previousCountry.current = data.country;
 
       }).catch(error => {
         console.error("Failed to load project:", error);
@@ -1042,9 +1014,8 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
       });
     } else if (templateIdFromUrl) {
         base44.entities.ProjectTemplate.get(templateIdFromUrl).then(template => {
-            // Prevent duplicate creation requests
             if (isCreatingProject.current) return;
-            isCreatingProject.current = true; // Set flag before mutation
+            isCreatingProject.current = true;
             
             let initialObject = getInitialData(template.type, user);
             const projectFromTemplate = defaultsDeep({}, template.project_data, initialObject);
@@ -1058,21 +1029,19 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
             createMutation.mutate(projectFromTemplate);
         }).catch(error => {
             console.error("Failed to load template:", error);
-            setIsInitializing(false); // Ensure initialization ends even on error
-            navigate(createPageUrl("Dashboard")); // Redirect on template load failure
+            setIsInitializing(false);
+            navigate(createPageUrl("Dashboard"));
         });
     } else {
       const typeFromUrl = urlParams.get('type');
       if (!typeFromUrl) {
-          // No type, navigate to dashboard, ensure initialization ends
-          setIsInitializing(false); // Crucial to prevent infinite loader
+          setIsInitializing(false);
           navigate(createPageUrl("Dashboard"));
           return;
       }
 
-      // Prevent duplicate creation requests
       if (isCreatingProject.current) return;
-      isCreatingProject.current = true; // Set flag before mutation
+      isCreatingProject.current = true;
 
       let initialObject = getInitialData(typeFromUrl, user);
       const preset = countryPresets.find(p => p.country_code === initialObject.country);
@@ -1095,7 +1064,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
       }
       createMutation.mutate(initialObject);
     }
-  }, [projectIdFromUrl, templateIdFromUrl, isUserLoading, arePresetsLoading, user, countryPresets, navigate, urlParams, createPageUrl, createMutation]); 
+  }, [projectIdFromUrl, templateIdFromUrl, isUserLoading, arePresetsLoading, user, countryPresets, navigate, urlParams, createMutation, language]); 
   
   const handleCalculate = useCallback(async () => {
         if (!projectData || !countryPresets) return;
@@ -1132,7 +1101,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
             
             setResults(calculatedResults);
             
-            // Update local projectData state to store calculation results
             setProjectData(prev => {
                 const updated = {
                     ...prev,
@@ -1142,7 +1110,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                 return updated;
             });
             
-            // Mark as dirty and unsaved
             setIsDirty(true);
             setSaveStatus('unsaved');
             console.log('[Calculator] Marked as dirty and unsaved');
@@ -1166,7 +1133,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
     window.print();
   };
 
-  // MANUAL SAVE ONLY - called when user clicks Save button
   const handleManualSave = useCallback(() => {
     console.log('[Calculator] handleManualSave called', {
       hasProjectData: !!projectData,
@@ -1192,7 +1158,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
   }
 
   const renderCalculatorInputs = () => {
-    if (!projectData) return null; // Added check for projectData
+    if (!projectData) return null;
     
     const props = { projectData, onFieldChange: handleFieldChange, onBulkUpdate: handleBulkUpdate, language, user, countryPresets, t: {} };
     switch (projectData.type) {
@@ -1222,7 +1188,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
             case 'airbnb':
                 return <AirbnbResults results={results} currency={currency} language={language} />;
             case 'development':
-                // Import the development results component
                 const DevelopmentResults = React.lazy(() => import('../components/calculator/development/ResultsDisplay'));
                 return (
                     <React.Suspense fallback={<div>Loading Development Results...</div>}>
