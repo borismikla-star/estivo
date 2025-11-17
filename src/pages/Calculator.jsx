@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -70,6 +71,7 @@ export default function Calculator() {
   const [sensitivityData, setSensitivityData] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [resultsKey, setResultsKey] = useState(0);
 
   const hasInitialized = useRef(false);
   const isCreatingProject = useRef(false);
@@ -155,6 +157,7 @@ export default function Calculator() {
           if (newResults) {
             console.log('[Calculator] Auto-recalc complete, updating results');
             setResults(newResults);
+            setResultsKey(prev => prev + 1); // Increment key to force re-render
             setProjectData(prev => ({
               ...prev,
               results: newResults,
@@ -226,6 +229,7 @@ export default function Calculator() {
             
             if (recalculatedResults) {
               setResults(recalculatedResults);
+              setResultsKey(prev => prev + 1); // Increment key to force re-render
               setProjectData(prev => ({
                 ...prev,
                 results: recalculatedResults
@@ -956,6 +960,9 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         
         setProjectData(data);
         setResults(data.results);
+        if (data.results) { // If there are initial results, set the key to force re-render
+            setResultsKey(prev => prev + 1);
+        }
         setAiSummary(data.ai_summary);
         setSensitivityData(data.sensitivity_data);
         
@@ -1055,6 +1062,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
             }
             
             setResults(calculatedResults);
+            setResultsKey(prev => prev + 1); // Increment key to force re-render
             setProjectData(prev => ({
                 ...prev,
                 results: calculatedResults
@@ -1116,21 +1124,23 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         
         switch(projectData.type) {
             case 'long_term_lease':
-                return <LongTermLeaseResults results={results} currency={currency} language={language} />;
+                return <LongTermLeaseResults key={resultsKey} results={results} currency={currency} language={language} />;
             case 'commercial':
                 return <CommercialResults 
+                    key={resultsKey}
                     results={results} 
                     currency={currency} 
                     language={language}
                     holdingPeriod={projectData.assumptions_data?.holding_period || 10}
                 />;
             case 'airbnb':
-                return <AirbnbResults results={results} currency={currency} language={language} />;
+                return <AirbnbResults key={resultsKey} results={results} currency={currency} language={language} />;
             case 'development':
                 const DevelopmentResults = React.lazy(() => import('../components/calculator/development/ResultsDisplay'));
                 return (
                     <React.Suspense fallback={<div>Loading Development Results...</div>}>
                         <DevelopmentResults 
+                            key={resultsKey}
                             results={results} 
                             currency={currency} 
                             language={language}
