@@ -28,6 +28,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             per_month: "/mo",
             per_year: "/year",
             per_stay: "/stay",
+            nights: "nights",
             
             // Tax Analysis
             taxAnalysis: "Tax Analysis",
@@ -143,6 +144,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             per_month: "/mes",
             per_year: "/rok",
             per_stay: "/pobyt",
+            nights: "nocí",
             
             // Tax Analysis
             taxAnalysis: "Daňová analýza",
@@ -257,6 +259,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             per_month: "/mies",
             per_year: "/rok",
             per_stay: "/pobyt",
+            nights: "nocy",
             
             // Tax Analysis
             taxAnalysis: "Analiza podatkowa",
@@ -275,7 +278,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             depreciationTooltip: "Roczna amortyzacja budynku zmniejszająca dochód podlegający opodatkowaniu",
             interestDeduction: "Odliczenie odsetek",
             interestDeductionDesc: "Odsetki od kredytu hipotecznego (odliczalne od podatku)",
-            interestDeductionTooltip: "Roczne odsetki od kredytu hipotecznego zmniejszające dochód podlegający opodatkowaniu",
+            interestDeductionTooltip: "Roczna odsetki od kredytu hipotecznego zmniejszające dochód podlegający opodatkowaniu",
             taxBenefits: "Korzyści podatkowe",
             taxBenefitFromInterest: "Korzyść z odsetek",
             taxBenefitFromDepreciation: "Korzyść z amortyzacji",
@@ -371,6 +374,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             per_month: "/hó",
             per_year: "/év",
             per_stay: "/tartózkodás",
+            nights: "éjszaka",
             
             // Tax Analysis
             taxAnalysis: "Adóelemzés",
@@ -485,6 +489,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             per_month: "/Mon",
             per_year: "/Jahr",
             per_stay: "/Aufenthalt",
+            nights: "Nächte",
             
             // Tax Analysis
             taxAnalysis: "Steueranalyse",
@@ -577,7 +582,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
 
             occupancyRate: "Auslastungsrate",
             occupancyRateDesc: "% der gebuchten Nächte",
-            occupancyRateTooltip: "Prozentsatz der Nächte, in denen die Unterkunft von Gästen belegt ist",
+            occupancyRateTooltip: "Prozentualer Anteil der Nächte, in denen die Unterkunft von Gästen belegt ist",
             occupancyRateWarning: "Unter dem Marktdurchschnitt – Erwägen Sie eine Optimierung der Preisgestaltung oder des Marketings",
 
             avgBookingLength: "Durchschnittliche Buchungsdauer",
@@ -864,7 +869,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
                             
                             <KPICard
                                 title={t.avgBookingLength}
-                                value={`${kpis.avg_booking_length?.toFixed(1) || 'N/A'} nights`}
+                                value={`${kpis.avg_booking_length?.toFixed(1) || 'N/A'} ${t.nights}`}
                                 description={t.avgBookingLengthDesc}
                                 tooltip={t.avgBookingLengthTooltip}
                             />
