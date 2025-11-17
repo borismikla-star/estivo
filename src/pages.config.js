@@ -17,7 +17,7 @@ import AdminLegalEditor from './pages/AdminLegalEditor';
 import LegalDocument from './pages/LegalDocument';
 import Contact from './pages/Contact';
 import AdminFAQ from './pages/AdminFAQ';
-import Layout from './Layout.jsx';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -45,5 +45,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Landing",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };

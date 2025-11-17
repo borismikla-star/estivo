@@ -180,6 +180,74 @@ export default function Calculator() {
     previousLanguage.current = language;
   }, [language, projectData, results, countryPresets]);
 
+  // NEW: Auto-recalculate when entity_type or country changes (if results exist)
+  const previousEntityType = React.useRef(projectData?.entity_type);
+  const previousCountry = React.useRef(projectData?.country);
+  
+  React.useEffect(() => {
+    // Only recalculate if:
+    // 1. We have projectData, results, and countryPresets
+    // 2. entity_type or country has actually changed from a previous value
+    // 3. We're not in the initial loading phase
+    if (!projectData || !results || !countryPresets || isInitializing) return;
+    
+    const entityTypeChanged = previousEntityType.current && previousEntityType.current !== projectData.entity_type;
+    const countryChanged = previousCountry.current && previousCountry.current !== projectData.country;
+    
+    if (entityTypeChanged || countryChanged) {
+      console.log(`[Calculator] ${entityTypeChanged ? 'Entity type' : 'Country'} changed, auto-recalculating results`);
+      
+      const recalculateOnEntityOrCountryChange = async () => {
+        const preset = countryPresets.find(p => p.country_code === projectData.country);
+        let recalculatedResults = null;
+        
+        try {
+          switch(projectData.type) {
+            case 'long_term_lease':
+              recalculatedResults = calculateLongTermLease(projectData, preset, language);
+              break;
+            case 'commercial':
+              recalculatedResults = calculateCommercial(projectData, preset, language);
+              break;
+            case 'airbnb':
+              recalculatedResults = calculateAirbnb(projectData, preset, language);
+              break;
+            case 'development':
+              const { calculateDevelopment } = await import('../components/calculator/development/calculation');
+              recalculatedResults = calculateDevelopment(projectData, preset, language);
+              break;
+            default:
+              console.warn("Unknown calculator type for entity/country change recalculation:", projectData.type);
+              break;
+          }
+          
+          if (recalculatedResults) {
+            setResults(recalculatedResults);
+            setProjectData(prev => ({
+              ...prev,
+              results: recalculatedResults,
+              // Clear AI analysis when key parameters change
+              ai_summary: null,
+              sensitivity_data: null
+            }));
+            setAiSummary(null);
+            setSensitivityData(null);
+            setIsDirty(true);
+            setSaveStatus('unsaved');
+          }
+        } catch (error) {
+          console.error("Error recalculating results on entity/country change:", error);
+        }
+      };
+      
+      recalculateOnEntityOrCountryChange();
+    }
+    
+    // Update refs
+    previousEntityType.current = projectData.entity_type;
+    previousCountry.current = projectData.country;
+  }, [projectData?.entity_type, projectData?.country, projectData, results, countryPresets, language, isInitializing]);
+
   const handleFieldChange = useCallback((section, field, value) => {
     setProjectData(prev => {
         if (!prev) return prev;
@@ -962,6 +1030,11 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         setIsInitializing(false);
         setSaveStatus('saved');
         setIsDirty(false);
+
+        // Set initial values for entity_type and country refs for auto-recalculation
+        previousEntityType.current = data.entity_type;
+        previousCountry.current = data.country;
+
       }).catch(error => {
         console.error("Failed to load project:", error);
         setIsInitializing(false);
