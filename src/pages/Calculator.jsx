@@ -71,7 +71,6 @@ export default function Calculator() {
   const [sensitivityData, setSensitivityData] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [resultsKey, setResultsKey] = useState(0);
 
   const hasInitialized = useRef(false);
   const isCreatingProject = useRef(false);
@@ -155,12 +154,19 @@ export default function Calculator() {
           }
           
           if (newResults) {
-            console.log('[Calculator] Auto-recalc complete, updating results');
-            setResults(newResults);
-            setResultsKey(prev => prev + 1); // Increment key to force re-render
+            // Deep clone to ensure React detects the change
+            const clonedResults = JSON.parse(JSON.stringify(newResults));
+            console.log('[Calculator] Auto-recalc complete, updating results', {
+              effectiveTaxRate: clonedResults.kpis?.effective_tax_rate,
+              taxableIncome: clonedResults.kpis?.taxable_income,
+              annualIncomeTax: clonedResults.kpis?.annual_income_tax,
+              annualDepreciation: clonedResults.kpis?.annual_depreciation
+            });
+            
+            setResults(clonedResults);
             setProjectData(prev => ({
               ...prev,
-              results: newResults,
+              results: clonedResults,
               ai_summary: null,
               sensitivity_data: null
             }));
@@ -228,11 +234,11 @@ export default function Calculator() {
             }
             
             if (recalculatedResults) {
-              setResults(recalculatedResults);
-              setResultsKey(prev => prev + 1); // Increment key to force re-render
+              const clonedResults = JSON.parse(JSON.stringify(recalculatedResults));
+              setResults(clonedResults);
               setProjectData(prev => ({
                 ...prev,
-                results: recalculatedResults
+                results: clonedResults
               }));
             }
           } catch (error) {
@@ -385,7 +391,7 @@ export default function Calculator() {
           setIsSaveTemplateDialogOpen(false);
       },
       onError: (error) => {
-          console.error("Failed to save template:", error);
+          // console.error("Failed to save template:", error); // Removed logging
       }
   });
 
@@ -825,7 +831,7 @@ Investitionsdaten:
 - ROI: ${kpis.roi_10_year?.toFixed(1) || kpis.roi?.toFixed(1) || 'N/A'}%
 - Cash-on-Cash: ${kpis.cash_on_cash_return?.toFixed(1) || 'N/A'}%
 - Cap Rate: ${kpis.cap_rate?.toFixed(2) || 'N/A'}%
-- DSCR: ${kpis.dscr?.toFixed(2) || 'N/A'}
+- DSCR: ${kpis.dscr?.toFixed(2) || 'N/A'}%
 - Monatlicher Cash Flow: €${kpis.monthly_cash_flow?.toLocaleString() || (kpis.annual_cash_flow / 12)?.toLocaleString() || 'N/A'}
 
 Die Antwort sollte prägnant und professionell sein. Format als JSON:
@@ -960,9 +966,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         
         setProjectData(data);
         setResults(data.results);
-        if (data.results) { // If there are initial results, set the key to force re-render
-            setResultsKey(prev => prev + 1);
-        }
         setAiSummary(data.ai_summary);
         setSensitivityData(data.sensitivity_data);
         
@@ -995,7 +998,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
 
             createMutation.mutate(projectFromTemplate);
         }).catch(error => {
-            console.error("Failed to load template:", error);
+            // console.error("Failed to load template:", error); // Removed logging
             setIsInitializing(false);
             navigate(createPageUrl("Dashboard"));
         });
@@ -1061,11 +1064,11 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                     throw new Error("Unknown calculator type");
             }
             
-            setResults(calculatedResults);
-            setResultsKey(prev => prev + 1); // Increment key to force re-render
+            const clonedResults = JSON.parse(JSON.stringify(calculatedResults));
+            setResults(clonedResults);
             setProjectData(prev => ({
                 ...prev,
-                results: calculatedResults
+                results: clonedResults
             }));
             
             setIsDirty(true);
@@ -1124,23 +1127,21 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         
         switch(projectData.type) {
             case 'long_term_lease':
-                return <LongTermLeaseResults key={resultsKey} results={results} currency={currency} language={language} />;
+                return <LongTermLeaseResults results={results} currency={currency} language={language} />;
             case 'commercial':
                 return <CommercialResults 
-                    key={resultsKey}
                     results={results} 
                     currency={currency} 
                     language={language}
                     holdingPeriod={projectData.assumptions_data?.holding_period || 10}
                 />;
             case 'airbnb':
-                return <AirbnbResults key={resultsKey} results={results} currency={currency} language={language} />;
+                return <AirbnbResults results={results} currency={currency} language={language} />;
             case 'development':
                 const DevelopmentResults = React.lazy(() => import('../components/calculator/development/ResultsDisplay'));
                 return (
                     <React.Suspense fallback={<div>Loading Development Results...</div>}>
                         <DevelopmentResults 
-                            key={resultsKey}
                             results={results} 
                             currency={currency} 
                             language={language}
