@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -72,16 +71,13 @@ export default function Calculator() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
 
-  // Protection against multiple initializations and project creations
   const hasInitialized = useRef(false);
   const isCreatingProject = useRef(false);
 
-  // Refs for tracking changes - initialize as null to detect first value assignment
   const previousEntityType = useRef(null);
   const previousCountry = useRef(null);
   const previousLanguage = useRef(null);
 
-  // Rate limit protection
   const [aiCooldown, setAiCooldown] = useState(() => {
     const stored = localStorage.getItem('estivo_ai_cooldown');
     if (stored) {
@@ -109,91 +105,22 @@ export default function Calculator() {
 
   const language = user?.preferred_language || 'en';
   
-  // Clear AI analysis when language changes AND recalculate results to update graph labels
+  // Auto-recalculate when entity_type or country changes
   React.useEffect(() => {
-    // Only proceed if the language has actually changed from a previous value
-    if (previousLanguage.current !== null && previousLanguage.current !== language) {
-      console.log("Language changed, clearing AI and recalculating results.");
-
-      // 1. Clear AI analysis and sensitivity from local state
-      setAiSummary(null);
-      setSensitivityData(null);
-
-      // 2. Update projectData to clear AI fields
-      setProjectData(prev => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          ai_summary: null,
-          sensitivity_data: null,
-          results: prev.results
-        };
-      });
-      setIsDirty(true);
-      setSaveStatus('unsaved');
-
-      // 3. If previous results exist, recalculate them with the new language
-      if (projectData && results && countryPresets) {
-        const recalculateProjectOnLanguageChange = async () => {
-          const preset = countryPresets.find(p => p.country_code === projectData.country);
-          let recalculatedResults = null;
-          
-          try {
-            switch(projectData.type) {
-              case 'long_term_lease':
-                recalculatedResults = calculateLongTermLease(projectData, preset, language);
-                break;
-              case 'commercial':
-                recalculatedResults = calculateCommercial(projectData, preset, language);
-                break;
-              case 'airbnb':
-                recalculatedResults = calculateAirbnb(projectData, preset, language);
-                break;
-              case 'development':
-                const { calculateDevelopment } = await import('../components/calculator/development/calculation');
-                recalculatedResults = calculateDevelopment(projectData, preset, language);
-                break;
-              default:
-                console.warn("Unknown calculator type for language change recalculation:", projectData.type);
-                break;
-            }
-            
-            if (recalculatedResults) {
-              setResults(recalculatedResults);
-              setProjectData(prev => ({
-                ...prev,
-                results: recalculatedResults
-              }));
-            }
-          } catch (error) {
-            console.error("Error recalculating results on language change:", error);
-          }
-        };
-        recalculateProjectOnLanguageChange();
-      }
-    }
-    // Update the ref to the current language for the next render cycle
-    previousLanguage.current = language;
-  }, [language, projectData, results, countryPresets]);
-
-  // NEW: Auto-recalculate when entity_type or country changes (if results exist)
-  React.useEffect(() => {
-    // Only recalculate if:
-    // 1. We have projectData, results, and countryPresets
-    // 2. entity_type or country has actually changed from a previous non-null value
-    // 3. We're not in the initial loading phase
     if (!projectData || !results || !countryPresets || isInitializing) return;
     
     const entityTypeChanged = previousEntityType.current !== null && previousEntityType.current !== projectData.entity_type;
     const countryChanged = previousCountry.current !== null && previousCountry.current !== projectData.country;
     
     if (entityTypeChanged || countryChanged) {
-      console.log(`[Calculator] ${entityTypeChanged ? 'Entity type' : 'Country'} changed, auto-recalculating results`, {
-        previous: entityTypeChanged ? previousEntityType.current : previousCountry.current,
-        current: entityTypeChanged ? projectData.entity_type : projectData.country
+      console.log(`[Calculator] ${entityTypeChanged ? 'Entity type' : 'Country'} changed, auto-recalculating`, {
+        previousEntity: previousEntityType.current,
+        currentEntity: projectData.entity_type,
+        previousCountry: previousCountry.current,
+        currentCountry: projectData.country
       });
       
-      const recalculateOnEntityOrCountryChange = async () => {
+      const recalculate = async () => {
         const preset = countryPresets.find(p => p.country_code === projectData.country);
         let recalculatedResults = null;
         
@@ -212,17 +139,14 @@ export default function Calculator() {
               const { calculateDevelopment } = await import('../components/calculator/development/calculation');
               recalculatedResults = calculateDevelopment(projectData, preset, language);
               break;
-            default:
-              console.warn("Unknown calculator type for entity/country change recalculation:", projectData.type);
-              break;
           }
           
           if (recalculatedResults) {
+            console.log('[Calculator] Auto-recalculation complete');
             setResults(recalculatedResults);
             setProjectData(prev => ({
               ...prev,
               results: recalculatedResults,
-              // Clear AI analysis when key parameters change
               ai_summary: null,
               sensitivity_data: null
             }));
@@ -232,17 +156,75 @@ export default function Calculator() {
             setSaveStatus('unsaved');
           }
         } catch (error) {
-          console.error("Error recalculating results on entity/country change:", error);
+          console.error("Error recalculating:", error);
         }
       };
       
-      recalculateOnEntityOrCountryChange();
+      recalculate();
     }
     
-    // Update refs - always update them when projectData changes
     previousEntityType.current = projectData.entity_type;
     previousCountry.current = projectData.country;
   }, [projectData?.entity_type, projectData?.country, projectData, results, countryPresets, language, isInitializing]);
+
+  // Language change handler
+  React.useEffect(() => {
+    if (previousLanguage.current !== null && previousLanguage.current !== language) {
+      console.log("Language changed, recalculating results.");
+
+      setAiSummary(null);
+      setSensitivityData(null);
+
+      setProjectData(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          ai_summary: null,
+          sensitivity_data: null,
+          results: prev.results
+        };
+      });
+      setIsDirty(true);
+      setSaveStatus('unsaved');
+
+      if (projectData && results && countryPresets) {
+        const recalculateForLanguage = async () => {
+          const preset = countryPresets.find(p => p.country_code === projectData.country);
+          let recalculatedResults = null;
+          
+          try {
+            switch(projectData.type) {
+              case 'long_term_lease':
+                recalculatedResults = calculateLongTermLease(projectData, preset, language);
+                break;
+              case 'commercial':
+                recalculatedResults = calculateCommercial(projectData, preset, language);
+                break;
+              case 'airbnb':
+                recalculatedResults = calculateAirbnb(projectData, preset, language);
+                break;
+              case 'development':
+                const { calculateDevelopment } = await import('../components/calculator/development/calculation');
+                recalculatedResults = calculateDevelopment(projectData, preset, language);
+                break;
+            }
+            
+            if (recalculatedResults) {
+              setResults(recalculatedResults);
+              setProjectData(prev => ({
+                ...prev,
+                results: recalculatedResults
+              }));
+            }
+          } catch (error) {
+            console.error("Error recalculating for language:", error);
+          }
+        };
+        recalculateForLanguage();
+      }
+    }
+    previousLanguage.current = language;
+  }, [language, projectData, results, countryPresets]);
 
   const handleFieldChange = useCallback((section, field, value) => {
     setProjectData(prev => {
@@ -264,8 +246,8 @@ export default function Calculator() {
     setProjectData(prev => {
         if (!prev) return prev;
         
-        // Special handling for top-level fields like country and entity_type
         if (section === 'country' || section === 'entity_type') {
+            console.log(`[Calculator] handleBulkUpdate for ${section}:`, data);
             const newData = {
                 ...prev,
                 [section]: data
@@ -275,7 +257,6 @@ export default function Calculator() {
             return newData;
         }
         
-        // Special handling for country/entity changes which are top-level fields when passed via property_data
         if (section === 'property_data' && (data.country !== undefined || data.entity_type !== undefined)) {
             const newData = {
                 ...prev,
@@ -313,29 +294,11 @@ export default function Calculator() {
       
       setSaveStatus('saving');
       console.log('[Calculator] Saving project:', data.id);
-      console.log('[Calculator] Full project data structure:', {
-        name: data.name,
-        type: data.type,
-        country: data.country,
-        project_info_data: data.project_info_data,
-        cost_data: data.cost_data, 
-        revenue_data: data.revenue_data, 
-        financing_data: data.financing_data,
-        results: data.results ? 'exists' : 'missing',
-        property_data: data.property_data
-      });
       
       const { id, created_by, created_date, updated_date, ...dataToSave } = data;
       
       try {
         const result = await base44.entities.Project.update(id, dataToSave);
-        console.log('[Calculator] Save successful, saved data:', {
-          id: result.id,
-          has_project_info_data: !!result.project_info_data,
-          project_info_data: result.project_info_data,
-          has_cost_data: !!result.cost_data, 
-          has_revenue_data: !!result.revenue_data 
-        });
         return result;
       } catch (error) {
         console.error('[Calculator] Save failed:', error);
@@ -343,16 +306,10 @@ export default function Calculator() {
       }
     },
     onSuccess: (savedProject) => {
-      console.log('[Calculator] onSuccess - received saved project:', {
-        id: savedProject.id,
-        has_project_info_data: !!savedProject.project_info_data,
-        project_info_data: savedProject.project_info_data
-      });
       setSaveStatus('saved');
       setIsDirty(false);
       queryClient.invalidateQueries({ queryKey: ['userProjects'] });
       
-      // IMPORTANT: Update projectData with saved data
       setProjectData(prev => {
         if (!prev) return savedProject;
         return {
@@ -387,7 +344,6 @@ export default function Calculator() {
         window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
         setProjectData(savedProject);
         
-        // Initialize refs for new project
         previousEntityType.current = savedProject.entity_type;
         previousCountry.current = savedProject.country;
         previousLanguage.current = language;
@@ -574,7 +530,6 @@ export default function Calculator() {
         }
         
         setSensitivityData(scenarios);
-        
         setProjectData(prev => ({
             ...prev,
             sensitivity_data: scenarios
@@ -881,7 +836,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         });
 
         setAiSummary(response);
-        
         setProjectData(prev => ({
             ...prev,
             ai_summary: response
@@ -941,10 +895,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
       base44.entities.Project.get(projectIdFromUrl).then(fetchedProject => {
         console.log('[Calculator] Loaded project from DB:', {
           id: fetchedProject.id,
-          name: fetchedProject.name,
-          type: fetchedProject.type,
           entity_type: fetchedProject.entity_type,
-          has_results: !!fetchedProject.results
         });
         
         const initialData = getInitialData(fetchedProject.type, user);
@@ -998,7 +949,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         setAiSummary(data.ai_summary);
         setSensitivityData(data.sensitivity_data);
         
-        // Initialize refs AFTER setting projectData
         previousEntityType.current = data.entity_type;
         previousCountry.current = data.country;
         previousLanguage.current = language;
@@ -1094,25 +1044,16 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                     throw new Error("Unknown calculator type");
             }
             
-            console.log('[Calculator] Calculation complete, results:', {
-                hasKpis: !!calculatedResults?.kpis,
-                kpisCount: calculatedResults?.kpis ? Object.keys(calculatedResults.kpis).length : 0
-            });
+            console.log('[Calculator] Calculation complete');
             
             setResults(calculatedResults);
-            
-            setProjectData(prev => {
-                const updated = {
-                    ...prev,
-                    results: calculatedResults
-                };
-                console.log('[Calculator] Updated projectData with results');
-                return updated;
-            });
+            setProjectData(prev => ({
+                ...prev,
+                results: calculatedResults
+            }));
             
             setIsDirty(true);
             setSaveStatus('unsaved');
-            console.log('[Calculator] Marked as dirty and unsaved');
             
         } catch (error) {
             console.error("[Calculator] Calculation error:", error);
@@ -1134,18 +1075,8 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
   };
 
   const handleManualSave = useCallback(() => {
-    console.log('[Calculator] handleManualSave called', {
-      hasProjectData: !!projectData,
-      projectId: projectData?.id,
-      isDirty: isDirty,
-      saveStatus: saveStatus
-    });
-    
     if (projectData && projectData.id && isDirty) {
-      console.log('[Calculator] Triggering save mutation');
       updateMutation.mutate(projectData);
-    } else {
-      console.log('[Calculator] Save skipped - conditions not met');
     }
   }, [projectData, isDirty, updateMutation]);
 
@@ -1225,12 +1156,10 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                 t={{}}
             />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 items-start p-3 sm:p-4 lg:p-6 xl:p-8 max-w-[1920px] mx-auto">
-                {/* Inputs Column */}
                 <div className="space-y-4 sm:space-y-6 bg-card p-4 sm:p-6 rounded-xl lg:rounded-2xl border border-border shadow-premium">
                     {renderCalculatorInputs()}
                 </div>
                 
-                {/* Results Column */}
                 <div className="xl:sticky xl:top-28 space-y-4 sm:space-y-6">
                     {isCalculating && !results && (
                       <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-card rounded-lg shadow-premium border border-border min-h-[300px] sm:h-96">
