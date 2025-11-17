@@ -107,65 +107,81 @@ export default function Calculator() {
   
   // Auto-recalculate when entity_type or country changes
   React.useEffect(() => {
-    if (!projectData || !results || !countryPresets || isInitializing) return;
+    if (!projectData || !results || !countryPresets || isInitializing) {
+      console.log('[Calculator] Skipping auto-recalc:', {
+        hasProjectData: !!projectData,
+        hasResults: !!results,
+        hasPresets: !!countryPresets,
+        isInit: isInitializing
+      });
+      return;
+    }
     
     const entityTypeChanged = previousEntityType.current !== null && previousEntityType.current !== projectData.entity_type;
     const countryChanged = previousCountry.current !== null && previousCountry.current !== projectData.country;
     
-    if (entityTypeChanged || countryChanged) {
-      console.log(`[Calculator] ${entityTypeChanged ? 'Entity type' : 'Country'} changed, auto-recalculating`, {
-        previousEntity: previousEntityType.current,
-        currentEntity: projectData.entity_type,
-        previousCountry: previousCountry.current,
-        currentCountry: projectData.country
-      });
-      
-      const recalculate = async () => {
-        const preset = countryPresets.find(p => p.country_code === projectData.country);
-        let recalculatedResults = null;
-        
-        try {
-          switch(projectData.type) {
-            case 'long_term_lease':
-              recalculatedResults = calculateLongTermLease(projectData, preset, language);
-              break;
-            case 'commercial':
-              recalculatedResults = calculateCommercial(projectData, preset, language);
-              break;
-            case 'airbnb':
-              recalculatedResults = calculateAirbnb(projectData, preset, language);
-              break;
-            case 'development':
-              const { calculateDevelopment } = await import('../components/calculator/development/calculation');
-              recalculatedResults = calculateDevelopment(projectData, preset, language);
-              break;
-          }
-          
-          if (recalculatedResults) {
-            console.log('[Calculator] Auto-recalculation complete');
-            setResults(recalculatedResults);
-            setProjectData(prev => ({
-              ...prev,
-              results: recalculatedResults,
-              ai_summary: null,
-              sensitivity_data: null
-            }));
-            setAiSummary(null);
-            setSensitivityData(null);
-            setIsDirty(true);
-            setSaveStatus('unsaved');
-          }
-        } catch (error) {
-          console.error("Error recalculating:", error);
-        }
-      };
-      
-      recalculate();
+    if (!entityTypeChanged && !countryChanged) {
+      // Update refs even if no change detected
+      previousEntityType.current = projectData.entity_type;
+      previousCountry.current = projectData.country;
+      return;
     }
     
-    previousEntityType.current = projectData.entity_type;
-    previousCountry.current = projectData.country;
-  }, [projectData?.entity_type, projectData?.country, projectData, results, countryPresets, language, isInitializing]);
+    console.log(`[Calculator] AUTO-RECALCULATING`, {
+      entityTypeChanged,
+      countryChanged,
+      previousEntity: previousEntityType.current,
+      currentEntity: projectData.entity_type,
+      previousCountry: previousCountry.current,
+      currentCountry: projectData.country
+    });
+    
+    const recalculate = async () => {
+      const preset = countryPresets.find(p => p.country_code === projectData.country);
+      let recalculatedResults = null;
+      
+      try {
+        switch(projectData.type) {
+          case 'long_term_lease':
+            recalculatedResults = calculateLongTermLease(projectData, preset, language);
+            break;
+          case 'commercial':
+            recalculatedResults = calculateCommercial(projectData, preset, language);
+            break;
+          case 'airbnb':
+            recalculatedResults = calculateAirbnb(projectData, preset, language);
+            break;
+          case 'development':
+            const { calculateDevelopment } = await import('../components/calculator/development/calculation');
+            recalculatedResults = calculateDevelopment(projectData, preset, language);
+            break;
+        }
+        
+        if (recalculatedResults) {
+          console.log('[Calculator] Auto-recalculation SUCCESS');
+          setResults(recalculatedResults);
+          setProjectData(prev => ({
+            ...prev,
+            results: recalculatedResults,
+            ai_summary: null,
+            sensitivity_data: null
+          }));
+          setAiSummary(null);
+          setSensitivityData(null);
+          setIsDirty(true);
+          setSaveStatus('unsaved');
+          
+          // Update refs AFTER successful recalculation
+          previousEntityType.current = projectData.entity_type;
+          previousCountry.current = projectData.country;
+        }
+      } catch (error) {
+        console.error("[Calculator] Auto-recalculation ERROR:", error);
+      }
+    };
+    
+    recalculate();
+  }, [projectData?.entity_type, projectData?.country, results, countryPresets, language, isInitializing]);
 
   // Language change handler
   React.useEffect(() => {
@@ -247,7 +263,7 @@ export default function Calculator() {
         if (!prev) return prev;
         
         if (section === 'country' || section === 'entity_type') {
-            console.log(`[Calculator] handleBulkUpdate for ${section}:`, data);
+            console.log(`[Calculator] handleBulkUpdate ${section}:`, data);
             const newData = {
                 ...prev,
                 [section]: data
@@ -808,7 +824,7 @@ Investitionsdaten:
 - ROI: ${kpis.roi_10_year?.toFixed(1) || kpis.roi?.toFixed(1) || 'N/A'}%
 - Cash-on-Cash: ${kpis.cash_on_cash_return?.toFixed(1) || 'N/A'}%
 - Cap Rate: ${kpis.cap_rate?.toFixed(2) || 'N/A'}%
-- DSCR: ${kpis.dscr?.toFixed(2) || 'N/A'}
+- DSCR: ${kpis.dscr?.toFixed(2) || 'N/A'}%
 - Monatlicher Cash Flow: €${kpis.monthly_cash_flow?.toLocaleString() || (kpis.annual_cash_flow / 12)?.toLocaleString() || 'N/A'}
 
 Die Antwort sollte prägnant und professionell sein. Format als JSON:
@@ -893,10 +909,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
 
     if (projectIdFromUrl) {
       base44.entities.Project.get(projectIdFromUrl).then(fetchedProject => {
-        console.log('[Calculator] Loaded project from DB:', {
-          id: fetchedProject.id,
-          entity_type: fetchedProject.entity_type,
-        });
+        console.log('[Calculator] Loaded project, entity_type:', fetchedProject.entity_type);
         
         const initialData = getInitialData(fetchedProject.type, user);
         const data = {
@@ -1020,7 +1033,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         if (!projectData || !countryPresets) return;
         
         setIsCalculating(true);
-        console.log('[Calculator] Starting calculation for project:', projectData.id);
+        console.log('[Calculator] Manual calculation started');
         
         try {
             const preset = countryPresets.find(p => p.country_code === projectData.country);
@@ -1043,8 +1056,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                 default:
                     throw new Error("Unknown calculator type");
             }
-            
-            console.log('[Calculator] Calculation complete');
             
             setResults(calculatedResults);
             setProjectData(prev => ({
