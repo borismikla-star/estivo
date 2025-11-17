@@ -73,10 +73,7 @@ export default function Calculator() {
 
   const hasInitialized = useRef(false);
   const isCreatingProject = useRef(false);
-
-  const previousEntityType = useRef(null);
-  const previousCountry = useRef(null);
-  const previousLanguage = useRef(null);
+  const isRecalculating = useRef(false);
 
   const [aiCooldown, setAiCooldown] = useState(() => {
     const stored = localStorage.getItem('estivo_ai_cooldown');
@@ -105,85 +102,87 @@ export default function Calculator() {
 
   const language = user?.preferred_language || 'en';
   
-  // Auto-recalculate when entity_type or country changes
-  React.useEffect(() => {
-    if (!projectData || !results || !countryPresets || isInitializing) {
-      console.log('[Calculator] Skipping auto-recalc:', {
-        hasProjectData: !!projectData,
-        hasResults: !!results,
-        hasPresets: !!countryPresets,
-        isInit: isInitializing
+  // Auto-recalculate when entity_type or country changes - using separate state for tracking
+  const [watchedEntityType, setWatchedEntityType] = useState(null);
+  const [watchedCountry, setWatchedCountry] = useState(null);
+
+  useEffect(() => {
+    if (!projectData || !countryPresets || isInitializing) return;
+    
+    // Initialize watched values on first render
+    if (watchedEntityType === null) {
+      setWatchedEntityType(projectData.entity_type);
+      setWatchedCountry(projectData.country);
+      return;
+    }
+    
+    // Detect changes
+    const entityChanged = watchedEntityType !== projectData.entity_type;
+    const countryChanged = watchedCountry !== projectData.country;
+    
+    if ((entityChanged || countryChanged) && results && !isRecalculating.current) {
+      console.log('[Calculator] DETECTED CHANGE - Auto-recalculating', {
+        entityChanged,
+        countryChanged,
+        from: { entity: watchedEntityType, country: watchedCountry },
+        to: { entity: projectData.entity_type, country: projectData.country }
       });
-      return;
-    }
-    
-    const entityTypeChanged = previousEntityType.current !== null && previousEntityType.current !== projectData.entity_type;
-    const countryChanged = previousCountry.current !== null && previousCountry.current !== projectData.country;
-    
-    if (!entityTypeChanged && !countryChanged) {
-      // Update refs even if no change detected
-      previousEntityType.current = projectData.entity_type;
-      previousCountry.current = projectData.country;
-      return;
-    }
-    
-    console.log(`[Calculator] AUTO-RECALCULATING`, {
-      entityTypeChanged,
-      countryChanged,
-      previousEntity: previousEntityType.current,
-      currentEntity: projectData.entity_type,
-      previousCountry: previousCountry.current,
-      currentCountry: projectData.country
-    });
-    
-    const recalculate = async () => {
-      const preset = countryPresets.find(p => p.country_code === projectData.country);
-      let recalculatedResults = null;
       
-      try {
-        switch(projectData.type) {
-          case 'long_term_lease':
-            recalculatedResults = calculateLongTermLease(projectData, preset, language);
-            break;
-          case 'commercial':
-            recalculatedResults = calculateCommercial(projectData, preset, language);
-            break;
-          case 'airbnb':
-            recalculatedResults = calculateAirbnb(projectData, preset, language);
-            break;
-          case 'development':
-            const { calculateDevelopment } = await import('../components/calculator/development/calculation');
-            recalculatedResults = calculateDevelopment(projectData, preset, language);
-            break;
-        }
+      isRecalculating.current = true;
+      
+      const recalculate = async () => {
+        const preset = countryPresets.find(p => p.country_code === projectData.country);
         
-        if (recalculatedResults) {
-          console.log('[Calculator] Auto-recalculation SUCCESS');
-          setResults(recalculatedResults);
-          setProjectData(prev => ({
-            ...prev,
-            results: recalculatedResults,
-            ai_summary: null,
-            sensitivity_data: null
-          }));
-          setAiSummary(null);
-          setSensitivityData(null);
-          setIsDirty(true);
-          setSaveStatus('unsaved');
+        try {
+          let newResults;
           
-          // Update refs AFTER successful recalculation
-          previousEntityType.current = projectData.entity_type;
-          previousCountry.current = projectData.country;
+          switch(projectData.type) {
+            case 'long_term_lease':
+              newResults = calculateLongTermLease(projectData, preset, language);
+              break;
+            case 'commercial':
+              newResults = calculateCommercial(projectData, preset, language);
+              break;
+            case 'airbnb':
+              newResults = calculateAirbnb(projectData, preset, language);
+              break;
+            case 'development':
+              const { calculateDevelopment } = await import('../components/calculator/development/calculation');
+              newResults = calculateDevelopment(projectData, preset, language);
+              break;
+          }
+          
+          if (newResults) {
+            console.log('[Calculator] Auto-recalc complete, updating results');
+            setResults(newResults);
+            setProjectData(prev => ({
+              ...prev,
+              results: newResults,
+              ai_summary: null,
+              sensitivity_data: null
+            }));
+            setAiSummary(null);
+            setSensitivityData(null);
+            setIsDirty(true);
+            setSaveStatus('unsaved');
+          }
+        } catch (error) {
+          console.error("[Calculator] Auto-recalc error:", error);
+        } finally {
+          isRecalculating.current = false;
+          // Update watched values
+          setWatchedEntityType(projectData.entity_type);
+          setWatchedCountry(projectData.country);
         }
-      } catch (error) {
-        console.error("[Calculator] Auto-recalculation ERROR:", error);
-      }
-    };
-    
-    recalculate();
-  }, [projectData?.entity_type, projectData?.country, results, countryPresets, language, isInitializing]);
+      };
+      
+      recalculate();
+    }
+  }, [projectData, countryPresets, language, results, isInitializing, watchedEntityType, watchedCountry]);
 
   // Language change handler
+  const previousLanguage = useRef(null);
+  
   React.useEffect(() => {
     if (previousLanguage.current !== null && previousLanguage.current !== language) {
       console.log("Language changed, recalculating results.");
@@ -309,7 +308,6 @@ export default function Calculator() {
       }
       
       setSaveStatus('saving');
-      console.log('[Calculator] Saving project:', data.id);
       
       const { id, created_by, created_date, updated_date, ...dataToSave } = data;
       
@@ -360,8 +358,8 @@ export default function Calculator() {
         window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
         setProjectData(savedProject);
         
-        previousEntityType.current = savedProject.entity_type;
-        previousCountry.current = savedProject.country;
+        setWatchedEntityType(savedProject.entity_type);
+        setWatchedCountry(savedProject.country);
         previousLanguage.current = language;
         
         setSaveStatus('saved');
@@ -380,7 +378,6 @@ export default function Calculator() {
   const createTemplateMutation = useMutation({
       mutationFn: (data) => base44.entities.ProjectTemplate.create(data),
       onSuccess: () => {
-          console.log("Template saved!");
           setIsSaveTemplateDialogOpen(false);
       },
       onError: (error) => {
@@ -824,7 +821,7 @@ Investitionsdaten:
 - ROI: ${kpis.roi_10_year?.toFixed(1) || kpis.roi?.toFixed(1) || 'N/A'}%
 - Cash-on-Cash: ${kpis.cash_on_cash_return?.toFixed(1) || 'N/A'}%
 - Cap Rate: ${kpis.cap_rate?.toFixed(2) || 'N/A'}%
-- DSCR: ${kpis.dscr?.toFixed(2) || 'N/A'}%
+- DSCR: ${kpis.dscr?.toFixed(2) || 'N/A'}
 - Monatlicher Cash Flow: €${kpis.monthly_cash_flow?.toLocaleString() || (kpis.annual_cash_flow / 12)?.toLocaleString() || 'N/A'}
 
 Die Antwort sollte prägnant und professionell sein. Format als JSON:
@@ -962,8 +959,8 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         setAiSummary(data.ai_summary);
         setSensitivityData(data.sensitivity_data);
         
-        previousEntityType.current = data.entity_type;
-        previousCountry.current = data.country;
+        setWatchedEntityType(data.entity_type);
+        setWatchedCountry(data.country);
         previousLanguage.current = language;
         
         setIsInitializing(false);
