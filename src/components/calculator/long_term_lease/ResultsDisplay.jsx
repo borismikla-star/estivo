@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,7 +27,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             per_month: "/mo",
             per_year: "/year",
             
-            // Tax Analysis
             taxAnalysis: "Tax Analysis",
             taxStatus: "Tax Status",
             entityTypeFO: "Individual (FO)",
@@ -55,7 +53,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             afterTax: "After Tax",
             cashFlowComparison: "Cash Flow Comparison",
             
-            // KPIs
             totalInvestment: "Total Investment",
             totalInvestmentDesc: "Purchase price + all initial costs",
             totalInvestmentTooltip: "Total capital required including purchase price and all initial costs",
@@ -130,7 +127,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             per_month: "/mes",
             per_year: "/rok",
             
-            // Tax Analysis
             taxAnalysis: "Daňová analýza",
             taxStatus: "Daňový status",
             entityTypeFO: "Fyzická osoba (FO)",
@@ -157,7 +153,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             afterTax: "Po zdanení",
             cashFlowComparison: "Porovnanie Cash Flow",
             
-            // KPIs
             totalInvestment: "Celková investícia",
             totalInvestmentDesc: "Kúpna cena + všetky počiatočné náklady",
             totalInvestmentTooltip: "Celkový požadovaný kapitál vrátane kúpnej ceny a všetkých počiatočných nákladov",
@@ -225,11 +220,13 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         pl: {
             long_term_lease_results: "Wyniki analizy najmu długoterminowego",
+            key_metrics: "Kluczowe wskaźniki finansowe",
             overview: "Przegląd",
             details: "Szczegóły",
             projections: "Projekcje 10-letnie",
+            per_month: "/mies",
+            per_year: "/rok",
             
-            // Tax Analysis
             taxAnalysis: "Analiza podatkowa",
             taxStatus: "Status podatkowy",
             entityTypeFO: "Osoba fizyczna (FO)",
@@ -256,7 +253,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             afterTax: "Po opodatkowaniu",
             cashFlowComparison: "Porównanie przepływów pieniężnych",
             
-            // KPIs
             totalInvestment: "Całkowita inwestycja",
             totalInvestmentDesc: "Cena zakupu + wszystkie koszty początkowe",
             totalInvestmentTooltip: "Całkowity kapitał wymagany, wliczając cenę zakupu i wszystkie koszty początkowe",
@@ -324,11 +320,13 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         hu: {
             long_term_lease_results: "Hosszú távú bérleti elemzés eredményei",
+            key_metrics: "Kulcsfontosságú pénzügyi mutatók",
             overview: "Áttekintés",
             details: "Részletek",
             projections: "10 éves előrejelzések",
+            per_month: "/hó",
+            per_year: "/év",
             
-            // Tax Analysis
             taxAnalysis: "Adóelemzés",
             taxStatus: "Adó státusz",
             entityTypeFO: "Magánszemély (FO)",
@@ -355,7 +353,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             afterTax: "Adózás után",
             cashFlowComparison: "Cash Flow összehasonlítás",
             
-            // KPIs
             totalInvestment: "Teljes befektetés",
             totalInvestmentDesc: "Vételár + összes kezdeti költség",
             totalInvestmentTooltip: "Teljes tőkeigény, beleértve a vételárat és az összes kezdeti költséget",
@@ -423,11 +420,13 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         de: {
             long_term_lease_results: "Ergebnisse der Langzeitvermietungsanalyse",
+            key_metrics: "Wichtige Finanzkennzahlen",
             overview: "Übersicht",
             details: "Details",
             projections: "10-Jahres-Prognosen",
+            per_month: "/Mon",
+            per_year: "/Jahr",
             
-            // Tax Analysis
             taxAnalysis: "Steueranalyse",
             taxStatus: "Steuerstatus",
             entityTypeFO: "Natürliche Person (FO)",
@@ -454,7 +453,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             afterTax: "Nach Steuern",
             cashFlowComparison: "Cashflow-Vergleich",
             
-            // KPIs
             totalInvestment: "Gesamtinvestition",
             totalInvestmentDesc: "Kaufpreis + alle Anfangskosten",
             totalInvestmentTooltip: "Benötigtes Gesamtkapital inklusive Kaufpreis und aller Anfangskosten",
@@ -524,7 +522,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
 
     const t = translations[language] || translations.en;
 
-    // Prepare data for charts
     const cashFlowChartData = (cashFlowProjection || []).map(p => ({
         year: p.year,
         cashFlow: p.net_cash_flow
@@ -535,7 +532,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         roi: p.cumulative_roi
     }));
 
-    // Helper function to check warnings
     const getROIStatus = (roi) => {
         if (roi < 50) return 'warning';
         if (roi > 150) return 'excellent';
@@ -577,9 +573,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                         <TabsTrigger value="projections">{t.projections}</TabsTrigger>
                     </TabsList>
 
-                    {/* Overview Tab */}
                     <TabsContent value="overview" className="space-y-4 sm:space-y-6">
-                        {/* TAX ANALYSIS SECTION */}
                         {kpis.effective_tax_rate !== undefined && (
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
@@ -587,7 +581,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                     {t.taxAnalysis}
                                 </h3>
                                 <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                                    {/* Entity Type Badge */}
                                     <div className="flex items-center gap-2 mb-3">
                                         <CheckCircle className="w-5 h-5 text-amber-600" />
                                         <span className="font-semibold text-amber-800">
@@ -598,7 +591,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                         </span>
                                     </div>
                                     
-                                    {/* Tax Calculation Details */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                         <KPICard
                                             title={t.depreciation}
@@ -627,7 +619,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                         />
                                     </div>
                                     
-                                    {/* Tax Benefits Box */}
                                     <div className="p-4 bg-orange-50 rounded-lg border border-orange-200 mb-4">
                                         <div className="flex items-center gap-2 mb-3">
                                             <span className="text-sm font-semibold text-orange-800">
@@ -656,7 +647,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                         </div>
                                     </div>
                                     
-                                    {/* Before/After Tax Comparison */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-blue-50 p-4 rounded-lg text-center border border-blue-200">
                                             <div className="text-xs text-blue-600 mb-1">{t.beforeTax}</div>
@@ -677,7 +667,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                             </div>
                         )}
 
-                        {/* Key Performance Indicators */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <KPICard
                                 title={t.totalInvestment}
@@ -686,7 +675,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                 tooltip={t.totalInvestmentTooltip}
                             />
                             
-                            {/* ROI - Show both before and after tax */}
                             <KPICard
                                 title={t.roi}
                                 value={percentFormatter(kpis.roi_10_year, 1)}
@@ -706,7 +694,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                 />
                             )}
                             
-                            {/* Cash-on-Cash - Show both */}
                             <KPICard
                                 title={t.cashOnCash}
                                 value={percentFormatter(kpis.cash_on_cash_return, 2)}
@@ -726,7 +713,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                 />
                             )}
                             
-                            {/* IRR - Show both */}
                             <KPICard
                                 title={t.irr}
                                 value={percentFormatter(kpis.irr, 2)}
@@ -805,7 +791,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                         </div>
                     </TabsContent>
 
-                    {/* Details Tab */}
                     <TabsContent value="details" className="space-y-6 mt-6">
                         <ExpenseBreakdownChart 
                             expenses={expense_breakdown || []} 
@@ -814,7 +799,6 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                         />
                     </TabsContent>
 
-                    {/* Projections Tab */}
                     <TabsContent value="projections" className="space-y-6 mt-6">
                         <CashFlowChart 
                             data={cashFlowChartData} 
