@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,9 +21,12 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
     const translations = {
         en: {
             long_term_lease_results: "Long-Term Lease Analysis Results",
+            key_metrics: "Key Financial Metrics",
             overview: "Overview",
             details: "Details",
             projections: "10-Year Projections",
+            per_month: "/mo",
+            per_year: "/year",
             
             // Tax Analysis
             taxAnalysis: "Tax Analysis",
@@ -119,9 +123,12 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         sk: {
             long_term_lease_results: "Výsledky analýzy dlhodobého prenájmu",
+            key_metrics: "Kľúčové finančné ukazovatele",
             overview: "Prehľad",
             details: "Detaily",
             projections: "10-ročné projekcie",
+            per_month: "/mes",
+            per_year: "/rok",
             
             // Tax Analysis
             taxAnalysis: "Daňová analýza",

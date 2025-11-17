@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,15 +15,19 @@ import ROIProgressionChart from '../shared/ROIProgressionChart';
 export default function AirbnbResults({ results, currency = '€', language = 'en', holdingPeriod = 10 }) {
     if (!results || !results.kpis) return null;
     
-    const { kpis, cashFlowProjection, expense_breakdown, equityBuildup } = results;
+    const { kpis, cashFlowProjection, expense_breakdown, equityBuildup, revenuePerAvailableNight } = results;
     const currencySymbol = currency === 'EUR' ? '€' : currency;
 
     const translations = {
         en: {
-            airbnb_results: "Airbnb Investment Analysis Results",
+            airbnb_results: "Short-Term Rental Analysis Results",
+            key_metrics: "Key Financial Metrics",
             overview: "Overview",
             details: "Details",
             projections: "10-Year Projections",
+            per_month: "/mo",
+            per_year: "/year",
+            per_stay: "/stay",
             
             // Tax Analysis
             taxAnalysis: "Tax Analysis",
@@ -34,7 +39,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             taxableIncomeDesc: "Income subject to taxation after deductions",
             taxableIncomeTooltip: "NOI minus interest expense minus depreciation",
             annualIncomeTax: "Annual Income Tax",
-            annualIncomeTaxDesc: "Tax liability on Airbnb income",
+            annualIncomeTaxDesc: "Tax liability on rental income",
             annualIncomeTaxTooltip: "Taxable income multiplied by effective tax rate",
             depreciation: "Annual Depreciation",
             depreciationDesc: "Building depreciation (tax deductible)",
@@ -53,13 +58,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             // KPIs
             totalInvestment: "Total Investment",
-            totalInvestmentDesc: "Purchase price + furnishing + costs",
-            totalInvestmentTooltip: "Total capital required including purchase, furnishing, and acquisition costs",
+            totalInvestmentDesc: "Purchase price + all initial costs",
+            totalInvestmentTooltip: "Total capital required including purchase price and all initial costs",
             
             roi: "10-Year ROI",
             roiDesc: "Total return after 10 years (before tax)",
             roiTooltip: "Total return on investment after 10 years including property appreciation and cumulative cash flow",
-            roiWarning: "Below market average",
+            roiWarning: "Below market average - consider improving conditions",
             
             roiAfterTax: "10-Year ROI (After Tax)",
             roiAfterTaxDesc: "Total return after taxes",
@@ -68,25 +73,21 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             cashOnCash: "Cash-on-Cash Return",
             cashOnCashDesc: "Annual return on equity (before tax)",
             cashOnCashTooltip: "Annual cash flow divided by total equity invested - measures year 1 cash return",
-            cashOnCashWarning: "Low annual return",
+            cashOnCashWarning: "Low annual return - check income and expenses",
             
             cashOnCashAfterTax: "Cash-on-Cash (After Tax)",
             cashOnCashAfterTaxDesc: "Annual return on equity after taxes",
             cashOnCashAfterTaxTooltip: "Annual cash flow after tax divided by total equity invested",
             
-            revPAN: "Revenue per Available Night",
-            revPANDesc: "Daily revenue potential",
-            revPANTooltip: "Average daily revenue calculated from annual gross revenue divided by 365 days",
-            
             capRate: "Cap Rate",
             capRateDesc: "Net income / Purchase price",
             capRateTooltip: "Net Operating Income divided by purchase price - key profitability metric",
-            capRateWarning: "Below typical cap rate",
+            capRateWarning: "Below typical market cap rate",
             
             irr: "Internal Rate of Return",
             irrDesc: "Average annual return (before tax)",
             irrTooltip: "Average annual return over the holding period - accounts for timing of cash flows",
-            irrWarning: "Below typical IRR",
+            irrWarning: "Below typical market IRR",
             
             irrAfterTax: "IRR (After Tax)",
             irrAfterTaxDesc: "Average annual return after taxes",
@@ -95,23 +96,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             dscr: "Debt Service Coverage",
             dscrDesc: "NOI / Annual debt payment",
             dscrTooltip: "Net Operating Income divided by annual debt service - lenders typically require 1.25+",
-            dscrWarning: "Below 1.25 - financing risk",
-            
-            occupancy: "Occupancy Rate",
-            occupancyDesc: "Percentage of nights booked",
-            occupancyTooltip: "Percentage of available nights that are booked by guests",
-            
-            nightsBooked: "Nights Booked Annually",
-            nightsBookedDesc: "Based on occupancy rate",
-            nightsBookedTooltip: "Total nights booked per year based on your occupancy rate",
-            
-            grossRevenue: "Gross Annual Revenue",
-            grossRevenueDesc: "Total income before fees",
-            grossRevenueTooltip: "Total revenue from nightly rates before platform fees and expenses",
-            
-            netRevenue: "Net Annual Revenue",
-            netRevenueDesc: "After platform fees",
-            netRevenueTooltip: "Revenue after deducting platform fees (Airbnb/Booking.com commissions)",
+            dscrWarning: "Below 1.25 - you may struggle to get financing",
             
             annualCashFlow: "Annual Cash Flow",
             annualCashFlowDesc: "Net cash flow (before tax)",
@@ -120,29 +105,44 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             monthlyCashFlow: "Monthly Cash Flow",
             monthlyCashFlowDesc: "Average monthly profit (before tax)",
             monthlyCashFlowTooltip: "Monthly cash flow before tax",
+
+            payback: "Payback Period",
+            paybackDesc: "Time to recoup initial investment",
+            paybackTooltip: "Number of years required to recoup total equity from cumulative cash flow",
             
-            grossYield: "Gross Yield",
-            grossYieldDesc: "Gross revenue / Purchase price",
-            grossYieldTooltip: "Gross annual revenue as percentage of purchase price",
+            noi: "Net Operating Income",
+            noiDesc: "Annual revenue minus operating expenses",
+            noiTooltip: "Annual rental revenue minus all operating expenses (before debt service)",
+
+            avgNightlyRevenue: "Avg Revenue per Night",
+            avgNightlyRevenueDesc: "Revenue per available night",
+            avgNightlyRevenueTooltip: "Total annual revenue divided by 365 - shows average value of each night",
+
+            occupancyRate: "Occupancy Rate",
+            occupancyRateDesc: "% of nights booked",
+            occupancyRateTooltip: "Percentage of nights the property is occupied by guests",
+            occupancyRateWarning: "Below market average - consider optimizing pricing or marketing",
+
+            avgBookingLength: "Average Booking Length",
+            avgBookingLengthDesc: "Average number of nights per stay",
+            avgBookingLengthTooltip: "The average number of nights guests stay",
+
+            annualBookings: "Annual Bookings",
+            annualBookingsDesc: "Estimated number of bookings",
+            annualBookingsTooltip: "Estimated number of separate bookings per year",
+
+            revenuePerNight: "Revenue per Available Night", // Unused, keeping for now
             
-            netYield: "Net Yield",
-            netYieldDesc: "NOI / Purchase price",
-            netYieldTooltip: "Net Operating Income as percentage of purchase price",
-            
-            airbnbPremium: "Airbnb Premium vs Long-Term",
-            airbnbPremiumDesc: "Extra income vs traditional rental",
-            airbnbPremiumTooltip: "Percentage increase in revenue compared to traditional long-term rental",
-            
-            breakEvenOccupancy: "Break-Even Occupancy",
-            breakEvenOccupancyDesc: "Minimum occupancy to cover costs",
-            breakEvenOccupancyTooltip: "Minimum occupancy rate needed to cover all expenses and debt service",
-            breakEvenWarning: "High break-even point",
         },
         sk: {
-            airbnb_results: "Výsledky analýzy Airbnb investície",
+            airbnb_results: "Výsledky analýzy krátkodobého prenájmu",
+            key_metrics: "Kľúčové finančné ukazovatele",
             overview: "Prehľad",
             details: "Detaily",
             projections: "10-ročné projekcie",
+            per_month: "/mes",
+            per_year: "/rok",
+            per_stay: "/pobyt",
             
             // Tax Analysis
             taxAnalysis: "Daňová analýza",
@@ -154,7 +154,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             taxableIncomeDesc: "Príjem podliehajúci zdaneniu po odpočtoch",
             taxableIncomeTooltip: "NOI mínus úrokové náklady mínus odpisy",
             annualIncomeTax: "Ročná daň z príjmu",
-            annualIncomeTaxDesc: "Daňová povinnosť z príjmov z Airbnb",
+            annualIncomeTaxDesc: "Daňová povinnosť z príjmov z prenájmu",
             annualIncomeTaxTooltip: "Zdaniteľný príjem vynásobený efektívnou daňovou sadzbou",
             depreciation: "Ročné odpisy",
             depreciationDesc: "Odpisy budovy (daňovo odpočítateľné)",
@@ -173,13 +173,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             // KPIs
             totalInvestment: "Celková investícia",
-            totalInvestmentDesc: "Kúpna cena + zariadenie + náklady",
-            totalInvestmentTooltip: "Celkový požadovaný kapitál vrátane kúpy, zariadenia a transakčných nákladov",
+            totalInvestmentDesc: "Kúpna cena + všetky počiatočné náklady",
+            totalInvestmentTooltip: "Celkový požadovaný kapitál vrátane kúpnej ceny a všetkých počiatočných nákladov",
             
             roi: "10-ročné ROI",
             roiDesc: "Celková návratnosť po 10 rokoch (pred zdanením)",
             roiTooltip: "Celková návratnosť investície po 10 rokoch vrátane zhodnotenia nehnuteľnosti a kumulatívneho cash flow",
-            roiWarning: "Pod priemerom trhu",
+            roiWarning: "Pod priemerom trhu - zvážte zlepšenie podmienok",
             
             roiAfterTax: "10-ročné ROI (Po zdanení)",
             roiAfterTaxDesc: "Celková návratnosť po zdanení",
@@ -188,25 +188,21 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             cashOnCash: "Cash-on-Cash návratnosť",
             cashOnCashDesc: "Ročná návratnosť vlastného kapitálu (pred zdanením)",
             cashOnCashTooltip: "Ročný cash flow delený celkovým investovaným kapitálom - meria ročný peňažný výnos",
-            cashOnCashWarning: "Nízka ročná návratnosť",
+            cashOnCashWarning: "Nízka ročná návratnosť - overte príjmy a náklady",
             
             cashOnCashAfterTax: "Cash-on-Cash (Po zdanení)",
             cashOnCashAfterTaxDesc: "Ročná návratnosť vlastného kapitálu po zdanení",
             cashOnCashAfterTaxTooltip: "Ročný cash flow po zdanení delený celkovým investovaným kapitálom",
             
-            revPAN: "Príjem na dostupnú noc",
-            revPANDesc: "Denný príjmový potenciál",
-            revPANTooltip: "Priemerný denný príjem vypočítaný z ročných hrubých tržieb delených 365 dňami",
-            
             capRate: "Cap Rate",
             capRateDesc: "Čistý príjem / Kúpna cena",
             capRateTooltip: "Čistý prevádzkový príjem delený kúpnou cenou - kľúčová metrika ziskovosti",
-            capRateWarning: "Pod typickým cap rate",
+            capRateWarning: "Pod typickým trhovým cap rate",
             
             irr: "Vnútorná miera návratnosti",
             irrDesc: "Priemerná ročná návratnosť (pred zdanením)",
             irrTooltip: "Priemerná ročná návratnosť počas doby držby - zohľadňuje načasovanie cash flow",
-            irrWarning: "Pod typickým IRR",
+            irrWarning: "Pod typickým trhovým IRR",
             
             irrAfterTax: "IRR (Po zdanení)",
             irrAfterTaxDesc: "Priemerná ročná návratnosť po zdanení",
@@ -215,23 +211,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             dscr: "Pokrytie dlhovej služby",
             dscrDesc: "NOI / Ročná splátka dlhu",
             dscrTooltip: "Čistý prevádzkový príjem delený ročnou splátkou - poskytovatelia úverov vyžadujú typicky 1.25+",
-            dscrWarning: "Pod 1.25 - riziko financovania",
-            
-            occupancy: "Miera obsadenosti",
-            occupancyDesc: "Percento obsadených nocí",
-            occupancyTooltip: "Percento dostupných nocí, ktoré sú rezervované hosťami",
-            
-            nightsBooked: "Obsadené noci ročne",
-            nightsBookedDesc: "Na základe miery obsadenosti",
-            nightsBookedTooltip: "Celkový počet obsadených nocí ročne na základe vašej miery obsadenosti",
-            
-            grossRevenue: "Hrubé ročné tržby",
-            grossRevenueDesc: "Celkový príjem pred poplatkami",
-            grossRevenueTooltip: "Celkové tržby z nocľahov pred poplatkami platforme a nákladmi",
-            
-            netRevenue: "Čisté ročné tržby",
-            netRevenueDesc: "Po poplatku platforme",
-            netRevenueTooltip: "Tržby po odpočítaní poplatkov platforme (provízie Airbnb/Booking.com)",
+            dscrWarning: "Pod 1.25 - môžete mať problémy so získaním financovania",
             
             annualCashFlow: "Ročný Cash Flow",
             annualCashFlowDesc: "Čistý cash flow (pred zdanením)",
@@ -241,28 +221,42 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             monthlyCashFlowDesc: "Priemerný mesačný zisk (pred zdanením)",
             monthlyCashFlowTooltip: "Mesačný cash flow pred zdanením",
             
-            grossYield: "Hrubý výnos",
-            grossYieldDesc: "Hrubé tržby / Kúpna cena",
-            grossYieldTooltip: "Hrubé ročné tržby ako percento z kúpnej ceny",
+            payback: "Doba návratnosti",
+            paybackDesc: "Čas na vrátenie počiatočnej investície",
+            paybackTooltip: "Počet rokov potrebných na vrátenie celkového kapitálu z kumulatívnych cash flow",
             
-            netYield: "Čistý výnos",
-            netYieldDesc: "NOI / Kúpna cena",
-            netYieldTooltip: "Čistý prevádzkový príjem ako percento z kúpnej ceny",
+            noi: "Čistý prevádzkový príjem",
+            noiDesc: "Ročný príjem mínus prevádzkové náklady",
+            noiTooltip: "Ročný príjem z prenájmu mínus všetky prevádzkové náklady (pred splácaním dlhu)",
             
-            airbnbPremium: "Airbnb prémia vs dlhodobý prenájom",
-            airbnbPremiumDesc: "Nadpríjem oproti tradičnému prenájmu",
-            airbnbPremiumTooltip: "Percentuálny nárast tržieb v porovnaní s tradičným dlhodobým prenájmom",
+            avgNightlyRevenue: "Priemerný príjem za noc",
+            avgNightlyRevenueDesc: "Príjem na dostupnú noc",
+            avgNightlyRevenueTooltip: "Celkový ročný príjem delený 365 - ukazuje priemernú hodnotu každej noci",
             
-            breakEvenOccupancy: "Bod zvratu - obsadenosť",
-            breakEvenOccupancyDesc: "Minimálna obsadenosť na pokrytie nákladov",
-            breakEvenOccupancyTooltip: "Minimálna miera obsadenosti potrebná na pokrytie všetkých nákladov a splátok dlhu",
-            breakEvenWarning: "Vysoký bod zvratu",
+            occupancyRate: "Miera obsadenosti",
+            occupancyRateDesc: "% obsadených nocí",
+            occupancyRateTooltip: "Percento nocí, kedy je nehnuteľnosť obsadená hosťami",
+            occupancyRateWarning: "Pod priemerom trhu - zvážte optimalizáciu cien alebo marketingu",
+            
+            avgBookingLength: "Priemerná dĺžka rezervácie",
+            avgBookingLengthDesc: "Priemerný počet nocí na pobyt",
+            avgBookingLengthTooltip: "Priemerný počet nocí, ktoré hostia zostávajú",
+            
+            annualBookings: "Ročné rezervácie",
+            annualBookingsDesc: "Odhadovaný počet rezervácií",
+            annualBookingsTooltip: "Odhadovaný počet samostatných rezervácií za rok",
+            
+            revenuePerNight: "Príjem na dostupnú noc",
         },
         pl: {
-            airbnb_results: "Wyniki analizy inwestycji Airbnb",
+            airbnb_results: "Wyniki analizy najmu krótkoterminowego",
+            key_metrics: "Kluczowe wskaźniki finansowe",
             overview: "Przegląd",
             details: "Szczegóły",
             projections: "Projekcje 10-letnie",
+            per_month: "/mies",
+            per_year: "/rok",
+            per_stay: "/pobyt",
             
             // Tax Analysis
             taxAnalysis: "Analiza podatkowa",
@@ -274,7 +268,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             taxableIncomeDesc: "Dochód podlegający opodatkowaniu po odliczeniach",
             taxableIncomeTooltip: "NOI minus koszty odsetek minus amortyzacja",
             annualIncomeTax: "Roczny podatek dochodowy",
-            annualIncomeTaxDesc: "Zobowiązanie podatkowe od dochodów z Airbnb",
+            annualIncomeTaxDesc: "Zobowiązanie podatkowe od dochodów z najmu",
             annualIncomeTaxTooltip: "Dochód podlegający opodatkowaniu pomnożony przez efektywną stopę podatkową",
             depreciation: "Roczna amortyzacja",
             depreciationDesc: "Amortyzacja budynku (odliczalna od podatku)",
@@ -293,13 +287,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             // KPIs
             totalInvestment: "Całkowita inwestycja",
-            totalInvestmentDesc: "Cena zakupu + umeblowanie + koszty",
-            totalInvestmentTooltip: "Całkowity kapitał wymagany, wliczając zakup, umeblowanie i koszty nabycia",
+            totalInvestmentDesc: "Cena zakupu + wszystkie koszty początkowe",
+            totalInvestmentTooltip: "Całkowity kapitał wymagany, wliczając cenę zakupu i wszystkie koszty początkowe",
             
             roi: "10-letni ROI",
             roiDesc: "Całkowity zwrot po 10 latach (przed opodatkowaniem)",
             roiTooltip: "Całkowity zwrot z inwestycji po 10 latach, wliczając wzrost wartości i skumulowane przepływy pieniężne",
-            roiWarning: "Poniżej średniej rynkowej",
+            roiWarning: "Poniżej średniej rynkowej - rozważ poprawę warunków",
             
             roiAfterTax: "10-letni ROI (Po opodatkowaniu)",
             roiAfterTaxDesc: "Całkowity zwrot po opodatkowaniu",
@@ -308,25 +302,21 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             cashOnCash: "Zwrot Cash-on-Cash",
             cashOnCashDesc: "Roczny zwrot z kapitału własnego (przed opodatkowaniem)",
             cashOnCashTooltip: "Roczny przepływ gotówki podzielony przez całkowity zainwestowany kapitał - mierzy roczny zwrot gotówkowy",
-            cashOnCashWarning: "Niska roczna stopa zwrotu",
+            cashOnCashWarning: "Niska roczna stopa zwrotu - sprawdź dochody i wydatki",
             
             cashOnCashAfterTax: "Cash-on-Cash (Po opodatkowaniu)",
             cashOnCashAfterTaxDesc: "Roczny zwrot z kapitału własnego po opodatkowaniu",
             cashOnCashAfterTaxTooltip: "Roczny przepływ gotówki po opodatkowaniu podzielony przez całkowity zainwestowany kapitał",
             
-            revPAN: "Przychód na dostępną noc",
-            revPANDesc: "Dzienny potencjał przychodowy",
-            revPANTooltip: "Średni dzienny przychód obliczony z rocznych przychodów brutto podzielonych przez 365 dni",
-            
             capRate: "Cap Rate",
             capRateDesc: "Dochód netto / Cena zakupu",
             capRateTooltip: "Dochód operacyjny netto podzielony przez cenę zakupu - kluczowy wskaźnik rentowności",
-            capRateWarning: "Poniżej typowej stopy kapitalizacji",
+            capRateWarning: "Poniżej typowej stopy kapitalizacji rynkowej",
             
             irr: "Wewnętrzna stopa zwrotu",
             irrDesc: "Średni roczny zwrot (przed opodatkowaniem)",
             irrTooltip: "Średnia roczna stopa zwrotu w okresie utrzymywania - uwzględnia timing przepływów pieniężnych",
-            irrWarning: "Poniżej typowego IRR",
+            irrWarning: "Poniżej typowego IRR rynkowego",
             
             irrAfterTax: "IRR (Po opodatkowaniu)",
             irrAfterTaxDesc: "Średni roczny zwrot po opodatkowaniu",
@@ -335,23 +325,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             dscr: "Wskaźnik pokrycia zadłużenia",
             dscrDesc: "NOI / Roczna spłata długu",
             dscrTooltip: "Dochód operacyjny netto podzielony przez roczną obsługę długu - kredytodawcy zazwyczaj wymagają 1.25+",
-            dscrWarning: "Poniżej 1.25 - ryzyko finansowania",
-            
-            occupancy: "Wskaźnik obłożenia",
-            occupancyDesc: "Procent zarezerwowanych nocy",
-            occupancyTooltip: "Procent dostępnych nocy zarezerwowanych przez gości",
-            
-            nightsBooked: "Zarezerwowane noce rocznie",
-            nightsBookedDesc: "Na podstawie wskaźnika obłożenia",
-            nightsBookedTooltip: "Całkowita liczba zarezerwowanych nocy rocznie na podstawie wskaźnika obłożenia",
-            
-            grossRevenue: "Roczny przychód brutto",
-            grossRevenueDesc: "Całkowity dochód przed opłatami",
-            grossRevenueTooltip: "Całkowity przychód z cen noclegowych przed opłatami platformy i wydatkami",
-            
-            netRevenue: "Roczny przychód netto",
-            netRevenueDesc: "Po opłatach platformy",
-            netRevenueTooltip: "Przychód po odliczeniu opłat platformy (prowizje Airbnb/Booking.com)",
+            dscrWarning: "Poniżej 1.25 - możesz mieć problemy z uzyskaniem finansowania",
             
             annualCashFlow: "Roczny Cash Flow",
             annualCashFlowDesc: "Czysty cash flow (przed opodatkowaniem)",
@@ -360,29 +334,43 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             monthlyCashFlow: "Miesięczny Cash Flow",
             monthlyCashFlowDesc: "Średni miesięczny zysk (przed opodatkowaniem)",
             monthlyCashFlowTooltip: "Miesięczny przepływ gotówki przed opodatkowaniem",
+
+            payback: "Okres zwrotu",
+            paybackDesc: "Czas na zwrot początkowej inwestycji",
+            paybackTooltip: "Liczba lat potrzebnych do zwrotu całkowitego kapitału z kumulowanych przepływów pieniężnych",
             
-            grossYield: "Rentowność brutto",
-            grossYieldDesc: "Przychód brutto / Cena zakupu",
-            grossYieldTooltip: "Roczny przychód brutto jako procent ceny zakupu",
-            
-            netYield: "Rentowność netto",
-            netYieldDesc: "NOI / Cena zakupu",
-            netYieldTooltip: "Dochód operacyjny netto jako procent ceny zakupu",
-            
-            airbnbPremium: "Premia Airbnb vs najem długoterminowy",
-            airbnbPremiumDesc: "Dodatkowy dochód vs tradycyjny najem",
-            airbnbPremiumTooltip: "Procentowy wzrost przychodów w porównaniu z tradycyjnym najmem długoterminowym",
-            
-            breakEvenOccupancy: "Próg rentowności - obłożenie",
-            breakEvenOccupancyDesc: "Minimalne obłożenie do pokrycia kosztów",
-            breakEvenOccupancyTooltip: "Minimalny wskaźnik obłożenia potrzebny do pokrycia wszystkich wydatków i obsługi długu",
-            breakEvenWarning: "Wysoki próg rentowności",
+            noi: "Dochód operacyjny netto",
+            noiDesc: "Roczny przychód minus koszty operacyjne",
+            noiTooltip: "Roczny przychód z najmu minus wszystkie koszty operacyjne (przed obsługą długu)",
+
+            avgNightlyRevenue: "Średni przychód za noc",
+            avgNightlyRevenueDesc: "Przychód na dostępną noc",
+            avgNightlyRevenueTooltip: "Całkowity roczny przychód podzielony przez 365 - pokazuje średnią wartość każdej nocy",
+
+            occupancyRate: "Wskaźnik obłożenia",
+            occupancyRateDesc: "% zarezerwowanych nocy",
+            occupancyRateTooltip: "Procent nocy, w których nieruchomość jest zajęta przez gości",
+            occupancyRateWarning: "Poniżej średniej rynkowej - rozważ optymalizację cen lub marketingu",
+
+            avgBookingLength: "Średnia długość rezerwacji",
+            avgBookingLengthDesc: "Średnia liczba nocy na pobyt",
+            avgBookingLengthTooltip: "Średnia liczba nocy, którą goście spędzają w obiekcie",
+
+            annualBookings: "Roczne rezerwacje",
+            annualBookingsDesc: "Szacowana liczba rezerwacji",
+            annualBookingsTooltip: "Szacowana liczba oddzielnych rezerwacji w ciągu roku",
+
+            revenuePerNight: "Przychód na dostępną noc",
         },
         hu: {
-            airbnb_results: "Airbnb befektetési elemzés eredményei",
+            airbnb_results: "Rövid távú bérleti elemzés eredményei",
+            key_metrics: "Kulcsfontosságú pénzügyi mutatók",
             overview: "Áttekintés",
             details: "Részletek",
             projections: "10 éves előrejelzések",
+            per_month: "/hó",
+            per_year: "/év",
+            per_stay: "/tartózkodás",
             
             // Tax Analysis
             taxAnalysis: "Adóelemzés",
@@ -394,7 +382,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             taxableIncomeDesc: "Levonások után adóköteles jövedelem",
             taxableIncomeTooltip: "NOI mínusz kamatköltségek mínusz értékcsökkenés",
             annualIncomeTax: "Éves jövedelemadó",
-            annualIncomeTaxDesc: "Adókötelezettség Airbnb jövedelemre",
+            annualIncomeTaxDesc: "Adókötelezettség bérleti jövedelemre",
             annualIncomeTaxTooltip: "Adóköteles jövedelem szorozva az effektív adókulccsal",
             depreciation: "Éves értékcsökkenés",
             depreciationDesc: "Épület értékcsökkenése (adóalap-csökkentő)",
@@ -413,13 +401,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             // KPIs
             totalInvestment: "Teljes befektetés",
-            totalInvestmentDesc: "Vételár + bútorozás + költségek",
-            totalInvestmentTooltip: "Teljes tőkeigény, beleértve a vételt, bútorozást és akvizíciós költségeket",
+            totalInvestmentDesc: "Vételár + összes kezdeti költség",
+            totalInvestmentTooltip: "Teljes tőkeigény, beleértve a vételárat és az összes kezdeti költséget",
             
             roi: "10 éves ROI",
             roiDesc: "Teljes megtérülés 10 év után (adózás előtt)",
             roiTooltip: "Teljes befektetési megtérülés 10 év után, beleértve az ingatlan értéknövekedését és a kumulált cash flow-t",
-            roiWarning: "Piaci átlag alatt",
+            roiWarning: "Piaci átlag alatt - érdemes javítani a feltételeken",
             
             roiAfterTax: "10 éves ROI (Adózás után)",
             roiAfterTaxDesc: "Teljes megtérülés adózás után",
@@ -428,25 +416,21 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             cashOnCash: "Cash-on-Cash hozam",
             cashOnCashDesc: "Éves hozam a saját tőkéből (adózás előtt)",
             cashOnCashTooltip: "Éves cash flow osztva a teljes befektetett tőkével - az éves készpénzes hozamot méri",
-            cashOnCashWarning: "Alacsony éves hozam",
+            cashOnCashWarning: "Alacsony éves hozam - ellenőrizze a bevételeket és kiadásokat",
             
             cashOnCashAfterTax: "Cash-on-Cash (Adózás után)",
             cashOnCashAfterTaxDesc: "Éves hozam a saját tőkéből adózás után",
             cashOnCashAfterTaxTooltip: "Éves cash flow adózás után osztva a teljes befektetett tőkével",
             
-            revPAN: "Bevétel elérhető éjszakánként",
-            revPANDesc: "Napi bevételi potenciál",
-            revPANTooltip: "Átlagos napi bevétel az éves bruttó bevételből osztva 365 nappal",
-            
             capRate: "Cap Rate",
             capRateDesc: "Nettó jövedelem / Vételár",
             capRateTooltip: "Nettó működési jövedelem osztva a vételárral - kulcsfontosságú jövedelmezőségi mutató",
-            capRateWarning: "Tipikus kapitalizációs ráta alatt",
+            capRateWarning: "Tipikus piaci kapitalizációs ráta alatt",
             
             irr: "Belső megtérülési ráta",
             irrDesc: "Átlagos éves megtérülés (adózás előtt)",
             irrTooltip: "Átlagos éves megtérülési ráta a tartási időszak alatt - figyelembe veszi a cash flow-k időzítését",
-            irrWarning: "Tipikus IRR alatt",
+            irrWarning: "Tipikus piaci IRR alatt",
             
             irrAfterTax: "IRR (Adózás után)",
             irrAfterTaxDesc: "Átlagos éves megtérülés adózás után",
@@ -455,23 +439,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             dscr: "Adósságszolgálati fedezet",
             dscrDesc: "NOI / Éves hiteltörlesztés",
             dscrTooltip: "Nettó működési jövedelem osztva az éves adósságszolgálattal - a hitelezők általában 1.25+-t követelnek meg",
-            dscrWarning: "1.25 alatt - finanszírozási kockázat",
-            
-            occupancy: "Kihasználtsági arány",
-            occupancyDesc: "Lefoglalt éjszakák százaléka",
-            occupancyTooltip: "A vendégek által lefoglalt elérhető éjszakák százaléka",
-            
-            nightsBooked: "Lefoglalt éjszakák évente",
-            nightsBookedDesc: "Kihasználtsági arány alapján",
-            nightsBookedTooltip: "Éves lefoglalt éjszakák száma a kihasználtsági arány alapján",
-            
-            grossRevenue: "Éves bruttó bevétel",
-            grossRevenueDesc: "Teljes bevétel díjak előtt",
-            grossRevenueTooltip: "Teljes bevétel az éjszakai díjakból platform díjak és kiadások előtt",
-            
-            netRevenue: "Éves nettó bevétel",
-            netRevenueDesc: "Platform díjak után",
-            netRevenueTooltip: "Bevétel a platform díjak levonása után (Airbnb/Booking.com jutalékok)",
+            dscrWarning: "1.25 alatt - nehézségekbe ütközhet a finanszírozás megszerzése",
             
             annualCashFlow: "Éves Cash Flow",
             annualCashFlowDesc: "Nettó cash flow (adózás előtt)",
@@ -480,29 +448,43 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             monthlyCashFlow: "Havi Cash Flow",
             monthlyCashFlowDesc: "Átlagos havi profit (adózás előtt)",
             monthlyCashFlowTooltip: "Havi cash flow adózás előtt",
+
+            payback: "Megtérülési idő",
+            paybackDesc: "A kezdeti befektetés megtérülésének ideje",
+            paybackTooltip: "Évek száma, amely a teljes tőke megtérüléséhez szükséges a kumulált cash flow-ból",
             
-            grossYield: "Bruttó hozam",
-            grossYieldDesc: "Bruttó bevétel / Vételár",
-            grossYieldTooltip: "Éves bruttó bevétel a vételár százalékában",
-            
-            netYield: "Nettó hozam",
-            netYieldDesc: "NOI / Vételár",
-            netYieldTooltip: "Nettó működési jövedelem a vételár százalékában",
-            
-            airbnbPremium: "Airbnb prémium vs hosszú távú bérlet",
-            airbnbPremiumDesc: "Többletbevétel vs hagyományos bérlet",
-            airbnbPremiumTooltip: "Százalékos bevételnövekedés a hagyományos hosszú távú bérlethez képest",
-            
-            breakEvenOccupancy: "Fedezeti pont - kihasználtság",
-            breakEvenOccupancyDesc: "Minimális kihasználtság a költségek fedezéséhez",
-            breakEvenOccupancyTooltip: "Minimális kihasználtsági arány az összes kiadás és adósságszolgálat fedezéséhez",
-            breakEvenWarning: "Magas fedezeti pont",
+            noi: "Nettó működési jövedelem",
+            noiDesc: "Éves bevétel mínusz működési költségek",
+            noiTooltip: "Éves bérleti bevétel mínusz minden működési költség (adósságszolgálat előtt)",
+
+            avgNightlyRevenue: "Átlagos bevétel éjszakánként",
+            avgNightlyRevenueDesc: "Bevétel elérhető éjszakánként",
+            avgNightlyRevenueTooltip: "Teljes éves bevétel osztva 365-tel - az egyes éjszakák átlagos értékét mutatja",
+
+            occupancyRate: "Kihasználtsági arány",
+            occupancyRateDesc: "% lefoglalt éjszakák",
+            occupancyRateTooltip: "Az ingatlan vendégek által elfoglalt éjszakáinak százaléka",
+            occupancyRateWarning: "Piaci átlag alatt - fontolja meg az árazás vagy a marketing optimalizálását",
+
+            avgBookingLength: "Átlagos foglalási hossz",
+            avgBookingLengthDesc: "Átlagos éjszakaszám tartózkodásonként",
+            avgBookingLengthTooltip: "Az átlagos éjszakaszám, amit a vendégek eltöltenek",
+
+            annualBookings: "Éves foglalások",
+            annualBookingsDesc: "Becsült foglalások száma",
+            annualBookingsTooltip: "Éves becsült különálló foglalások száma",
+
+            revenuePerNight: "Bevétel elérhető éjszakánként",
         },
         de: {
-            airbnb_results: "Airbnb Investitionsanalyse Ergebnisse",
+            airbnb_results: "Ergebnisse der Kurzzeitvermietungsanalyse",
+            key_metrics: "Wichtige Finanzkennzahlen",
             overview: "Übersicht",
             details: "Details",
             projections: "10-Jahres-Prognosen",
+            per_month: "/Mon",
+            per_year: "/Jahr",
+            per_stay: "/Aufenthalt",
             
             // Tax Analysis
             taxAnalysis: "Steueranalyse",
@@ -514,7 +496,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             taxableIncomeDesc: "Einkommen, das nach Abzügen der Besteuerung unterliegt",
             taxableIncomeTooltip: "NOI minus Zinsaufwand minus Abschreibung",
             annualIncomeTax: "Jährliche Einkommensteuer",
-            annualIncomeTaxDesc: "Steuerpflicht auf Airbnb-Einkommen",
+            annualIncomeTaxDesc: "Steuerpflicht auf Mieteinkommen",
             annualIncomeTaxTooltip: "Zu versteuerndes Einkommen multipliziert mit dem effektiven Steuersatz",
             depreciation: "Jährliche Abschreibung",
             depreciationDesc: "Gebäudeabschreibung (steuerlich absetzbar)",
@@ -533,13 +515,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             // KPIs
             totalInvestment: "Gesamtinvestition",
-            totalInvestmentDesc: "Kaufpreis + Möblierung + Kosten",
-            totalInvestmentTooltip: "Benötigtes Gesamtkapital inklusive Kauf, Möblierung und Erwerbsnebenkosten",
+            totalInvestmentDesc: "Kaufpreis + alle initialen Kosten",
+            totalInvestmentTooltip: "Benötigtes Gesamtkapital inklusive Kaufpreis und aller initialen Kosten",
             
             roi: "10-Jahres-ROI",
             roiDesc: "Gesamtrendite nach 10 Jahren (vor Steuern)",
             roiTooltip: "Gesamtrendite nach 10 Jahren, einschließlich Wertsteigerung und kumuliertem Cashflow",
-            roiWarning: "Unter dem Marktdurchschnitt",
+            roiWarning: "Unter dem Marktdurchschnitt – Erwägen Sie eine Verbesserung der Bedingungen",
             
             roiAfterTax: "10-Jahres-ROI (Nach Steuern)",
             roiAfterTaxDesc: "Gesamtrendite nach Steuern",
@@ -547,26 +529,22 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             cashOnCash: "Cash-on-Cash Rendite",
             cashOnCashDesc: "Jährliche Eigenkapitalrendite (vor Steuern)",
-            cashOnCashTooltip: "Jährlicher Cashflow geteilt durch das gesamte investierte Eigenkapital - misst die jährliche Barrendite",
-            cashOnCashWarning: "Niedrige jährliche Rendite",
+            cashOnCashTooltip: "Jährlicher Cashflow geteilt durch das gesamte investierte Eigenkapital – misst die jährliche Barrendite",
+            cashOnCashWarning: "Niedrige jährliche Rendite – Überprüfen Sie Einnahmen und Ausgaben",
             
             cashOnCashAfterTax: "Cash-on-Cash (Nach Steuern)",
             cashOnCashAfterTaxDesc: "Jährliche Eigenkapitalrendite nach Steuern",
             cashOnCashAfterTaxTooltip: "Jährlicher Cashflow nach Steuern geteilt durch das gesamte investierte Eigenkapital",
             
-            revPAN: "Umsatz pro verfügbarer Nacht",
-            revPANDesc: "Tägliches Umsatzpotenzial",
-            revPANTooltip: "Durchschnittlicher Tagesumsatz aus dem jährlichen Bruttoumsatz geteilt durch 365 Tage",
-            
             capRate: "Cap Rate",
             capRateDesc: "Nettoeinkommen / Kaufpreis",
-            capRateTooltip: "Nettobetriebseinkommen geteilt durch den Kaufpreis - wichtige Rentabilitätskennzahl",
-            capRateWarning: "Unter dem typischen Kapitalisierungszinssatz",
+            capRateTooltip: "Nettobetriebseinkommen geteilt durch den Kaufpreis – wichtige Rentabilitätskennzahl",
+            capRateWarning: "Unter dem typischen Marktkapitalisierungssatz",
             
             irr: "Interner Zinsfuß",
             irrDesc: "Durchschnittliche jährliche Rendite (vor Steuern)",
-            irrTooltip: "Durchschnittliche jährliche Rendite über die Haltedauer - berücksichtigt den Zeitpunkt der Cashflows",
-            irrWarning: "Unter dem typischen IRR",
+            irrTooltip: "Durchschnittliche jährliche Rendite über die Haltedauer – berücksichtigt den Zeitpunkt der Cashflows",
+            irrWarning: "Unter dem typischen Mark-IRR",
             
             irrAfterTax: "IRR (Nach Steuern)",
             irrAfterTaxDesc: "Durchschnittliche jährliche Rendite nach Steuern",
@@ -574,49 +552,43 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
             dscr: "Schuldendienstdeckungsgrad",
             dscrDesc: "NOI / Jährliche Schuldenzahlung",
-            dscrTooltip: "Nettobetriebseinkommen geteilt durch den jährlichen Schuldendienst - Kreditgeber verlangen typischerweise 1.25+",
-            dscrWarning: "Unter 1.25 - Finanzierungsrisiko",
+            dscrTooltip: "Nettobetriebseinkommen geteilt durch den jährlichen Schuldendienst – Kreditgeber verlangen typischerweise 1.25+",
+            dscrWarning: "Unter 1.25 – Sie könnten Schwierigkeiten haben, eine Finanzierung zu erhalten",
             
-            occupancy: "Kihasználtsági arány",
-            occupancyDesc: "Lefoglalt éjszakák százaléka",
-            occupancyTooltip: "A vendégek által lefoglalt elérhető éjszakák százaléka",
+            annualCashFlow: "Jährlicher Cash Flow",
+            annualCashFlowDesc: "Netto-Cashflow (vor Steuern)",
+            annualCashFlowTooltip: "Jährliches Barvermögen nach allen Ausgaben und Schuldendienst",
             
-            nightsBooked: "Lefoglalt éjszakák évente",
-            nightsBookedDesc: "Kihasználtsági arány alapján",
-            nightsBookedTooltip: "Éves lefoglalt éjszakák száma a kihasználtsági arány alapján",
+            monthlyCashFlow: "Monatlicher Cash Flow",
+            monthlyCashFlowDesc: "Durchschnittlicher monatlicher Gewinn (vor Steuern)",
+            monthlyCashFlowTooltip: "Monatlicher Cashflow vor Steuern",
+
+            payback: "Amortisationszeit",
+            paybackDesc: "Zeit zur Amortisation der Erstinvestition",
+            paybackTooltip: "Anzahl der Jahre, die benötigt werden, um das gesamte Eigenkapital aus den kumulierten Cashflows zurückzugewinnen",
             
-            grossRevenue: "Éves bruttó bevétel",
-            grossRevenueDesc: "Teljes bevétel díjak előtt",
-            grossRevenueTooltip: "Teljes bevétel az éjszakai díjakból platform díjak és kiadások előtt",
-            
-            netRevenue: "Éves nettó bevétel",
-            netRevenueDesc: "Platform díjak után",
-            netRevenueTooltip: "Bevétel a platform díjak levonása után (Airbnb/Booking.com jutalékok)",
-            
-            annualCashFlow: "Éves Cash Flow",
-            annualCashFlowDesc: "Nettó cash flow (adózás előtt)",
-            annualCashFlowTooltip: "Éves pénzmaradvány az összes költség és adósságtörlesztés után",
-            
-            monthlyCashFlow: "Havi Cash Flow",
-            monthlyCashFlowDesc: "Átlagos havi profit (adózás előtt)",
-            monthlyCashFlowTooltip: "Havi cash flow adózás előtt",
-            
-            grossYield: "Bruttó hozam",
-            grossYieldDesc: "Bruttó bevétel / Vételár",
-            grossYieldTooltip: "Éves bruttó bevétel a vételár százalékában",
-            
-            netYield: "Nettó hozam",
-            netYieldDesc: "NOI / Vételár",
-            netYieldTooltip: "Nettó működési jövedelem a vételár százalékában",
-            
-            airbnbPremium: "Airbnb prémium vs hosszú távú bérlet",
-            airbnbPremiumDesc: "Többletbevétel vs hagyományos bérlet",
-            airbnbPremiumTooltip: "Százalékos bevételnövekedés a hagyományos hosszú távú bérlethez képest",
-            
-            breakEvenOccupancy: "Fedezeti pont - kihasználtság",
-            breakEvenOccupancyDesc: "Minimális kihasználtság a költségek fedezéséhez",
-            breakEvenOccupancyTooltip: "Minimális kihasználtsági arány az összes kiadás és adósságszolgálat fedezéséhez",
-            breakEvenWarning: "Magas fedezeti pont",
+            noi: "Nettobetriebseinkommen",
+            noiDesc: "Jahreseinnahmen abzüglich Betriebskosten",
+            noiTooltip: "Jährliche Mieteinnahmen abzüglich aller Betriebskosten (vor Schuldendienst)",
+
+            avgNightlyRevenue: "Durchschn. Umsatz pro Nacht",
+            avgNightlyRevenueDesc: "Umsatz pro verfügbarer Nacht",
+            avgNightlyRevenueTooltip: "Gesamter Jahresumsatz geteilt durch 365 – zeigt den Durchschnittswert jeder Nacht",
+
+            occupancyRate: "Auslastungsrate",
+            occupancyRateDesc: "% der gebuchten Nächte",
+            occupancyRateTooltip: "Prozentsatz der Nächte, in denen die Unterkunft von Gästen belegt ist",
+            occupancyRateWarning: "Unter dem Marktdurchschnitt – Erwägen Sie eine Optimierung der Preisgestaltung oder des Marketings",
+
+            avgBookingLength: "Durchschnittliche Buchungsdauer",
+            avgBookingLengthDesc: "Durchschnittliche Anzahl der Nächte pro Aufenthalt",
+            avgBookingLengthTooltip: "Die durchschnittliche Anzahl der Nächte, die Gäste bleiben",
+
+            annualBookings: "Jährliche Buchungen",
+            annualBookingsDesc: "Geschätzte Anzahl der Buchungen",
+            annualBookingsTooltip: "Geschätzte Anzahl separater Buchungen pro Jahr",
+
+            revenuePerNight: "Umsatz pro verfügbarer Nacht",
         }
     };
 
@@ -642,16 +614,16 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
     };
 
     const getCashOnCashStatus = (coc) => {
-        if (coc < 6) return 'warning';
-        if (coc > 15) return 'excellent';
-        if (coc > 10) return 'good';
+        if (coc < 5) return 'warning';
+        if (coc > 12) return 'excellent';
+        if (coc > 8) return 'good';
         return 'neutral';
     };
 
     const getCapRateStatus = (capRate) => {
-        if (capRate < 5) return 'warning';
-        if (capRate > 10) return 'excellent';
-        if (capRate > 7) return 'good';
+        if (capRate < 4) return 'warning';
+        if (capRate > 8) return 'excellent';
+        if (capRate > 6) return 'good';
         return 'neutral';
     };
 
@@ -659,6 +631,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
         if (dscr < 1.25) return 'warning';
         if (dscr > 2.0) return 'excellent';
         if (dscr > 1.5) return 'good';
+        return 'neutral';
+    };
+
+    const getOccupancyStatus = (occ) => {
+        if (occ < 60) return 'warning';
+        if (occ > 80) return 'excellent';
+        if (occ > 70) return 'good';
         return 'neutral';
     };
 
@@ -847,13 +826,6 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
                             )}
                             
                             <KPICard
-                                title={t.revPAN}
-                                value={currencyFormatter(kpis.revPAN, currency, currencySymbol, 0)}
-                                description={t.revPANDesc}
-                                tooltip={t.revPANTooltip}
-                            />
-                            
-                            <KPICard
                                 title={t.capRate}
                                 value={percentFormatter(kpis.cap_rate, 2)}
                                 description={t.capRateDesc}
@@ -874,64 +846,55 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
                             />
                             
                             <KPICard
-                                title={t.occupancy}
+                                title={t.avgNightlyRevenue}
+                                value={currencyFormatter(kpis.avg_revenue_per_night, currency, currencySymbol, 0)}
+                                description={t.avgNightlyRevenueDesc}
+                                tooltip={t.avgNightlyRevenueTooltip}
+                            />
+                            
+                            <KPICard
+                                title={t.occupancyRate}
                                 value={percentFormatter(kpis.occupancy_rate, 1)}
-                                description={t.occupancyDesc}
-                                tooltip={t.occupancyTooltip}
+                                description={t.occupancyRateDesc}
+                                tooltip={t.occupancyRateTooltip}
+                                warning={getOccupancyStatus(kpis.occupancy_rate) === 'warning' ? t.occupancyRateWarning : null}
+                                excellent={getOccupancyStatus(kpis.occupancy_rate) === 'excellent'}
+                                good={getOccupancyStatus(kpis.occupancy_rate) === 'good'}
                             />
                             
                             <KPICard
-                                title={t.nightsBooked}
-                                value={Math.round(kpis.nights_booked)}
-                                description={t.nightsBookedDesc}
-                                tooltip={t.nightsBookedTooltip}
+                                title={t.avgBookingLength}
+                                value={`${kpis.avg_booking_length?.toFixed(1) || 'N/A'} nights`}
+                                description={t.avgBookingLengthDesc}
+                                tooltip={t.avgBookingLengthTooltip}
                             />
                             
                             <KPICard
-                                title={t.grossRevenue}
-                                value={currencyFormatter(kpis.gross_annual_revenue, currency, currencySymbol, 0)}
-                                description={t.grossRevenueDesc}
-                                tooltip={t.grossRevenueTooltip}
+                                title={t.annualBookings}
+                                value={kpis.annual_bookings?.toFixed(0) || 'N/A'}
+                                description={t.annualBookingsDesc}
+                                tooltip={t.annualBookingsTooltip}
                             />
                             
                             <KPICard
-                                title={t.netRevenue}
-                                value={currencyFormatter(kpis.net_annual_revenue, currency, currencySymbol, 0)}
-                                description={t.netRevenueDesc}
-                                tooltip={t.netRevenueTooltip}
+                                title={t.monthlyCashFlow}
+                                value={currencyFormatter(kpis.monthly_cash_flow, currency, currencySymbol, 0)}
+                                description={t.monthlyCashFlowDesc}
+                                tooltip={t.monthlyCashFlowTooltip}
                             />
                             
                             <KPICard
-                                title={t.grossYield}
-                                value={percentFormatter(kpis.gross_yield, 2)}
-                                description={t.grossYieldDesc}
-                                tooltip={t.grossYieldTooltip}
+                                title={t.annualCashFlow}
+                                value={currencyFormatter(kpis.annual_cash_flow, currency, currencySymbol, 0)}
+                                description={t.annualCashFlowDesc}
+                                tooltip={t.annualCashFlowTooltip}
                             />
                             
                             <KPICard
-                                title={t.netYield}
-                                value={percentFormatter(kpis.net_yield, 2)}
-                                description={t.netYieldDesc}
-                                tooltip={t.netYieldTooltip}
-                            />
-                            
-                            <KPICard
-                                title={t.airbnbPremium}
-                                value={percentFormatter(kpis.airbnb_premium, 1)}
-                                description={t.airbnbPremiumDesc}
-                                tooltip={t.airbnbPremiumTooltip}
-                                excellent={kpis.airbnb_premium > 50}
-                                good={kpis.airbnb_premium > 30}
-                            />
-                            
-                            <KPICard
-                                title={t.breakEvenOccupancy}
-                                value={percentFormatter(kpis.break_even_occupancy, 1)}
-                                description={t.breakEvenOccupancyDesc}
-                                tooltip={t.breakEvenOccupancyTooltip}
-                                excellent={kpis.break_even_occupancy < 40}
-                                good={kpis.break_even_occupancy < 50}
-                                warning={kpis.break_even_occupancy > 60 ? t.breakEvenWarning : null}
+                                title={t.noi}
+                                value={currencyFormatter(kpis.net_operating_income, currency, currencySymbol, 0)}
+                                description={t.noiDesc}
+                                tooltip={t.noiTooltip}
                             />
                         </div>
                     </TabsContent>
