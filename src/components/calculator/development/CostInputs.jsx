@@ -311,8 +311,8 @@ export default function CostInputs({ data, projectData, language, onChange }) {
     onChange({ ...safeData, [field]: parseFloat(value) || 0 });
   };
 
-  const handleModeChange = (prefix, mode) => {
-    onChange({ ...safeData, [`${prefix}_manual_mode`]: mode === 'manual' });
+  const handleModeChange = (prefix, isManual) => {
+    onChange({ ...safeData, [`${prefix}_manual_mode`]: isManual });
   };
 
   const renderCostItem = (prefix, label, area, unitLabel) => {
