@@ -24,6 +24,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             occupancy_tooltip: "Percentage of nights booked per year (70% is common for successful Airbnb properties)",
             avg_length_of_stay: "Average Length of Stay (nights)",
             avg_length_tooltip: "Typical number of nights guests stay (affects cleaning frequency)",
+            nights: "nights",
+            per_month: "/mo",
             platform_fee_rate: "Platform Fee Rate (%)",
             platform_fee_tooltip: "Airbnb/Booking.com host fee (typically 3-5%)",
             revenue_growth_rate: "Annual Revenue Growth (%)",
@@ -40,6 +42,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             occupancy_tooltip: "Percento obsadených nocí za rok (70% je bežné pre úspešné Airbnb nehnuteľnosti)",
             avg_length_of_stay: "Priemerná dĺžka pobytu (noci)",
             avg_length_tooltip: "Typický počet nocí, ktoré hostia zostanú (ovplyvňuje frekvenciu upratovania)",
+            nights: "nocí",
+            per_month: "/mes",
             platform_fee_rate: "Poplatok platformy (%)",
             platform_fee_tooltip: "Poplatok Airbnb/Booking.com pre hostiteľa (typicky 3-5%)",
             revenue_growth_rate: "Ročný rast príjmov (%)",
@@ -56,6 +60,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             occupancy_tooltip: "Procent zarezerwowanych nocy w roku (70% jest typowe dla udanych nieruchomości Airbnb)",
             avg_length_of_stay: "Średnia długość pobytu (noce)",
             avg_length_tooltip: "Typowa liczba nocy, które goście spędzają (wpływa na częstotliwość sprzątania)",
+            nights: "nocy",
+            per_month: "/mies",
             platform_fee_rate: "Opłata platformy (%)",
             platform_fee_tooltip: "Opłata gospodarza Airbnb/Booking.com (zazwyczaj 3-5%)",
             revenue_growth_rate: "Roczny wzrost przychodów (%)",
@@ -72,6 +78,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             occupancy_tooltip: "A lefoglalt éjszakák százaléka évente (70% jellemző a sikeres Airbnb ingatlanoknál)",
             avg_length_of_stay: "Átlagos tartózkodási idő (éjszaka)",
             avg_length_tooltip: "Vendégek jellemző éjszakák száma (befolyásolja a takarítás gyakoriságát)",
+            nights: "éjszaka",
+            per_month: "/hó",
             platform_fee_rate: "Platform díj (%)",
             platform_fee_tooltip: "Airbnb/Booking.com házigazda díj (jellemzően 3-5%)",
             revenue_growth_rate: "Éves bevételnövekedés (%)",
@@ -96,6 +104,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             comparable_long_term_tooltip: "Wofür diese Immobilie langfristig vermietet würde - zum Vergleich",
             annual_revenue: "Geschätzter Jahresumsatz",
             annual_revenue_tooltip: "Prognostizierter jährlicher Bruttoumsatz basierend auf Übernachtungspreis und Auslastung",
+            nights: "Nächte",
+            per_month: "/Mon",
         }
     };
 
@@ -154,7 +164,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                             onChange={(e) => handleChange('avg_length_of_stay', parseFloat(e.target.value) || 1)}
                             placeholder="3"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">nights</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{t.nights}</span>
                     </div>
                 </div>
                 <div>
@@ -204,7 +214,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                             onChange={(e) => handleChange('comparable_long_term_rent', parseFloat(e.target.value) || 0)}
                             placeholder="1000"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
                     </div>
                 </div>
             </div>
@@ -222,7 +232,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                         </div>
                     </div>
                     <div className="text-xs text-green-600 mt-1">
-                        {nightlyRate.toLocaleString()}€ × 365 nights × {(occupancyPercentage * 100).toFixed(0)}% occupancy
+                        {nightlyRate.toLocaleString()}€ × 365 {t.nights} × {(occupancyPercentage * 100).toFixed(0)}% occupancy
                     </div>
                 </div>
             )}
