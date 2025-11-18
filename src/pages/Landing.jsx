@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -367,8 +366,8 @@ export default function LandingPage() {
 
             <main className="relative">
                 {/* Hero Section */}
-                <section className="container mx-auto px-4 sm:px-6 pt-16 pb-12 md:pt-24 md:pb-16">
-                    <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+                <section className="container mx-auto px-4 sm:px-6 pt-16 pb-8 md:pt-24 md:pb-12">
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                         <motion.div
                             className="z-10 text-center lg:text-left"
                             initial={{ opacity: 0, x: -50 }}
