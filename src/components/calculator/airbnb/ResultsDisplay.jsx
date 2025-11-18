@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,6 +19,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
 
     const translations = {
         en: {
+            analysis_results: "Analysis Results",
             airbnb_results: "Short-Term Rental Analysis Results",
             key_metrics: "Key Financial Metrics",
             overview: "Overview",
@@ -136,6 +136,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
             
         },
         sk: {
+            analysis_results: "Výsledky analýzy",
             airbnb_results: "Výsledky analýzy krátkodobého prenájmu",
             key_metrics: "Kľúčové finančné ukazovatele",
             overview: "Prehľad",

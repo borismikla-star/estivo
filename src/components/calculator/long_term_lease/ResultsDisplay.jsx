@@ -19,6 +19,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
 
     const translations = {
         en: {
+            analysis_results: "Analysis Results",
             long_term_lease_results: "Long-Term Lease Analysis Results",
             key_metrics: "Key Financial Metrics",
             overview: "Overview",
@@ -119,6 +120,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
             noiTooltip: "Annual rental income minus all operating expenses (before debt service)",
         },
         sk: {
+            analysis_results: "Výsledky analýzy",
             long_term_lease_results: "Výsledky analýzy dlhodobého prenájmu",
             key_metrics: "Kľúčové finančné ukazovatele",
             overview: "Prehľad",
