@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +12,25 @@ import PublicHeader from '@/components/layout/PublicHeader';
 import PublicFooter from '@/components/layout/PublicFooter';
 import { getLandingPageTranslations } from '@/components/lib/translations';
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post, language }) => {
+    // Get localized content
+    const getLocalizedContent = (post) => {
+        if (language === post.primary_language) {
+            return { title: post.title, excerpt: post.excerpt };
+        }
+        
+        if (post.translations && post.translations[language]) {
+            return {
+                title: post.translations[language].title || post.title,
+                excerpt: post.translations[language].excerpt || post.excerpt
+            };
+        }
+        
+        return { title: post.title, excerpt: post.excerpt };
+    };
+
+    const localizedContent = getLocalizedContent(post);
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -22,11 +39,11 @@ const PostCard = ({ post }) => {
         >
             <Card className="h-full flex flex-col overflow-hidden rounded-2xl shadow-premium hover:shadow-lg transition-shadow duration-300">
                 <CardHeader>
-                    <CardTitle className="text-xl font-bold text-foreground">{post.title}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-foreground">{localizedContent.title}</CardTitle>
                     {post.publication_date && <p className="text-sm text-muted-foreground pt-2">{format(new Date(post.publication_date), 'PPP')}</p>}
                 </CardHeader>
                 <CardContent className="flex-grow">
-                    <p className="text-muted-foreground">{post.excerpt}</p>
+                    <p className="text-muted-foreground">{localizedContent.excerpt}</p>
                 </CardContent>
                 <CardFooter>
                     <Link to={createPageUrl(`BlogPost?slug=${post.slug}`)} className="w-full">
@@ -142,7 +159,7 @@ export default function BlogPage() {
                     ) : (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {currentPosts?.map(post => (
-                                <PostCard key={post.id} post={post} />
+                                <PostCard key={post.id} post={post} language={language} />
                             ))}
                         </div>
                     )}

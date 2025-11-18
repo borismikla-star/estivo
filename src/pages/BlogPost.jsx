@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -32,6 +31,34 @@ export default function BlogPostPage() {
         },
         enabled: !!slug,
     });
+
+    // Get localized content
+    const getLocalizedContent = (post) => {
+        if (!post) return null;
+        
+        // If current language matches primary language, return original
+        if (language === post.primary_language) {
+            return {
+                title: post.title,
+                excerpt: post.excerpt,
+                content: post.content
+            };
+        }
+        
+        // Try to get translation for current language
+        if (post.translations && post.translations[language]) {
+            return post.translations[language];
+        }
+        
+        // Fallback to primary language
+        return {
+            title: post.title,
+            excerpt: post.excerpt,
+            content: post.content
+        };
+    };
+
+    const localizedContent = getLocalizedContent(post);
     
     const handleSetLanguage = (lang) => {
         setLanguage(lang);
@@ -81,16 +108,16 @@ export default function BlogPostPage() {
                         </Link>
                     </div>
                     <article className="prose lg:prose-xl max-w-none">
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4">{post.title}</h1>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4">{localizedContent?.title || post.title}</h1>
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                             <div className="text-muted-foreground">
                                 <span>By {post.author}</span>
                                 {post.publication_date && <span> &bull; {format(new Date(post.publication_date), 'PPP')}</span>}
                             </div>
-                            <SocialShareButtons url={currentUrl} title={post.title} />
+                            <SocialShareButtons url={currentUrl} title={localizedContent?.title || post.title} />
                         </div>
                         {/* The content is rendered from the rich text editor */}
-                        <div className="ql-editor" style={{padding: 0}} dangerouslySetInnerHTML={{ __html: post.content }} />
+                        <div className="ql-editor" style={{padding: 0}} dangerouslySetInnerHTML={{ __html: localizedContent?.content || post.content }} />
                     </article>
                 </div>
             </main>
@@ -98,4 +125,3 @@ export default function BlogPostPage() {
         </div>
     );
 }
-
