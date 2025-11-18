@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { currencyFormatter } from '../../lib/formatters';
-import InfoTooltip from '@/components/calculator/shared/InfoTooltip';
+import InfoTooltip from '@/components/shared/InfoTooltip';
 import { Sparkles } from 'lucide-react';
 
 export default function CostInputs({ data, projectData, language, onChange }) {
