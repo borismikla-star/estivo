@@ -48,24 +48,47 @@ export default function PortfolioStats({ projects, language = 'en' }) {
     const totalProjects = projects.length;
     
     let totalInvested = 0;
-    let totalEquity = 0;
+    let totalCurrentEquity = 0;
     let roiSum = 0;
     let roiCount = 0;
 
     projects.forEach(project => {
         const kpis = project.results?.kpis || {};
-        if (kpis.total_equity) {
-            totalInvested += kpis.total_equity;
+        const isDevelopment = project.type === 'development';
+        
+        // Total Invested Capital (initial investment)
+        if (isDevelopment) {
+            // For development: use total costs or own resources
+            totalInvested += kpis.total_project_costs || kpis.own_resources || 0;
+        } else {
+            // For rental projects: use total_investment or total_equity
+            totalInvested += kpis.total_investment || kpis.total_equity || kpis.down_payment || 0;
         }
         
-        // For equity, use the latest projection if available
-        if (project.results?.projections && project.results.projections.length > 0) {
-            const latestProjection = project.results.projections[project.results.projections.length - 1];
-            totalEquity += latestProjection.equity || 0;
+        // Current Portfolio Equity (current value)
+        if (isDevelopment) {
+            // For development: current equity = total costs + profit (or just profit if completed)
+            totalCurrentEquity += (kpis.total_project_costs || 0) + (kpis.gross_profit || 0);
+        } else {
+            // For rental: use latest equity from cashFlowProjection if available
+            const cashFlow = project.results?.cashFlowProjection;
+            if (cashFlow && cashFlow.length > 0) {
+                const latestYear = cashFlow[cashFlow.length - 1];
+                totalCurrentEquity += latestYear.equity || 0;
+            } else {
+                // Fallback to initial investment
+                totalCurrentEquity += kpis.total_investment || kpis.total_equity || 0;
+            }
         }
         
-        // For ROI, use the 10-year or overall ROI
-        const roi = kpis.roi_10_year || kpis.roi || 0;
+        // Average ROI
+        let roi = 0;
+        if (isDevelopment) {
+            roi = kpis.annualized_return || kpis.return_on_cost || kpis.irr || 0;
+        } else {
+            roi = kpis.roi_10_year || kpis.roi || 0;
+        }
+        
         if (roi > 0) {
             roiSum += roi;
             roiCount++;
@@ -96,7 +119,7 @@ export default function PortfolioStats({ projects, language = 'en' }) {
         },
         {
             title: t.total_equity,
-            value: currencyFormatter(totalEquity, 'EUR', '€', 0),
+            value: currencyFormatter(totalCurrentEquity, 'EUR', '€', 0),
             icon: BarChart3,
             color: 'text-purple-600'
         },
