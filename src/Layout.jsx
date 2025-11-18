@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,6 +30,7 @@ import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import CookieConsentBanner from "./components/cookies/CookieConsentBanner"; // Updated import path
 import AppFooter from './components/layout/AppFooter'; // Updated import path
+import EstivoLogo from './components/shared/EstivoLogo';
 
 const pageSpecificStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700&display=swap');
@@ -455,7 +455,7 @@ export default function Layout({ children, currentPageName }) {
         <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border">
           <div className="p-6 flex items-center gap-3">
              <a href={createPageUrl("Landing")} className="block">
-                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" alt="Estivo Logo" className="h-8" />
+                <EstivoLogo className="h-8" />
             </a>
             {appSettings?.beta_mode && (
                 <span className="px-2 py-1 text-xs font-semibold bg-amber-500 text-white rounded-full">
@@ -496,7 +496,7 @@ export default function Layout({ children, currentPageName }) {
           <header className="md:hidden flex items-center justify-between bg-card/80 backdrop-blur-sm border-b border-border h-16 px-4 sticky top-0 z-50">
              <div className="flex items-center gap-2">
                 <a href={createPageUrl("Landing")} className="block">
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" alt="Estivo Logo" className="h-7" />
+                    <EstivoLogo className="h-7" />
                 </a>
                 {appSettings?.beta_mode && (
                     <span className="px-2 py-0.5 text-xs font-semibold bg-amber-500 text-white rounded-full">
