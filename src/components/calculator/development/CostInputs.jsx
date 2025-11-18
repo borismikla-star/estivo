@@ -1,17 +1,11 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { currencyFormatter } from '../../lib/formatters';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Edit3 } from 'lucide-react';
+import InfoTooltip from '../shared/InfoTooltip';
+import { Sparkles } from 'lucide-react';
 
 export default function CostInputs({ data, projectData, language, onChange }) {
   const translations = {
