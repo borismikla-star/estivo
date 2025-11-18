@@ -565,7 +565,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
     return (
         <Card className="bg-card">
             <ResultsHeader 
-                title={t.long_term_lease_results}
+                language={language}
             />
             <CardContent className="p-3 sm:p-6">
                 <Tabs defaultValue="overview" className="w-full">

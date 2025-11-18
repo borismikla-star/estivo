@@ -650,7 +650,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
     return (
         <Card className="bg-card">
             <ResultsHeader 
-                title={t.airbnb_results}
+                language={language}
             />
             <CardContent className="p-3 sm:p-6">
                 <Tabs defaultValue="overview" className="w-full">
