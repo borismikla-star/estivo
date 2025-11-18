@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Globe, Menu, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import EstivoLogo from '@/components/shared/EstivoLogo';
 
 const NavLink = ({ href, children, isPageLink = false, onClick }) => {
     const location = useLocation();
@@ -74,11 +74,7 @@ export default function PublicHeader({ t, language, onLanguageChange, isLoggedIn
                 {/* Logo */}
                 <div className="flex items-center">
                     <Link to={createPageUrl("Landing")} onClick={() => setMobileMenuOpen(false)}>
-                        <img 
-                            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" 
-                            alt="Estivo Logo" 
-                            className="h-7 sm:h-8" 
-                        />
+                        <EstivoLogo className="h-7 sm:h-8" />
                     </Link>
                 </div>
 
