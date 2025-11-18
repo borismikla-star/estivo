@@ -104,6 +104,10 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             property_mgmt_desc: "% of gross revenue (typical: 15-25% for Airbnb)",
             other_expenses: "Other Annual Expenses",
             other_desc: "Licenses, permits, accounting, etc.",
+            autoCalculateTip: "Tip: Enable auto-calculate for typical Airbnb costs, or enter your specific expenses manually.",
+            per_month: "/mo",
+            per_year: "/year",
+            per_stay: "/stay",
         },
         sk: {
             title: "Prevádzkové náklady",
@@ -126,6 +130,10 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             property_mgmt_desc: "% z hrubých príjmov (typicky: 15-25% pre Airbnb)",
             other_expenses: "Ostatné ročné náklady",
             other_desc: "Licencie, povolenia, účtovníctvo, atď.",
+            autoCalculateTip: "Tip: Zapnite automatické výpočty pre typické náklady Airbnb alebo zadajte vlastné náklady manuálne.",
+            per_month: "/mes",
+            per_year: "/rok",
+            per_stay: "/pobyt",
         },
         pl: {
             title: "Koszty operacyjne",
@@ -148,6 +156,10 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             property_mgmt_desc: "% z przychodów brutto (typowo: 15-25% dla Airbnb)",
             other_expenses: "Inne roczne koszty",
             other_desc: "Licencje, pozwolenia, księgowość, itp.",
+            autoCalculateTip: "Tip: Włącz automatyczne obliczenia dla typowych kosztów Airbnb lub wprowadź swoje koszty ręcznie.",
+            per_month: "/mies",
+            per_year: "/rok",
+            per_stay: "/pobyt",
         },
         hu: {
             title: "Működési költségek",
@@ -170,6 +182,10 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             property_mgmt_desc: "% bruttó bevételből (tipikusan: 15-25% Airbnb-nél)",
             other_expenses: "Egyéb éves költségek",
             other_desc: "Engedélyek, könyvelés, stb.",
+            autoCalculateTip: "Tip: Engedélyezze az automatikus számítást a tipikus Airbnb költségekhez, vagy adja meg saját költségeit manuálisan.",
+            per_month: "/hó",
+            per_year: "/év",
+            per_stay: "/tartózkodás",
         },
         de: {
             title: "Betriebskosten",
@@ -192,6 +208,10 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             property_mgmt_desc: "% des Bruttoumsatzes (typisch: 15-25% für Airbnb)",
             other_expenses: "Sonstige jährliche Kosten",
             other_desc: "Lizenzen, Genehmigungen, Buchhaltung, usw.",
+            autoCalculateTip: "Tipp: Aktivieren Sie die automatische Berechnung für typische Airbnb-Kosten oder geben Sie Ihre spezifischen Ausgaben manuell ein.",
+            per_month: "/Mon",
+            per_year: "/Jahr",
+            per_stay: "/Aufenthalt",
         }
     };
 
@@ -240,7 +260,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
         <div className="space-y-4">
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-900">
-                    <strong>💡 Tip:</strong> Enable auto-calculate for typical Airbnb costs, or enter your specific expenses manually.
+                    <strong>💡 {t.autoCalculateTip}</strong>
                 </p>
             </div>
 
@@ -257,7 +277,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('utilities', e.target.value)}
                             placeholder="100"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
                     </div>
                 </div>
 
@@ -273,7 +293,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('cleaning_cost_per_stay', e.target.value)}
                             placeholder="60"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/stay</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_stay}</span>
                     </div>
                 </div>
 
@@ -289,7 +309,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('supplies', e.target.value)}
                             placeholder="50"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
                     </div>
                 </div>
 
@@ -307,7 +327,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                     label={t.insurance}
                     description={t.insurance_desc}
                     value={localData.insurance}
-                    suffix="€/mo"
+                    suffix={`€${t.per_month}`}
                 />
 
                 <AutoCalculateField
@@ -330,7 +350,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('hoa', e.target.value)}
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
                     </div>
                 </div>
 
@@ -363,7 +383,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('other_expenses', e.target.value)}
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/year</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_year}</span>
                     </div>
                 </div>
             </div>

@@ -102,6 +102,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             utilities_desc: "Monthly utilities if paid by owner",
             other_expenses: "Other Annual Expenses",
             other_desc: "HOA, legal, accounting, etc.",
+            autoCalculateTip: "Tip: Enable auto-calculate for typical market rates, or enter your specific costs manually.",
+            per_month: "/mo",
+            per_year: "/year",
         },
         sk: {
             title: "Prevádzkové náklady",
@@ -122,6 +125,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             utilities_desc: "Mesačné energie ak platí vlastník",
             other_expenses: "Ostatné ročné náklady",
             other_desc: "HOA, právne, účtovníctvo, atď.",
+            autoCalculateTip: "Tip: Zapnite automatické výpočty pre typické trhové sadzby alebo zadajte vlastné náklady manuálne.",
+            per_month: "/mes",
+            per_year: "/rok",
         },
         pl: {
             title: "Koszty operacyjne",
@@ -142,6 +148,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             utilities_desc: "Miesięczne media jeśli płaci właściciel",
             other_expenses: "Inne roczne koszty",
             other_desc: "HOA, prawne, księgowość, itp.",
+            autoCalculateTip: "Tip: Włącz automatyczne obliczenia dla typowych stawek rynkowych lub wprowadź swoje koszty ręcznie.",
+            per_month: "/mies",
+            per_year: "/rok",
         },
         hu: {
             title: "Működési költségek",
@@ -162,6 +171,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             utilities_desc: "Havi közművek ha a tulajdonos fizeti",
             other_expenses: "Egyéb éves költségek",
             other_desc: "HOA, jogi, könyvelés, stb.",
+            autoCalculateTip: "Tip: Engedélyezze az automatikus számítást a tipikus piaci árakhoz, vagy adja meg saját költségeit manuálisan.",
+            per_month: "/hó",
+            per_year: "/év",
         },
         de: {
             title: "Betriebskosten",
@@ -182,6 +194,9 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
             utilities_desc: "Monatliche Nebenkosten wenn vom Eigentümer bezahlt",
             other_expenses: "Sonstige jährliche Kosten",
             other_desc: "HOA, Rechtsberatung, Buchhaltung, usw.",
+            autoCalculateTip: "Tipp: Aktivieren Sie die automatische Berechnung für typische Marktpreise oder geben Sie Ihre spezifischen Kosten manuell ein.",
+            per_month: "/Mon",
+            per_year: "/Jahr",
         }
     };
 
@@ -230,7 +245,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
         <div className="space-y-4">
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-900">
-                    <strong>💡 Tip:</strong> Enable auto-calculate for typical market rates, or enter your specific costs manually.
+                    <strong>💡 {t.autoCalculateTip}</strong>
                 </p>
             </div>
 
@@ -249,7 +264,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                     label={t.insurance}
                     description={t.insurance_desc}
                     value={localData.insurance}
-                    suffix="€/mo"
+                    suffix={`€${t.per_month}`}
                 />
 
                 <AutoCalculateField
@@ -272,7 +287,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('hoa', e.target.value)}
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
                     </div>
                 </div>
 
@@ -322,7 +337,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('utilities', e.target.value)}
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/mo</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
                     </div>
                 </div>
 
@@ -338,7 +353,7 @@ export default function OperatingInputs({ data, onChange, language = 'en', purch
                             onChange={(e) => handleChange('other_expenses', e.target.value)}
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€/year</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_year}</span>
                     </div>
                 </div>
             </div>
