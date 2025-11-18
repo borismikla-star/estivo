@@ -454,18 +454,18 @@ export default function CostInputs({ data, projectData, language, onChange }) {
                 {t.engineering_networks}
                 {safeData.engineering_networks_manual_mode && <Badge variant="outline" className="text-xs">{t.manual_badge}</Badge>}
               </Label>
-              <Select 
-                value={safeData.engineering_networks_manual_mode ? 'manual' : 'auto'} 
-                onValueChange={(value) => handleModeChange('engineering_networks', value)}
-              >
-                <SelectTrigger className="w-24 h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="auto">{t.mode_auto}</SelectItem>
-                  <SelectItem value="manual">{t.mode_manual}</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="engineering_networks_auto" className="text-sm text-muted-foreground flex items-center gap-1.5 cursor-pointer">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  {t.auto_calculate}
+                </Label>
+                <InfoTooltip content={t.auto_tooltip} />
+                <Switch 
+                  id="engineering_networks_auto"
+                  checked={!safeData.engineering_networks_manual_mode}
+                  onCheckedChange={(checked) => handleModeChange('engineering_networks', !checked)}
+                />
+              </div>
             </div>
             
             {safeData.engineering_networks_manual_mode ? (
