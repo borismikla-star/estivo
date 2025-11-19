@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { Linkedin, Facebook, Instagram, Twitter } from 'lucide-react';
 
 const NavLink = ({ href, children }) => {
     const location = useLocation();
@@ -33,7 +34,21 @@ export default function PublicFooter({ t }) {
                         <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" alt="Estivo Logo" className="h-8" />
                     </Link>
                     <p className="text-muted-foreground">&copy; {new Date().getFullYear()} Estivo. {t.all_rights_reserved}</p>
-                </div>
+                    <div className="flex gap-4 mt-4">
+                       <a href="https://www.linkedin.com/in/info-estivo-559862396/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                           <Linkedin className="w-5 h-5" />
+                       </a>
+                       <a href="https://www.facebook.com/profile.php?id=61583115466142" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                           <Facebook className="w-5 h-5" />
+                       </a>
+                       <a href="https://www.instagram.com/estivo.io/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                           <Instagram className="w-5 h-5" />
+                       </a>
+                       <a href="https://x.com/estivo_io" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                           <Twitter className="w-5 h-5" />
+                       </a>
+                    </div>
+                    </div>
                 <div>
                     <h4 className="font-semibold text-foreground mb-4">{t.footer_product}</h4>
                     <ul className="space-y-3">
