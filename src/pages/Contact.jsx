@@ -99,10 +99,10 @@ export default function ContactPage() {
     const ct = translations[language] || translations.en;
 
     const socialLinks = [
-        { name: 'Facebook', icon: Facebook, url: '', color: 'hover:text-blue-600' },
-        { name: 'Instagram', icon: Instagram, url: '', color: 'hover:text-pink-600' },
-        { name: 'LinkedIn', icon: Linkedin, url: '', color: 'hover:text-blue-700' },
-        { name: 'Twitter', icon: Twitter, url: '', color: 'hover:text-sky-500' },
+        { name: 'Facebook', icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61583115466142', color: 'hover:text-blue-600' },
+        { name: 'Instagram', icon: Instagram, url: 'https://www.instagram.com/estivo.io/', color: 'hover:text-pink-600' },
+        { name: 'LinkedIn', icon: Linkedin, url: 'https://www.linkedin.com/in/info-estivo-559862396/', color: 'hover:text-blue-700' },
+        { name: 'Twitter', icon: Twitter, url: 'https://x.com/estivo_io', color: 'hover:text-sky-500' },
     ];
 
     const groupedFAQs = faqItems?.reduce((acc, item) => {
