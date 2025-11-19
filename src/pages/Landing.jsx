@@ -10,7 +10,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import PublicHeader from '@/components/layout/PublicHeader';
 import PublicFooter from '@/components/layout/PublicFooter';
-import CookieConsentBanner from '@/components/cookies/CookieConsentBanner';
 import { getLandingPageTranslations } from '@/components/lib/translations';
 import { useQuery } from '@tanstack/react-query';
 
@@ -590,7 +589,6 @@ export default function LandingPage() {
             </main>
 
             <PublicFooter t={t} />
-            <CookieConsentBanner language={language} />
         </div>
     );
 }

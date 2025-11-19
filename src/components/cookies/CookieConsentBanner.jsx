@@ -23,7 +23,12 @@ export default function CookieConsentBanner({ language }) {
         try {
             const storedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
             if (storedConsent) {
-                setConsent(JSON.parse(storedConsent));
+                const parsed = JSON.parse(storedConsent);
+                setConsent(parsed);
+                // Load Google Analytics if previously accepted
+                if (parsed.analytics) {
+                    loadGoogleAnalytics();
+                }
             } else {
                 setConsent(null);
                 setIsVisible(true);
@@ -39,6 +44,47 @@ export default function CookieConsentBanner({ language }) {
         setConsent(newSettings);
         setIsVisible(false);
         setIsSettingsOpen(false);
+        
+        // Load Google Analytics if analytics cookies are accepted
+        if (newSettings.analytics) {
+            loadGoogleAnalytics();
+        } else {
+            removeGoogleAnalytics();
+        }
+    };
+
+    const loadGoogleAnalytics = () => {
+        if (window.gtag) return; // Already loaded
+        
+        const script1 = document.createElement('script');
+        script1.async = true;
+        script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-QHR4243DXQ';
+        document.head.appendChild(script1);
+        
+        const script2 = document.createElement('script');
+        script2.innerHTML = `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QHR4243DXQ');
+        `;
+        document.head.appendChild(script2);
+    };
+
+    const removeGoogleAnalytics = () => {
+        // Remove Google Analytics scripts and cookies
+        const scripts = document.querySelectorAll('script[src*="googletagmanager.com"]');
+        scripts.forEach(script => script.remove());
+        
+        // Delete GA cookies
+        document.cookie.split(";").forEach((c) => {
+            if (c.trim().startsWith('_ga')) {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            }
+        });
+        
+        delete window.gtag;
+        delete window.dataLayer;
     };
 
     const acceptAll = () => {
