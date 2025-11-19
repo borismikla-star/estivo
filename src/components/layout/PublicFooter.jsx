@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Linkedin, Facebook, Instagram, X } from 'lucide-react';
+import { Linkedin, Facebook, Instagram } from 'lucide-react';
 
 const NavLink = ({ href, children }) => {
     const location = useLocation();
@@ -45,7 +45,7 @@ export default function PublicFooter({ t }) {
                            <Instagram className="w-5 h-5" />
                        </a>
                        <a href="https://x.com/estivo_io" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                           <X className="w-5 h-5" />
+                           <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/729bc984f_image.png" alt="X" className="w-5 h-5" />
                        </a>
                     </div>
                     </div>

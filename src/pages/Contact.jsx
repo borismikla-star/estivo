@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Mail, Facebook, Instagram, Linkedin, X } from 'lucide-react';
+import { Mail, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card } from '@/components/ui/card';
 import PublicHeader from '@/components/layout/PublicHeader';
@@ -102,7 +102,7 @@ export default function ContactPage() {
         { name: 'Facebook', icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61583115466142', color: 'hover:text-blue-600' },
         { name: 'Instagram', icon: Instagram, url: 'https://www.instagram.com/estivo.io/', color: 'hover:text-pink-600' },
         { name: 'LinkedIn', icon: Linkedin, url: 'https://www.linkedin.com/in/info-estivo-559862396/', color: 'hover:text-blue-700' },
-        { name: 'X', icon: X, url: 'https://x.com/estivo_io', color: 'hover:text-sky-500' },
+        { name: 'X', icon: () => <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/729bc984f_image.png" alt="X" className="w-6 h-6" />, url: 'https://x.com/estivo_io', color: 'hover:text-sky-500' },
     ];
 
     const groupedFAQs = faqItems?.reduce((acc, item) => {
