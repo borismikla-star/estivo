@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Facebook, Twitter, Linkedin, Link as LinkIcon, Check } from 'lucide-react';
+import { Facebook, Linkedin, Link as LinkIcon, Check } from 'lucide-react';
 
 export default function SocialShareButtons({ url, title }) {
     const [copied, setCopied] = useState(false);
@@ -16,10 +16,10 @@ export default function SocialShareButtons({ url, title }) {
             className: 'bg-blue-600 hover:bg-blue-700'
         },
         {
-            name: 'Twitter',
-            icon: Twitter,
+            name: 'X',
+            icon: () => <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/729bc984f_image.png" alt="X" className="h-4 w-4" />,
             url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-            className: 'bg-sky-500 hover:bg-sky-600'
+            className: 'bg-gray-800 hover:bg-gray-900'
         },
         {
             name: 'LinkedIn',
