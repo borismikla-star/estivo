@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -17,7 +16,7 @@ export default function UpgradePrompt({ open, onOpenChange, language = 'en' }) {
     const translations = {
         en: {
             title: "Upgrade to Pro",
-            description: "Unlock this feature and many more with Estivo Pro.",
+            description: "Unlock this feature and many more with Estivo Pro for €29/month.",
             feature1: "Unlimited projects",
             feature2: "All calculator types",
             feature3: "AI analysis & recommendations",
@@ -28,7 +27,7 @@ export default function UpgradePrompt({ open, onOpenChange, language = 'en' }) {
         },
         sk: {
             title: "Prejsť na Pro",
-            description: "Odomknite túto funkciu a mnoho ďalších s Estivo Pro.",
+            description: "Odomknite túto funkciu a mnoho ďalších s Estivo Pro za 29€/mesiac.",
             feature1: "Neobmedzené projekty",
             feature2: "Všetky typy kalkulačiek",
             feature3: "AI analýza a odporúčania",
@@ -39,7 +38,7 @@ export default function UpgradePrompt({ open, onOpenChange, language = 'en' }) {
         },
         pl: {
             title: "Przejdź na Pro",
-            description: "Odblokuj tę funkcję i wiele innych dzięki Estivo Pro.",
+            description: "Odblokuj tę funkcję i wiele innych dzięki Estivo Pro za 129 zł/miesiąc.",
             feature1: "Nieograniczone projekty",
             feature2: "Wszystkie typy kalkulatorów",
             feature3: "Analiza AI i rekomendacje",
@@ -50,7 +49,7 @@ export default function UpgradePrompt({ open, onOpenChange, language = 'en' }) {
         },
         hu: {
             title: "Váltson Pro-ra",
-            description: "Nyissa meg ezt a funkciót és még sok mást az Estivo Pro-val.",
+            description: "Nyissa meg ezt a funkciót és még sok mást az Estivo Pro-val 11 900 Ft/hónap áron.",
             feature1: "Korlátlan projektek",
             feature2: "Minden kalkulátor típus",
             feature3: "AI elemzés és ajánlások",
@@ -61,7 +60,7 @@ export default function UpgradePrompt({ open, onOpenChange, language = 'en' }) {
         },
         de: {
             title: "Upgrade auf Pro",
-            description: "Schalten Sie diese Funktion und viele weitere mit Estivo Pro frei.",
+            description: "Schalten Sie diese Funktion und viele weitere mit Estivo Pro für 29€/Monat frei.",
             feature1: "Unbegrenzte Projekte",
             feature2: "Alle Rechnertypen",
             feature3: "KI-Analyse & Empfehlungen",
