@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -112,7 +111,7 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
             name: "Name",
             email: "Email",
             plan: "Plan",
-            country: "Country",
+            role: "Role",
             created: "Created",
             actions: "Actions",
             edit: "Edit",
@@ -141,7 +140,7 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
             name: "Meno",
             email: "Email",
             plan: "Plán",
-            country: "Krajina",
+            role: "Rola",
             created: "Vytvorené",
             actions: "Akcie",
             edit: "Upraviť",
@@ -170,7 +169,7 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
             name: "Imię",
             email: "Email",
             plan: "Plan",
-            country: "Kraj",
+            role: "Rola",
             created: "Utworzono",
             actions: "Akcje",
             edit: "Edytuj",
@@ -199,7 +198,7 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
             name: "Név",
             email: "Email",
             plan: "Csomag",
-            country: "Ország",
+            role: "Szerep",
             created: "Létrehozva",
             actions: "Műveletek",
             edit: "Szerkesztés",
@@ -228,7 +227,7 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
             name: "Name",
             email: "E-Mail",
             plan: "Plan",
-            country: "Land",
+            role: "Rolle",
             created: "Erstellt",
             actions: "Aktionen",
             edit: "Bearbeiten",
@@ -279,9 +278,9 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
                         <TableHeader>
                             <TableRow>
                                 <TableHead>{t.name}</TableHead>
-                                <TableHead>{t.role}</TableHead>
+                                <TableHead>Role</TableHead>
                                 <TableHead>{t.plan}</TableHead>
-                                <TableHead>{t.created}</TableHead> {/* Updated to t.created */}
+                                <TableHead>{t.created}</TableHead>
                                 <TableHead className="text-right">{t.actions}</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -379,4 +378,3 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
         </div>
     );
 }
-
