@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -129,7 +128,7 @@ export default function PricingPage() {
 
     const plans = [
         { name: t.free, id: 'free', desc: t.free_desc, price: t.free_price, features: t.free_features, isCurrent: user?.plan === 'free' },
-        { name: t.pro, id: 'pro', desc: t.pro_desc, price: t.pro_price, price_suffix: t.pro_per_month, features: t.pro_features, isCurrent: user?.plan === 'pro', isPopular: true, stripe_link: 'https://buy.stripe.com/test_dummy_link_for_pro' },
+        { name: t.pro, id: 'pro', desc: t.pro_desc, price: t.pro_price, price_suffix: t.pro_per_month, features: t.pro_features, isCurrent: user?.plan === 'pro', isPopular: true, contact: true },
         { name: t.business, id: 'business', desc: t.business_desc, price: t.business_price, features: t.business_features, isCurrent: user?.plan === 'business', contact: true }
     ];
     
@@ -174,13 +173,9 @@ export default function PricingPage() {
                             <div className="mt-10">
                                 {plan.isCurrent ? (
                                     <Button variant="outline" className="w-full text-lg py-3 cursor-default" disabled>{t.current_plan}</Button>
-                                ) : plan.stripe_link ? (
-                                    <a href={plan.stripe_link} className="block w-full">
-                                        <Button className={`w-full text-lg py-3 text-white ${plan.isPopular ? 'bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)] hover:opacity-90' : 'bg-primary hover:bg-primary/90'}`}>{t.upgrade_to_pro}</Button>
-                                    </a>
                                 ) : plan.contact ? (
-                                    <Link to={createPageUrl("Landing")} className="block w-full">
-                                        <Button variant="outline" className="w-full text-lg py-3">{t.contact_us}</Button>
+                                    <Link to={createPageUrl("Contact")} className="block w-full">
+                                        <Button variant={plan.isPopular ? 'default' : 'outline'} className={`w-full text-lg py-3 ${plan.isPopular ? 'text-white bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)] hover:opacity-90' : ''}`}>{plan.id === 'pro' ? t.upgrade_to_pro : t.contact_us}</Button>
                                     </Link>
                                 ) : (
                                     <Button className="w-full text-lg py-3" disabled>{t.current_plan}</Button>
