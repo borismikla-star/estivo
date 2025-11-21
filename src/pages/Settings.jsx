@@ -300,10 +300,10 @@ export default function SettingsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="country">{t.pref_country}</Label>
+                                <Label htmlFor="country_code">{t.pref_country}</Label>
                                 <Select
-                                    value={formData.country || 'SK'}
-                                    onValueChange={(value) => handleChange('country', value)}
+                                    value={formData.country_code || 'SK'}
+                                    onValueChange={(value) => handleChange('country_code', value)}
                                 >
                                     <SelectTrigger>
                                         <SelectValue />
