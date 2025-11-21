@@ -73,17 +73,18 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
     const handleExportCSV = () => {
         if (!users || users.length === 0) return;
 
-        const headers = ['email', 'full_name', 'plan', 'country', 'entity_type', 'registration_date'];
+        const headers = ['email', 'full_name', 'role', 'plan', 'country_code', 'entity_type', 'registration_date'];
         
         const csvRows = [
             headers.join(','), // Header row
             ...users.map(u => [
-                u.email,
-                `"${(u.full_name || '').replace(/"/g, '""')}"`, // Handle names with commas and double quotes
+                u.email || '',
+                `"${(u.full_name || 'N/A').replace(/"/g, '""')}"`,
+                u.role || 'user',
                 u.plan || 'free',
-                u.country || '',
+                u.country_code || '',
                 u.entity_type || 'FO',
-                format(new Date(u.created_date), 'yyyy-MM-dd')
+                u.created_date ? format(new Date(u.created_date), 'yyyy-MM-dd') : ''
             ].join(','))
         ];
 
@@ -91,7 +92,7 @@ export default function AdminUsersPage() { // Renamed from AdminUsers
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `base44_users_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+        link.setAttribute("download", `estivo_users_${format(new Date(), 'yyyy-MM-dd')}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
