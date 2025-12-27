@@ -491,7 +491,7 @@ export default function Layout({ children, currentPageName }) {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-screen">
           {/* Mobile Header */}
           <header className="lg:hidden flex items-center justify-between bg-card border-b border-border h-16 px-4 sticky top-0 z-50">
              <div className="flex items-center gap-2">
@@ -558,15 +558,14 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
           
-          <div className="flex-1 flex flex-col">
-              <main className="flex-1 p-4 sm:p-6 lg:p-8">
-                  <div className="hidden lg:flex justify-end mb-4">
-                      <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
-                  </div>
-                  {children}
-              </main>
-              <AppFooter language={language} />
-          </div>
+          <main className="flex-1 p-4 sm:p-6 lg:p-8">
+              <div className="hidden lg:flex justify-end mb-4">
+                  <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
+              </div>
+              {children}
+          </main>
+          
+          <AppFooter language={language} />
         </div>
       </div>
       <CookieConsentBanner language={language} />
