@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -1155,7 +1154,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
     };
 
   return (
-    <div className="bg-background min-h-full print:bg-white">
+    <div className="print:bg-white">
         <div className="print:hidden">
             <CalculatorHeader 
                 projectData={projectData}
