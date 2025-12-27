@@ -558,13 +558,15 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
           
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">
-              <div className="hidden lg:flex justify-end mb-4">
-                  <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
-              </div>
-              {children}
-          </main>
-          <AppFooter language={language} />
+          <div className="flex-1 flex flex-col">
+              <main className="flex-1 p-4 sm:p-6 lg:p-8">
+                  <div className="hidden lg:flex justify-end mb-4">
+                      <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
+                  </div>
+                  {children}
+              </main>
+              <AppFooter language={language} />
+          </div>
         </div>
       </div>
       <CookieConsentBanner language={language} />
