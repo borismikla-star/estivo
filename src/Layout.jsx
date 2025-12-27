@@ -452,7 +452,7 @@ export default function Layout({ children, currentPageName }) {
       {layoutStyles}
       <div className="flex min-h-screen bg-background text-foreground">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border">
+        <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border">
           <div className="p-6 flex items-center gap-3">
              <a href={createPageUrl("Landing")} className="block">
                 <EstivoLogo className="h-8" />
@@ -491,9 +491,9 @@ export default function Layout({ children, currentPageName }) {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-screen">
           {/* Mobile Header */}
-          <header className="md:hidden flex items-center justify-between bg-card border-b border-border h-16 px-4 sticky top-0 z-50">
+          <header className="lg:hidden flex items-center justify-between bg-card border-b border-border h-16 px-4 sticky top-0 z-50">
              <div className="flex items-center gap-2">
                 <a href={createPageUrl("Landing")} className="block">
                     <EstivoLogo className="h-7" />
@@ -559,7 +559,7 @@ export default function Layout({ children, currentPageName }) {
           </header>
           
           <main className="flex-1 p-4 sm:p-6 lg:p-8">
-              <div className="hidden md:flex justify-end mb-4">
+              <div className="hidden lg:flex justify-end mb-4">
                   <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
               </div>
               {children}
