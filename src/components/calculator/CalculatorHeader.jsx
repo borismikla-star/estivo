@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -100,12 +99,19 @@ export default function CalculatorHeader({
     <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <Input
-            value={projectData?.name || ''}
-            onChange={(e) => onNameChange(e.target.value)}
-            className="text-lg sm:text-xl font-bold bg-transparent border-none focus-visible:ring-0 px-0 max-w-md"
-            placeholder={t.project_name}
-          />
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <Link to={createPageUrl('Dashboard')}>
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <Input
+              value={projectData?.name || ''}
+              onChange={(e) => onNameChange(e.target.value)}
+              className="text-lg sm:text-xl font-bold bg-transparent border-none focus-visible:ring-0 px-0 flex-1 min-w-0"
+              placeholder={t.project_name}
+            />
+          </div>
                     
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Button
