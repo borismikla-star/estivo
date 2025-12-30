@@ -450,9 +450,9 @@ export default function Layout({ children, currentPageName }) {
   return (
     <>
       {layoutStyles}
-      <div className="flex bg-background text-foreground min-h-screen">
+      <div className="flex bg-background text-foreground">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border min-h-screen">
+        <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border h-screen sticky top-0">
           <div className="p-6 flex items-center gap-3">
              <a href={createPageUrl("Landing")} className="block">
                 <EstivoLogo className="h-8" />
@@ -558,13 +558,11 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
           
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col">
+          <main className="p-4 sm:p-6 lg:p-8">
               <div className="hidden lg:flex justify-end mb-4">
                   <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
               </div>
-              <div className="flex-1">
-                  {children}
-              </div>
+              {children}
           </main>
 
           <AppFooter language={language} />
