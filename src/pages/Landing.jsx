@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import PublicHeader from '@/components/layout/PublicHeader';
 import PublicFooter from '@/components/layout/PublicFooter';
+import AppFooter from '@/components/layout/AppFooter';
 import { getLandingPageTranslations } from '@/components/lib/translations';
 import { useQuery } from '@tanstack/react-query';
 
@@ -586,9 +587,10 @@ export default function LandingPage() {
                         </Button>
                     </div>
                 </section>
-            </main>
+                </main>
 
-            <PublicFooter t={t} />
-        </div>
-    );
-}
+                <PublicFooter t={t} />
+                <AppFooter language={language} />
+                </div>
+                );
+                }
