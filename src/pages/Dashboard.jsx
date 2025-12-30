@@ -13,7 +13,6 @@ import DeleteConfirmationDialog from '../components/shared/DeleteConfirmationDia
 import NewProjectDialog from '../components/dashboard/NewProjectDialog';
 import TrialStatus from '../components/shared/TrialStatus';
 import UpgradePrompt from '../components/shared/UpgradePrompt';
-import AppFooter from '../components/layout/AppFooter';
 
 export default function Dashboard() {
     const queryClient = useQueryClient();
@@ -216,8 +215,7 @@ export default function Dashboard() {
     ];
     
     return (
-        <div className="min-h-screen flex flex-col">
-            <div className="flex-1 space-y-12">
+        <div className="space-y-12">
             <div>
                 <h1 className="text-3xl font-bold text-foreground">{t.welcome}</h1>
                 <p className="text-lg text-muted-foreground">{t.subtitle}</p>
@@ -306,10 +304,6 @@ export default function Dashboard() {
                 projectTitle={newProjectTitle}
                 language={language}
                 />
-
-                </div>
-
-                <AppFooter language={language} />
                 </div>
                 );
                 }
