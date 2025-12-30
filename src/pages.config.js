@@ -1,45 +1,47 @@
-import Landing from './pages/Landing';
-import Dashboard from './pages/Dashboard';
-import Calculator from './pages/Calculator';
-import AdminSettings from './pages/AdminSettings';
-import Pricing from './pages/Pricing';
-import AdminUsers from './pages/AdminUsers';
-import Settings from './pages/Settings';
-import Portfolio from './pages/Portfolio';
-import Compare from './pages/Compare';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import AdminCountryPresets from './pages/AdminCountryPresets';
 import AdminBlog from './pages/AdminBlog';
 import AdminBlogPostEditor from './pages/AdminBlogPostEditor';
+import AdminCountryPresets from './pages/AdminCountryPresets';
+import AdminFAQ from './pages/AdminFAQ';
 import AdminLegal from './pages/AdminLegal';
 import AdminLegalEditor from './pages/AdminLegalEditor';
-import LegalDocument from './pages/LegalDocument';
+import AdminSettings from './pages/AdminSettings';
+import AdminUsers from './pages/AdminUsers';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import Calculator from './pages/Calculator';
+import Compare from './pages/Compare';
 import Contact from './pages/Contact';
-import AdminFAQ from './pages/AdminFAQ';
+import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
+import Landing from './pages/Landing';
+import LegalDocument from './pages/LegalDocument';
+import Portfolio from './pages/Portfolio';
+import Pricing from './pages/Pricing';
+import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Landing": Landing,
-    "Dashboard": Dashboard,
-    "Calculator": Calculator,
-    "AdminSettings": AdminSettings,
-    "Pricing": Pricing,
-    "AdminUsers": AdminUsers,
-    "Settings": Settings,
-    "Portfolio": Portfolio,
-    "Compare": Compare,
-    "Blog": Blog,
-    "BlogPost": BlogPost,
-    "AdminCountryPresets": AdminCountryPresets,
     "AdminBlog": AdminBlog,
     "AdminBlogPostEditor": AdminBlogPostEditor,
+    "AdminCountryPresets": AdminCountryPresets,
+    "AdminFAQ": AdminFAQ,
     "AdminLegal": AdminLegal,
     "AdminLegalEditor": AdminLegalEditor,
-    "LegalDocument": LegalDocument,
+    "AdminSettings": AdminSettings,
+    "AdminUsers": AdminUsers,
+    "Blog": Blog,
+    "BlogPost": BlogPost,
+    "Calculator": Calculator,
+    "Compare": Compare,
     "Contact": Contact,
-    "AdminFAQ": AdminFAQ,
+    "Dashboard": Dashboard,
+    "Home": Home,
+    "Landing": Landing,
+    "LegalDocument": LegalDocument,
+    "Portfolio": Portfolio,
+    "Pricing": Pricing,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {
