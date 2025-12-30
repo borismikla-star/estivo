@@ -133,6 +133,7 @@ const NavLink = ({ to, icon: Icon, children, isMobile = false, currentPath }) =>
 };
 
 export default function Layout({ children, currentPageName }) {
+  console.log('🔵 LAYOUT RENDERING - Page:', currentPageName);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -569,6 +570,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
       <CookieConsentBanner language={language} />
+      {console.log('🟢 FOOTER RENDERED')}
     </>
   );
 }
