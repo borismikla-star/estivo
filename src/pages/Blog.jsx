@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import PublicHeader from '@/components/layout/PublicHeader';
 import PublicFooter from '@/components/layout/PublicFooter';
+import AppFooter from '@/components/layout/AppFooter';
 import { getLandingPageTranslations } from '@/components/lib/translations';
 
 const PostCard = ({ post, language }) => {
@@ -188,6 +189,7 @@ export default function BlogPage() {
                 </div>
             </main>
             <PublicFooter t={t} />
+            <AppFooter language={language} />
         </div>
     );
 }
