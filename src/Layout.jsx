@@ -443,6 +443,7 @@ export default function Layout({ children, currentPageName }) {
   //    - user is not null (user is authenticated)
   //    - The page is not a public page (it's a protected page)
   // So, render the full authenticated layout.
+  console.log('🟢 AUTHENTICATED LAYOUT RENDERING for:', currentPageName);
 
   const navItems = [
     { name: t.dashboard, href: "Dashboard", icon: LayoutDashboard },
@@ -450,10 +451,12 @@ export default function Layout({ children, currentPageName }) {
     { name: t.compare, href: "Compare", icon: GitCompareArrows },
   ];
 
+  console.log('🔷 LAYOUT: Rendering sidebar and footer');
+  
   return (
     <>
       {layoutStyles}
-      <div className="flex bg-background text-foreground">
+      <div className="flex bg-background text-foreground min-h-screen">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border h-screen sticky top-0">
           <div className="p-6 flex items-center gap-3">
