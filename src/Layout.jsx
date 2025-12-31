@@ -411,11 +411,13 @@ export default function Layout({ children, currentPageName }) {
 
   // 2. Handle public pages that don't require authentication (and user loading is done)
   if (isPublicPage) {
+      console.log('🟣 PUBLIC PAGE RENDERED:', currentPageName);
       return (
           <>
             {layoutStyles}
             {children}
             <CookieConsentBanner language={language} />
+            {console.log('🟢 PUBLIC FOOTER AREA')}
           </>
       );
   }
