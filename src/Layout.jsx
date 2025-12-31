@@ -142,7 +142,14 @@ export default function Layout({ children, currentPageName }) {
 
   // Added 'Contact' to publicPages array
   const publicPages = ['Landing', 'Blog', 'BlogPost', 'LegalDocument', 'Contact'];
-  const isPublicPage = publicPages.includes(currentPageName);
+
+  // Check actual URL path to handle routing issues
+  const actualPath = window.location.pathname.toLowerCase();
+  const isDashboardArea = actualPath.includes('/dashboard') || actualPath.includes('/portfolio') || 
+                         actualPath.includes('/settings') || actualPath.includes('/compare') ||
+                         actualPath.includes('/calculator') || actualPath.includes('/admin');
+
+  const isPublicPage = publicPages.includes(currentPageName) && !isDashboardArea;
 
   // Check authentication with proper error handling
   const { data: user, isLoading: isUserLoading, error: userError } = useQuery({ 
