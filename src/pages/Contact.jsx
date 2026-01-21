@@ -183,10 +183,10 @@ export default function ContactPage() {
                                                 <AccordionItem key={item.id} value={`item-${index}`} 
                                                                className="border border-border rounded-lg bg-card shadow-sm">
                                                     <AccordionTrigger className="text-left font-semibold px-6 py-4 hover:no-underline text-foreground">
-                                                        {language === 'sk' ? item.question_sk : item.question_en}
+                                                        {language === 'sk' ? item.question_sk : (item.question_en || item.question_sk)}
                                                     </AccordionTrigger>
                                                     <AccordionContent className="px-6 pb-6 text-muted-foreground whitespace-pre-line">
-                                                        {language === 'sk' ? item.answer_sk : item.answer_en}
+                                                        {language === 'sk' ? item.answer_sk : (item.answer_en || item.answer_sk)}
                                                     </AccordionContent>
                                                 </AccordionItem>
                                             ))}
