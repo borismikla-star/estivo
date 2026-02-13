@@ -1,4 +1,3 @@
-
 // Helper function to calculate IRR using Newton-Raphson method
 function calculateIRR(cashFlows, guess = 0.1) {
     const maxIterations = 100;
@@ -47,6 +46,9 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     // IMPORTANT: Use project_info_data.vat_payer instead of entity_type
     // User can explicitly set VAT payer status regardless of entity type
     const isVATpayer = project_info_data.vat_payer === true;
+    
+    // ALL INPUTS ARE EXPECTED TO BE WITHOUT VAT (NET PRICES)
+    // System adds VAT automatically based on VAT payer status
 
     // === PROJECT DATA ===
     const totalLandArea = num(project_info_data.total_land_area);
@@ -174,35 +176,32 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     marketingCosts = totalGrossRevenue * 0.008; // 0.8% of revenue
 
     // === VAT CALCULATIONS ===
+    // ALL INPUTS ARE NET (WITHOUT VAT) - we add VAT based on payer status
     let vatInput = 0;  // VAT on costs (can be deducted by VAT payer)
     let vatOutput = 0; // VAT on revenue (must be paid to tax authority)
     let totalCostsExclVAT = 0;
-    let totalRevenueExclVAT = totalGrossRevenue; // Apartments are VAT exempt
+    let totalRevenueExclVAT = totalGrossRevenue;
 
-    // TOTAL COSTS BEFORE FINANCING (with VAT)
-    const totalCostsWithVAT = landAndProject + totalImplementation + totalAdditionalBudget + 
-                               salesCosts + marketingCosts + totalOtherServices + reserveProvision;
+    // TOTAL COSTS BEFORE FINANCING (NET - without VAT)
+    const totalCostsNet = landAndProject + totalImplementation + totalAdditionalBudget + 
+                          salesCosts + marketingCosts + totalOtherServices + reserveProvision;
 
     if (isVATpayer) {
-        // VAT payer - can deduct input VAT
-        // Calculate VAT on costs (assuming all costs are provided as VAT inclusive and we extract VAT)
-        vatInput = totalCostsWithVAT * (VAT_RATE / (1 + VAT_RATE)); // Extract VAT from prices with VAT
-        totalCostsExclVAT = totalCostsWithVAT - vatInput; // Net costs without VAT
+        // VAT payer - adds VAT on costs, collects VAT on taxable revenue
+        vatInput = totalCostsNet * VAT_RATE; // VAT paid on costs (deductible)
+        totalCostsExclVAT = totalCostsNet; // Base for financing calculations
         
-        // VAT on revenue (apartments are VAT exempt, but some items like parking/non-res might have VAT)
-        // Assume non-residential and parking revenues are taxable. Assume they are provided as NET prices.
+        // VAT on revenue (apartments are VAT exempt, non-residential and parking are taxable)
         const taxableRevenue = nonResidentialRevenue + parkingIndoorRevenue + parkingOutdoorRevenue;
-        vatOutput = taxableRevenue * VAT_RATE;
-        // totalRevenueExclVAT remains totalGrossRevenue as calculated, as we assume it's net for the developer
+        vatOutput = taxableRevenue * VAT_RATE; // VAT collected from customers
     } else {
-        // Non-VAT payer - cannot deduct input VAT, must pay full prices
-        vatInput = 0; // No deduction possible
-        vatOutput = 0; // No VAT on sales
-        totalCostsExclVAT = totalCostsWithVAT; // Pays full price including embedded VAT
-        // totalRevenueExclVAT remains totalGrossRevenue as calculated
+        // Non-VAT payer - pays costs with VAT included, no VAT on revenue
+        vatInput = totalCostsNet * VAT_RATE; // VAT paid but cannot be deducted
+        totalCostsExclVAT = totalCostsNet + vatInput; // Must pay full price including VAT
+        vatOutput = 0; // No VAT collected
     }
 
-    const vatBalance = vatOutput - vatInput; // Net VAT to pay to tax authority (can be negative = refund)
+    const vatBalance = vatOutput - vatInput; // Net VAT to pay (can be negative = refund for VAT payer)
 
     // === FINANCING ===
     const ownResourcesPercent = num(financing_data.own_resources_percent) || 30;
@@ -474,13 +473,13 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
             project_duration_months: projectDurationMonths,
             project_duration_years: projectDurationYears,
 
-            // NEW: VAT METRICS
+            // VAT METRICS (all inputs are NET, VAT calculated automatically)
             vat_input: vatInput,
             vat_output: vatOutput,
             vat_balance: vatBalance,
             net_profit_after_vat: netProfitAfterVAT,
             is_vat_payer: isVATpayer,
-            total_costs_with_vat: totalCostsWithVAT,
+            total_costs_net: totalCostsNet,
             total_costs_excl_vat: totalCostsExclVAT,
         },
         cost_breakdown: costBreakdown,
