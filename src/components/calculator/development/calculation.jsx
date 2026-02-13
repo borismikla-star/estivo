@@ -23,7 +23,7 @@ function calculateIRR(cashFlows, guess = 0.1) {
         rate = newRate;
     }
     
-    return 0; // If no convergence, return 0
+    return null; // If no convergence, return null
 }
 
 export function calculateDevelopment(projectData, preset, language = 'en') {
@@ -256,17 +256,17 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     // === IRR CALCULATION WITH TIMELINE ===
     // Simplified timeline model:
     // - Month 0: Initial equity investment
-    // - Months 1-(duration-6): Construction costs paid gradually
-    // - Months (duration-6)-duration: Sales revenue comes in
+    // - Months 1-construction: Construction costs + financing paid gradually
+    // - Months construction-end: Sales revenue comes in
     
     const cashFlowsForIRR = [];
     
     // Initial investment (negative)
     cashFlowsForIRR.push(-ownResources);
     
-    // During construction: costs are paid out (negative cash flows)
-    const constructionMonths = Math.max(projectDurationMonths - 6, projectDurationMonths * 0.75); // At least 75% of duration
-    const monthlyCostDuringConstruction = (totalCostsExclVAT - ownResources) / constructionMonths;
+    // During construction: costs + financing are paid out (negative cash flows)
+    const constructionMonths = Math.min(projectDurationMonths, Math.floor(Math.max(projectDurationMonths - 6, projectDurationMonths * 0.75)));
+    const monthlyCostDuringConstruction = (totalCostsExclVAT + totalFinancingCosts - ownResources) / constructionMonths;
     
     for (let month = 1; month <= constructionMonths; month++) {
         cashFlowsForIRR.push(-monthlyCostDuringConstruction);

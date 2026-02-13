@@ -23,7 +23,7 @@ function calculateIRR(cashFlows, guess = 0.1) {
         rate = newRate;
     }
     
-    return 0; // If no convergence, return 0
+    return null; // If no convergence, return null
 }
 
 export function calculateCommercial(projectData, preset, language = 'en') {
@@ -75,9 +75,15 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const monthlyInterestRate = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
     let monthlyMortgagePayment = 0;
-    if (loanAmount > 0 && monthlyInterestRate > 0) {
-        monthlyMortgagePayment = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / 
-                                 (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+    if (loanAmount > 0) {
+        if (monthlyInterestRate === 0) {
+            // 0% interest: simple equal principal payments
+            monthlyMortgagePayment = loanAmount / numberOfPayments;
+        } else {
+            // Standard annuity formula
+            monthlyMortgagePayment = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / 
+                                     (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+        }
     }
     const annualDebtService = monthlyMortgagePayment * 12;
 
@@ -137,7 +143,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     
     // Annual interest paid (tax deductible)
     let firstYearInterest = 0;
-    if (loanAmount > 0 && monthlyInterestRate > 0) {
+    if (loanAmount > 0 && monthlyMortgagePayment > 0) {
         let balance = loanAmount;
         for (let month = 1; month <= 12; month++) {
             const interest = balance * monthlyInterestRate;
@@ -231,7 +237,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         
         let yearPrincipalPaid = 0;
         let tempLoanBalance = remainingLoanBalance;
-        if (monthlyMortgagePayment > 0 && monthlyInterestRate > 0) {
+        if (monthlyMortgagePayment > 0) {
             for (let month = 1; month <= 12; month++) {
                 const interestPayment = tempLoanBalance * monthlyInterestRate;
                 const principalPayment = Math.max(0, monthlyMortgagePayment - interestPayment);
