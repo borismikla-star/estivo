@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { currencyFormatter, percentFormatter } from '../lib/formatters';
 
@@ -612,15 +611,15 @@ export default function PDFReport({ projectData, results, language, user }) {
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
                                 <div style={{ textAlign: 'center', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '6px' }}>
                                     <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.totalGFA}</div>
-                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_gfa || 0).toLocaleString()} m²</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_gfa || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²</div>
                                 </div>
                                 <div style={{ textAlign: 'center', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '6px' }}>
                                     <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.totalNFA}</div>
-                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_nfa || 0).toLocaleString()} m²</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_nfa || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²</div>
                                 </div>
                                 <div style={{ textAlign: 'center', backgroundColor: '#eff6ff', padding: '8px', borderRadius: '6px' }}>
                                     <div style={{ fontSize: '10px', color: '#6b7280' }}>{currentT.totalSalesArea}</div>
-                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_sales_area || 0).toLocaleString()} m²</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{(kpis.total_sales_area || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} m²</div>
                                 </div>
                             </div>
                         </Section>
