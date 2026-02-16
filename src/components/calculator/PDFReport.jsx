@@ -450,9 +450,9 @@ export default function PDFReport({ projectData, results, language, user }) {
     const REVENUE_COLORS = ['#00B894', '#00D1A0', '#4ECCA3', '#78E4C8', '#A8F5E5'];
     const EXPENSE_COLORS = ['#E53935', '#EF5350', '#F44336', '#E57373', '#EF9A9A', '#FFCDD2', '#FFEBEE'];
 
-    // Get entity type label
+    // Get entity type label - check both locations where it might be stored
     const getEntityTypeLabel = () => {
-        const entityType = projectData.entity_type || 'FO';
+        const entityType = projectData.project_info_data?.entity_type || projectData.entity_type || 'FO';
         return entityType === 'PO' ? 
             (language === 'sk' ? 'Právnická osoba (PO)' : 'Legal Entity (PO)') : 
             (language === 'sk' ? 'Fyzická osoba (FO)' : 'Individual (FO)');
