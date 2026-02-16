@@ -115,6 +115,17 @@ export default function PDFReport({ projectData, results, language, user }) {
 
     const { kpis, cost_breakdown, revenue_breakdown, expense_breakdown } = results;
     const { name, type, country, property_data, income_data, assumptions_data } = projectData;
+    
+    // Country name mapping
+    const countryNames = {
+        SK: { sk: 'Slovensko', en: 'Slovakia', pl: 'Słowacja', hu: 'Szlovákia', de: 'Slowakei' },
+        CZ: { sk: 'Česko', en: 'Czech Republic', pl: 'Czechy', hu: 'Csehország', de: 'Tschechien' },
+        PL: { sk: 'Poľsko', en: 'Poland', pl: 'Polska', hu: 'Lengyelország', de: 'Polen' },
+        HU: { sk: 'Maďarsko', en: 'Hungary', pl: 'Węgry', hu: 'Magyarország', de: 'Ungarn' },
+        AT: { sk: 'Rakúsko', en: 'Austria', pl: 'Austria', hu: 'Ausztria', de: 'Österreich' },
+        DE: { sk: 'Nemecko', en: 'Germany', pl: 'Niemcy', hu: 'Németország', de: 'Deutschland' },
+    };
+    const countryName = countryNames[country]?.[language] || country || 'N/A';
 
     const t = {
         en: {
@@ -476,7 +487,7 @@ export default function PDFReport({ projectData, results, language, user }) {
                 <Section title={currentT.projectInfo}>
                     <KeyValue label={currentT.projectName} value={name} />
                     <KeyValue label={currentT.projectType} value={type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} />
-                    <KeyValue label={currentT.country} value={country} />
+                    <KeyValue label={currentT.country} value={countryName} />
                     <KeyValue label={currentT.entityType} value={getEntityTypeLabel()} />
                 </Section>
                 
