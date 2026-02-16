@@ -11,10 +11,10 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
       title: "Financovanie",
       basic: "Základné",
       phased: "Fázované",
-      own_resources: "Vlastné zdroje (€)",
-      own_resources_tooltip: "Výška vlastných zdrojov investovaných do projektu",
-      bank_loan: "Bankový úver (€)",
-      bank_loan_tooltip: "Výška bankového úveru na projekt",
+      own_resources: "Vlastné zdroje (%)",
+      own_resources_tooltip: "Percento celkových nákladov krytých vlastnými zdrojmi (napr. 30 = 30%)",
+      bank_loan: "Úroková sadzba úveru (%)",
+      bank_loan_tooltip: "Ročná úroková sadzba bankového úveru",
       interest_rate: "Úroková sadzba (%)",
       interest_rate_tooltip: "Ročná úroková sadzba úveru",
       loan_term: "Doba úveru (mesiace)",
@@ -41,10 +41,10 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
       title: "Financing",
       basic: "Basic",
       phased: "Phased",
-      own_resources: "Own Resources (€)",
-      own_resources_tooltip: "Amount of equity invested in the project",
-      bank_loan: "Bank Loan (€)",
-      bank_loan_tooltip: "Amount of bank loan for the project",
+      own_resources: "Own Resources (%)",
+      own_resources_tooltip: "Percentage of total costs covered by equity (e.g., 30 = 30%)",
+      bank_loan: "Bank Interest Rate (%)",
+      bank_loan_tooltip: "Annual interest rate on the bank loan",
       interest_rate: "Interest Rate (%)",
       interest_rate_tooltip: "Annual interest rate on the loan",
       loan_term: "Loan Term (months)",
@@ -71,10 +71,10 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
       title: "Finansowanie",
       basic: "Podstawowe",
       phased: "Fazowane",
-      own_resources: "Środki własne (€)",
-      own_resources_tooltip: "Wysokość kapitału własnego zainwestowanego w projekt",
-      bank_loan: "Kredyt bankowy (€)",
-      bank_loan_tooltip: "Wysokość kredytu bankowego na projekt",
+      own_resources: "Środki własne (%)",
+      own_resources_tooltip: "Procent całkowitych kosztów pokrywany kapitałem własnym (np. 30 = 30%)",
+      bank_loan: "Oprocentowanie kredytu (%)",
+      bank_loan_tooltip: "Roczna stopa procentowa kredytu bankowego",
       interest_rate: "Stopa procentowa (%)",
       interest_rate_tooltip: "Roczna stopa procentowa kredytu",
       loan_term: "Okres kredytu (miesiące)",
@@ -100,10 +100,10 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
       title: "Finanszírozás",
       basic: "Alap",
       phased: "Fázisolt",
-      own_resources: "Saját források (€)",
-      own_resources_tooltip: "A projektbe befektetett saját tőke összege",
-      bank_loan: "Bankhitel (€)",
-      bank_loan_tooltip: "A projekthez felvett bankhitel összege",
+      own_resources: "Saját források (%)",
+      own_resources_tooltip: "A teljes költségek saját tőkéből fedezett százaléka (pl. 30 = 30%)",
+      bank_loan: "Hitel kamatlába (%)",
+      bank_loan_tooltip: "A bankhitel éves kamatlába",
       interest_rate: "Kamatláb (%)",
       interest_rate_tooltip: "A hitel éves kamatlába",
       loan_term: "Hitel futamideje (hónap)",
@@ -129,10 +129,10 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
       title: "Finanzierung",
       basic: "Basis",
       phased: "Phasenweise",
-      own_resources: "Eigenkapital (€)",
-      own_resources_tooltip: "Höhe des in das Projekt investierten Eigenkapitals",
-      bank_loan: "Bankdarlehen (€)",
-      bank_loan_tooltip: "Höhe des Bankdarlehens für das Projekt",
+      own_resources: "Eigenkapital (%)",
+      own_resources_tooltip: "Prozentsatz der Gesamtkosten aus Eigenkapital (z.B. 30 = 30%)",
+      bank_loan: "Darlehenszinssatz (%)",
+      bank_loan_tooltip: "Jährlicher Zinssatz des Bankdarlehens",
       interest_rate: "Zinssatz (%)",
       interest_rate_tooltip: "Jährlicher Zinssatz des Darlehens",
       loan_term: "Darlehenslaufzeit (Monate)",
@@ -182,9 +182,10 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
     });
   };
 
-  const ownResources = safeData.own_resources || 0;
-  const bankLoan = safeData.bank_loan || 0;
-  const totalFinancing = ownResources + bankLoan;
+  const ownResourcesPercent = safeData.own_resources_percent || 30;
+  const ownResources = totalCosts * (ownResourcesPercent / 100);
+  const bankResources = totalCosts * ((100 - ownResourcesPercent) / 100);
+  const totalFinancing = ownResources + bankResources;
   const financingGap = totalCosts - totalFinancing;
 
   return (
@@ -200,50 +201,37 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
         {/* Basic Financing Tab */}
         <TabsContent value="basic" className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="own_resources" className="flex items-center gap-2">
+            <Label htmlFor="own_resources_percent" className="flex items-center gap-2">
               {t.own_resources} <span className="text-destructive">*</span>
               <InfoTooltip content={t.own_resources_tooltip} />
             </Label>
             <Input
-              id="own_resources"
+              id="own_resources_percent"
               type="number"
               min="0"
-              step="1000"
-              value={safeData.own_resources || ""}
-              onChange={(e) => handleChange('own_resources', e.target.value)}
+              max="100"
+              step="1"
+              placeholder="30"
+              value={safeData.own_resources_percent || ""}
+              onChange={(e) => handleChange('own_resources_percent', e.target.value)}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bank_loan" className="flex items-center gap-2">
+            <Label htmlFor="bank_interest_percent" className="flex items-center gap-2">
               {t.bank_loan} <span className="text-destructive">*</span>
               <InfoTooltip content={t.bank_loan_tooltip} />
             </Label>
             <Input
-              id="bank_loan"
-              type="number"
-              min="0"
-              step="1000"
-              value={safeData.bank_loan || ""}
-              onChange={(e) => handleChange('bank_loan', e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="interest_rate" className="flex items-center gap-2">
-              {t.interest_rate} <span className="text-destructive">*</span>
-              <InfoTooltip content={t.interest_rate_tooltip} />
-            </Label>
-            <Input
-              id="interest_rate"
+              id="bank_interest_percent"
               type="number"
               min="0"
               max="100"
               step="0.1"
-              value={safeData.interest_rate || ""}
-              onChange={(e) => handleChange('interest_rate', e.target.value)}
+              placeholder="6"
+              value={safeData.bank_interest_percent || ""}
+              onChange={(e) => handleChange('bank_interest_percent', e.target.value)}
               required
             />
           </div>
@@ -264,17 +252,18 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="project_duration" className="flex items-center gap-2">
+            <Label htmlFor="project_duration_months" className="flex items-center gap-2">
               {t.project_duration} <span className="text-destructive">*</span>
               <InfoTooltip content={t.project_duration_tooltip} />
             </Label>
             <Input
-              id="project_duration"
+              id="project_duration_months"
               type="number"
               min="1"
               step="1"
-              value={safeData.project_duration || ""}
-              onChange={(e) => handleChange('project_duration', e.target.value)}
+              placeholder="24"
+              value={safeData.project_duration_months || ""}
+              onChange={(e) => handleChange('project_duration_months', e.target.value)}
               required
             />
           </div>
@@ -432,12 +421,12 @@ export default function FinancingInputs({ data, totalCosts, totalRevenue, langua
             <span className="font-semibold">{currencyFormatter(totalRevenue, 'EUR', '€', 0)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">{t.own_resources}:</span>
-            <span className="font-semibold">{currencyFormatter(ownResources, 'EUR', '€', 0)}</span>
+            <span className="text-muted-foreground">{language === 'en' ? 'Own Resources' : language === 'sk' ? 'Vlastné zdroje' : language === 'pl' ? 'Środki własne' : language === 'hu' ? 'Saját források' : 'Eigenkapital'}:</span>
+            <span className="font-semibold">{currencyFormatter(ownResources, 'EUR', '€', 0)} ({ownResourcesPercent}%)</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">{t.bank_loan}:</span>
-            <span className="font-semibold">{currencyFormatter(bankLoan, 'EUR', '€', 0)}</span>
+            <span className="text-muted-foreground">{language === 'en' ? 'Bank Resources' : language === 'sk' ? 'Bankové zdroje' : language === 'pl' ? 'Środki bankowe' : language === 'hu' ? 'Banki források' : 'Bankdarlehen'}:</span>
+            <span className="font-semibold">{currencyFormatter(bankResources, 'EUR', '€', 0)} ({(100 - ownResourcesPercent).toFixed(0)}%)</span>
           </div>
         </div>
         {financingGap !== 0 && (
