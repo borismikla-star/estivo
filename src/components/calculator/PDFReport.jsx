@@ -239,7 +239,7 @@ export default function PDFReport({ projectData, results, language, user }) {
             vatInput: "VAT Input",
             vatOutput: "VAT Output",
             vatBalance: "VAT Balance",
-            netProfitAfterVAT: "Net Profit after VAT",
+            vatCashFlowImpact: "VAT Cash Flow Impact",
             financingBreakdown: "Financing Breakdown",
             summary: "Executive Summary",
             performance: "Performance Metrics",
@@ -387,7 +387,7 @@ export default function PDFReport({ projectData, results, language, user }) {
             vatInput: "DPH na vstupe",
             vatOutput: "DPH na výstupe",
             vatBalance: "Saldo DPH",
-            netProfitAfterVAT: "Čistý zisk po DPH",
+            vatCashFlowImpact: "Vplyv DPH na cash-flow",
             financingBreakdown: "Rozloženie financovania",
             summary: "Zhrnutie",
             performance: "Výkonnostné metriky",
@@ -684,7 +684,10 @@ export default function PDFReport({ projectData, results, language, user }) {
                                         <KeyValue label={currentT.vatInput} value={currencyFormatter(kpis.vat_input || 0)} />
                                         <KeyValue label={currentT.vatOutput} value={currencyFormatter(kpis.vat_output || 0)} />
                                         <KeyValue label={currentT.vatBalance} value={currencyFormatter(kpis.vat_balance || 0)} isBold />
-                                        <KeyValue label={currentT.netProfitAfterVAT} value={currencyFormatter(kpis.net_profit_after_vat || 0)} isBold />
+                                        <KeyValue label={currentT.vatCashFlowImpact} value={currencyFormatter(kpis.vat_cash_flow_impact || kpis.vat_balance || 0)} isBold />
+                                    </div>
+                                    <div style={{ marginTop: '8px', padding: '8px', backgroundColor: '#eff6ff', borderRadius: '4px', fontSize: '10px', color: '#1e40af' }}>
+                                        💡 {kpis.is_vat_payer ? (language === 'sk' ? 'Pre platcu DPH je DPH cash-flow neutrálne - neovplyvňuje ekonomický zisk.' : 'For VAT payer, VAT is cash-flow neutral - does not affect economic profit.') : (language === 'sk' ? 'Pre neplatcu DPH je DPH zahrnutá v nákladoch.' : 'For non-VAT payer, VAT is included in costs.')}
                                     </div>
                                 </div>
                             </Section>

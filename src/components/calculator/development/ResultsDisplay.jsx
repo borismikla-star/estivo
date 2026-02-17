@@ -35,10 +35,10 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             vat_output_tooltip: "Suma DPH, ktorú musí platca DPH odviesť z predaja. Byty sú oslobodené od DPH, ale nebytové priestory a parkovacie miesta môžu podliehať DPH.",
             vat_balance: "Saldo DPH",
             vat_balance_desc: "Výsledná pozícia voči štátu",
-            vat_balance_tooltip: "Rozdiel medzi DPH na výstupe a vstupe. Kladné číslo = treba zaplatiť štátu, záporné = štát vráti.",
-            net_profit_after_vat: "Čistý zisk po DPH",
-            net_profit_after_vat_desc: "Reálny zisk po zohľadnení DPH",
-            net_profit_after_vat_tooltip: "Skutočný zisk po zaplatení/odpočítaní DPH. Pre FO neplatcu je rovnaký ako hrubý zisk, pre PO zahŕňa vplyv DPH salda.",
+            vat_balance_tooltip: "Rozdiel medzi DPH na výstupe a vstupe. Kladné číslo = treba zaplatiť štátu, záporné = štát vráti. Pre platcu DPH je DPH cash-flow neutrálne - neovplyvňuje zisk, len časovanie platieb.",
+            vat_cash_flow_impact: "Vplyv DPH na cash-flow",
+            vat_cash_flow_impact_desc: "Časovanie DPH platieb",
+            vat_cash_flow_impact_tooltip: "Pre platcu DPH: záporné saldo = refund od štátu (pomáha financovaniu), kladné = musíte zaplatiť. Pre neplatcu: DPH už zahrnutá v nákladoch.",
             entity_type_label: "Typ subjektu",
             vat_payer: "Platca DPH",
             non_vat_payer: "Neplatca DPH",
@@ -123,10 +123,10 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             vat_output_tooltip: "Amount of VAT that must be paid to tax authority from sales. Apartments are VAT exempt, but non-residential and parking may have VAT.",
             vat_balance: "VAT Balance",
             vat_balance_desc: "Net position with tax authority",
-            vat_balance_tooltip: "Difference between VAT output and input. Positive = must pay to state, negative = state refunds.",
-            net_profit_after_vat: "Net Profit after VAT",
-            net_profit_after_vat_desc: "Real profit after VAT consideration",
-            net_profit_after_vat_tooltip: "Actual profit after paying/deducting VAT. For non-VAT payer same as gross profit, for company includes VAT balance impact.",
+            vat_balance_tooltip: "Difference between VAT output and input. Positive = must pay to state, negative = state refunds. For VAT payer, VAT is cash-flow neutral - doesn't affect profit, only payment timing.",
+            vat_cash_flow_impact: "VAT Cash Flow Impact",
+            vat_cash_flow_impact_desc: "VAT payment timing",
+            vat_cash_flow_impact_tooltip: "For VAT payer: negative balance = refund from state (helps financing), positive = must pay. For non-payer: VAT already included in costs.",
             entity_type_label: "Entity Type",
             vat_payer: "VAT Payer",
             non_vat_payer: "Non-VAT Payer",
@@ -479,11 +479,11 @@ export default function ResultsDisplay({ results, currency = '€', language = '
     // VAT Impact message based on entity type
     const vatImpactMessages = {
         sk: {
-            vat_payer: `Ako platca DPH môžete odpočítať ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} z nákladov, čo výrazne znižuje reálne náklady projektu.`,
+            vat_payer: `Ako platca DPH je DPH neutrálne - odpočítate si ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} vstupnej DPH a odvedete ${currencyFormatter(kpis.vat_output, 'EUR', currency, 0)} výstupnej DPH. Saldo ${currencyFormatter(Math.abs(kpis.vat_balance), 'EUR', currency, 0)} ${kpis.vat_balance < 0 ? 'vám štát vráti' : 'musíte zaplatiť štátu'}.`,
             non_vat_payer: `Ako neplatca DPH platíte plnú cenu vrátane DPH, čo zvyšuje vaše náklady o približne 20%. Zvážte registráciu ako platca DPH.`
         },
         en: {
-            vat_payer: `As VAT payer you can deduct ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} from costs, significantly reducing real project costs.`,
+            vat_payer: `As VAT payer, VAT is neutral - you deduct ${currencyFormatter(kpis.vat_input, 'EUR', currency, 0)} input VAT and pay ${currencyFormatter(kpis.vat_output, 'EUR', currency, 0)} output VAT. Balance of ${currencyFormatter(Math.abs(kpis.vat_balance), 'EUR', currency, 0)} ${kpis.vat_balance < 0 ? 'will be refunded by state' : 'must be paid to state'}.`,
             non_vat_payer: `As non-VAT payer you pay full price including VAT, increasing your costs by approximately 20%. Consider registering as VAT payer.`
         },
         pl: {
@@ -725,12 +725,12 @@ export default function ResultsDisplay({ results, currency = '€', language = '
                                     tooltip={t.vat_balance_tooltip}
                                 />
                                 <KPICard
-                                    title={t.net_profit_after_vat}
-                                    value={currencyFormatter(kpis.net_profit_after_vat || 0, 'EUR', currency, 0)}
-                                    icon={TrendingUp}
-                                    description={t.net_profit_after_vat_desc}
-                                    trend={kpis.net_profit_after_vat > 0 ? "up" : "down"}
-                                    tooltip={t.net_profit_after_vat_tooltip}
+                                    title={t.vat_cash_flow_impact}
+                                    value={currencyFormatter(kpis.vat_cash_flow_impact || kpis.vat_balance || 0, 'EUR', currency, 0)}
+                                    icon={kpis.vat_balance < 0 ? TrendingUp : TrendingDown}
+                                    description={t.vat_cash_flow_impact_desc}
+                                    trend={kpis.vat_balance < 0 ? "up" : "down"}
+                                    tooltip={t.vat_cash_flow_impact_tooltip}
                                 />
                             </div>
 
