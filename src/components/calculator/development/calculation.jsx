@@ -32,7 +32,7 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
         cost_data = {},
         revenue_data = {},
         financing_data = {},
-        entity_type = 'FO' // Get entity type from projectData, default to 'FO'
+        entity_type = 'FO'
     } = projectData;
 
     const num = (value) => {
@@ -293,6 +293,16 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const landValueUplift = totalRevenueExclVAT - landAndProject;
     const landValueUpliftPercent = landAndProject > 0 ? (landValueUplift / landAndProject) * 100 : 0;
 
+    // === TAX CALCULATIONS (NEW - MISSING!) ===
+    const corporateTaxRate = num(preset?.corporate_tax_rate) || 21;
+    const incomeTaxRateFO = num(preset?.income_tax_rate_fo) || 25;
+    
+    // For development projects, tax is on the final profit
+    // No annual depreciation/interest deductions like rental properties
+    const effectiveTaxRate = entity_type === 'PO' ? corporateTaxRate : incomeTaxRateFO;
+    const taxOnProfit = grossProfit * (effectiveTaxRate / 100);
+    const netProfitAfterTax = grossProfit - taxOnProfit;
+
     // === COST BREAKDOWN FOR CHARTS ===
     const costLabels = {
         en: {
@@ -481,6 +491,12 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
             is_vat_payer: isVATpayer,
             total_costs_net: totalCostsNet,
             total_costs_excl_vat: totalCostsExclVAT,
+            
+            // TAX METRICS (NEW!)
+            entity_type: entity_type,
+            effective_tax_rate: effectiveTaxRate,
+            tax_on_profit: taxOnProfit,
+            net_profit_after_tax: netProfitAfterTax,
         },
         cost_breakdown: costBreakdown,
         revenue_breakdown: revenueBreakdown

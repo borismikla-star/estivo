@@ -61,16 +61,15 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const vatOnAcquisition = isVatPayer ? acquisitionCostsGross - acquisitionCosts : 0;
     const totalVatDeductible = vatOnPurchase + vatOnAcquisition;
 
-    // === FINANCING - CORRECTED ===
+    // === FINANCING ===
     const downPaymentPercent = num(financing_data.down_payment_percent) || 25;
     const loanTerm = num(financing_data.loan_term) || 25;
     const interestRate = num(financing_data.interest_rate) || 4.5;
     
-    // Down payment is on purchase price only
-    const downPayment = price * (downPaymentPercent / 100);
-    const loanAmount = price - downPayment;
-    // Total equity = down payment + acquisition costs
-    const totalEquity = downPayment + acquisitionCosts;
+    // Loan is only on purchase price, not acquisition costs
+    const loanAmount = price * ((100 - downPaymentPercent) / 100);
+    // Total equity covers: down payment portion + all acquisition costs
+    const totalEquity = totalInvestment - loanAmount;
     
     const monthlyInterestRate = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
