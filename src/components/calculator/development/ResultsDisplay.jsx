@@ -459,6 +459,15 @@ export default function ResultsDisplay({ results, currency = '€', language = '
 
     const t = translations[language] || translations.en;
 
+    // DEBUG: Check if tax data is present
+    console.log('[DEV RESULTS] Tax data check:', {
+        effective_tax_rate: kpis.effective_tax_rate,
+        entity_type: kpis.entity_type,
+        tax_on_profit: kpis.tax_on_profit,
+        net_profit_after_tax: kpis.net_profit_after_tax,
+        gross_profit: kpis.gross_profit
+    });
+
     // Generate Cash Flow Timeline data (simplified - 4 phases)
     const cashFlowData = [
         { period: '1-6 ' + t.months, costs: -kpis.total_project_costs * 0.3, revenue: 0, cumulative: -kpis.total_project_costs * 0.3 },
