@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import KPICard from '../shared/KPICard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 import { currencyFormatter, percentFormatter } from '@/components/lib/formatters';
-import { TrendingUp, TrendingDown, DollarSign, Target, PieChart as PieChartIcon, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Target, PieChart as PieChartIcon, BarChart3, FileText, CheckCircle } from 'lucide-react';
 import InfoTooltip from '@/components/shared/InfoTooltip';
 
 const COLORS = ['#003E7E', '#004C97', '#0066CC', '#0080FF', '#33A3FF', '#66BBFF', '#99D6FF'];
@@ -44,6 +44,16 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             non_vat_payer: "Neplatca DPH",
             vat_advantage: "✓ Výhoda: Môžete odpočítať DPH z nákladov",
             vat_disadvantage: "⚠ Nevýhoda: Platíte plnú cenu vrátane DPH",
+            
+            tax_analysis: "Daňová analýza",
+            entity_type_fo: "Fyzická osoba (FO)",
+            entity_type_po: "Právnická osoba (PO)",
+            effective_tax_rate: "Efektívna daňová sadzba",
+            tax_on_profit: "Daň zo zisku",
+            tax_liability: "Daňová povinnosť",
+            net_profit_after_tax: "Čistý zisk po zdanení",
+            before_tax: "Pred zdanením",
+            after_tax: "Po zdanení",
             
             total_project_costs: "Celkové náklady",
             total_project_costs_desc: "Všetky náklady vrátane financovania",
@@ -123,6 +133,16 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             vat_advantage: "✓ Advantage: Can deduct VAT from costs",
             vat_disadvantage: "⚠ Disadvantage: Pay full price including VAT",
             
+            tax_analysis: "Tax Analysis",
+            entity_type_fo: "Individual (FO)",
+            entity_type_po: "Legal Entity (PO)",
+            effective_tax_rate: "Effective Tax Rate",
+            tax_on_profit: "Tax on Profit",
+            tax_liability: "Tax liability",
+            net_profit_after_tax: "Net Profit After Tax",
+            before_tax: "Before Tax",
+            after_tax: "After Tax",
+            
             total_project_costs: "Total Costs",
             total_project_costs_desc: "All costs including financing",
             total_project_costs_tooltip: "Sum of all project costs: land, construction, engineering networks, financing, reserve and other costs.",
@@ -200,6 +220,16 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             non_vat_payer: "Niepłatnik VAT",
             vat_advantage: "✓ Zaleta: Możesz odliczyć VAT od kosztów",
             vat_disadvantage: "⚠ Wada: Płacisz pełną cenę z VAT",
+            
+            tax_analysis: "Analiza podatkowa",
+            entity_type_fo: "Osoba fizyczna (FO)",
+            entity_type_po: "Osoba prawna (PO)",
+            effective_tax_rate: "Efektywna stopa podatkowa",
+            tax_on_profit: "Podatek od zysku",
+            tax_liability: "Zobowiązanie podatkowe",
+            net_profit_after_tax: "Zysk netto po opodatkowaniu",
+            before_tax: "Przed opodatkowaniem",
+            after_tax: "Po opodatkowaniu",
             
             total_project_costs: "Całkowite koszty",
             total_project_costs_desc: "Wszystkie koszty wraz z finansowaniem",
@@ -279,6 +309,16 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             vat_advantage: "✓ Előny: Levonhatja az ÁFA-t a költségekből",
             vat_disadvantage: "⚠ Hátrány: Teljes árat fizet, beleértve az ÁFA-t",
 
+            tax_analysis: "Adóelemzés",
+            entity_type_fo: "Magánszemély (FO)",
+            entity_type_po: "Jogi személy (PO)",
+            effective_tax_rate: "Effektív adókulcs",
+            tax_on_profit: "Nyereségadó",
+            tax_liability: "Adókötelezettség",
+            net_profit_after_tax: "Nettó nyereség adózás után",
+            before_tax: "Adózás előtt",
+            after_tax: "Adózás után",
+
             total_project_costs: "Összes költség",
             total_project_costs_desc: "Összes költség a finanszírozással együtt",
             total_project_costs_tooltip: "Összes projektköltség összege: telek, építés, mérnöki hálózatok, finanszírozás, tartalék és egyéb költségek.",
@@ -356,6 +396,16 @@ export default function ResultsDisplay({ results, currency = '€', language = '
             non_vat_payer: "Nicht-Mehrwertsteuerzahler",
             vat_advantage: "✓ Vorteil: Sie können die Mehrwertsteuer von den Kosten abziehen",
             vat_disadvantage: "⚠ Nachteil: Sie zahlen den vollen Preis inklusive Mehrwertsteuer",
+            
+            tax_analysis: "Steueranalyse",
+            entity_type_fo: "Natürliche Person (FO)",
+            entity_type_po: "Juristische Person (PO)",
+            effective_tax_rate: "Effektiver Steuersatz",
+            tax_on_profit: "Gewinnsteuer",
+            tax_liability: "Steuerpflicht",
+            net_profit_after_tax: "Nettogewinn nach Steuern",
+            before_tax: "Vor Steuern",
+            after_tax: "Nach Steuern",
             
             total_project_costs: "Gesamtkosten",
             total_project_costs_desc: "Alle Kosten inkl. Finanzierung",
@@ -471,6 +521,47 @@ export default function ResultsDisplay({ results, currency = '€', language = '
                                     ⏱ {t.time_period_info}: {t.project_duration_label} ({kpis.project_duration_months || 24} {t.months})
                                 </span>
                             </div>
+                            
+                            {/* TAX ANALYSIS SECTION (NEW!) */}
+                            {kpis.effective_tax_rate !== undefined && (
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
+                                        <FileText className="w-5 h-5" />
+                                        {t.tax_analysis}
+                                    </h3>
+                                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <CheckCircle className="w-5 h-5 text-amber-600" />
+                                            <span className="font-semibold text-amber-800">
+                                                {kpis.entity_type === 'PO' ? t.entity_type_po : t.entity_type_fo}
+                                            </span>
+                                            <span className="text-sm text-gray-600">
+                                                ({t.effective_tax_rate}: {percentFormatter(kpis.effective_tax_rate)})
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <KPICard
+                                                title={t.gross_profit}
+                                                value={currencyFormatter(kpis.gross_profit, 'EUR', currency, 0)}
+                                                description={t.before_tax}
+                                            />
+                                            <KPICard
+                                                title={t.tax_on_profit}
+                                                value={currencyFormatter(kpis.tax_on_profit, 'EUR', currency, 0)}
+                                                description={t.tax_liability}
+                                                status="warning"
+                                            />
+                                            <KPICard
+                                                title={t.net_profit_after_tax}
+                                                value={currencyFormatter(kpis.net_profit_after_tax, 'EUR', currency, 0)}
+                                                description={t.after_tax}
+                                                status="excellent"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             
                             <h3 className="text-lg font-semibold flex items-center gap-2">
                                 <Target className="w-5 h-5" />
