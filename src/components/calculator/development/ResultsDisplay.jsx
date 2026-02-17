@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -18,6 +17,8 @@ export default function ResultsDisplay({ results, currency = '€', language = '
     const translations = {
         sk: {
             title: "Výsledky developmentu",
+            time_period_info: "Všetky metriky vypočítané za",
+            project_duration_label: "celé trvanie projektu",
             overview: "Prehľad",
             charts: "Grafy",
             cashflow: "Cash Flow",
@@ -94,6 +95,8 @@ export default function ResultsDisplay({ results, currency = '€', language = '
         },
         en: {
             title: "Development Results",
+            time_period_info: "All metrics calculated for",
+            project_duration_label: "entire project duration",
             overview: "Overview",
             charts: "Charts",
             cashflow: "Cash Flow",
@@ -170,6 +173,8 @@ export default function ResultsDisplay({ results, currency = '€', language = '
         },
         pl: {
             title: "Wyniki deweloperskie",
+            time_period_info: "Wszystkie wskaźniki obliczone dla",
+            project_duration_label: "całego czasu trwania projektu",
             overview: "Przegląd",
             charts: "Wykresy",
             cashflow: "Przepływ gotówki",
@@ -246,6 +251,8 @@ export default function ResultsDisplay({ results, currency = '€', language = '
         },
         hu: {
             title: "Fejlesztési eredmények",
+            time_period_info: "Minden mutató kiszámítva",
+            project_duration_label: "teljes projekt időtartamra",
             overview: "Áttekintés",
             charts: "Grafikonok",
             cashflow: "Pénzáramlás",
@@ -322,6 +329,8 @@ export default function ResultsDisplay({ results, currency = '€', language = '
         },
         de: {
             title: "Entwicklungsergebnisse",
+            time_period_info: "Alle Kennzahlen berechnet für",
+            project_duration_label: "gesamte Projektdauer",
             overview: "Übersicht",
             charts: "Diagramme",
             cashflow: "Cashflow",
@@ -456,6 +465,13 @@ export default function ResultsDisplay({ results, currency = '€', language = '
 
                         {/* Overview Tab */}
                         <TabsContent value="overview" className="space-y-6">
+                            {/* Time Period Info */}
+                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 text-center">
+                                <span className="text-sm text-blue-800 font-medium">
+                                    ⏱ {t.time_period_info}: {t.project_duration_label} ({kpis.project_duration_months || 24} {t.months})
+                                </span>
+                            </div>
+                            
                             <h3 className="text-lg font-semibold flex items-center gap-2">
                                 <Target className="w-5 h-5" />
                                 {t.kpis_title}
