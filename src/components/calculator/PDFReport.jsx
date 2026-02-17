@@ -261,6 +261,7 @@ export default function PDFReport({ projectData, results, language, user }) {
             totalTaxBenefit: "Total Tax Benefits",
             beforeTax: "Before Tax",
             afterTax: "After Tax",
+            taxOnProfit: "Tax on Profit",
             cashFlowComparison: "Cash Flow Comparison",
             roiComparison: "ROI Comparison",
             irrComparison: "IRR Comparison",
@@ -408,6 +409,7 @@ export default function PDFReport({ projectData, results, language, user }) {
             totalTaxBenefit: "Celkové daňové benefity",
             beforeTax: "Pred zdanením",
             afterTax: "Po zdanení",
+            taxOnProfit: "Daň zo zisku",
             cashFlowComparison: "Porovnanie Cash Flow",
             roiComparison: "Porovnanie ROI",
             irrComparison: "Porovnanie IRR",
@@ -515,6 +517,45 @@ export default function PDFReport({ projectData, results, language, user }) {
                                 </div>
                             </div>
                         </Section>
+
+                        {/* TAX ANALYSIS (NEW!) */}
+                        {kpis.effective_tax_rate !== undefined && (
+                            <Section title={currentT.taxAnalysis}>
+                                <div style={{ backgroundColor: '#fef3c7', padding: '12px', borderRadius: '8px', border: '1px solid #fcd34d' }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '8px', padding: '6px', backgroundColor: '#fef9c3', borderRadius: '4px' }}>
+                                        <span style={{ fontWeight: 'bold', color: '#92400e' }}>
+                                            {kpis.entity_type === 'PO' ? currentT.entityTypePO : currentT.entityTypeFO}
+                                        </span>
+                                        <span style={{ marginLeft: '8px', color: '#ca8a04' }}>
+                                            ({currentT.effectiveTaxRate}: {percentFormatter(kpis.effective_tax_rate)})
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                                        <div style={{ textAlign: 'center', backgroundColor: '#e0f2fe', padding: '8px', borderRadius: '6px' }}>
+                                            <div style={{ fontSize: '10px', color: '#0369a1', marginBottom: '4px' }}>{currentT.grossProfit}</div>
+                                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#0c4a6e' }}>
+                                                {currencyFormatter(kpis.gross_profit || 0)}
+                                            </div>
+                                            <div style={{ fontSize: '9px', color: '#0369a1' }}>{currentT.beforeTax}</div>
+                                        </div>
+                                        <div style={{ textAlign: 'center', backgroundColor: '#fee2e2', padding: '8px', borderRadius: '6px' }}>
+                                            <div style={{ fontSize: '10px', color: '#991b1b', marginBottom: '4px' }}>{currentT.annualIncomeTax}</div>
+                                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#991b1b' }}>
+                                                {currencyFormatter(kpis.tax_on_profit || 0)}
+                                            </div>
+                                            <div style={{ fontSize: '9px', color: '#991b1b' }}>{currentT.taxableIncome}</div>
+                                        </div>
+                                        <div style={{ textAlign: 'center', backgroundColor: '#dcfce7', padding: '8px', borderRadius: '6px' }}>
+                                            <div style={{ fontSize: '10px', color: '#15803d', marginBottom: '4px' }}>{currentT.netProfit}</div>
+                                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#166534' }}>
+                                                {currencyFormatter(kpis.net_profit_after_tax || 0)}
+                                            </div>
+                                            <div style={{ fontSize: '9px', color: '#15803d' }}>{currentT.afterTax}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Section>
+                        )}
 
                         {/* Development Metrics */}
                         <Section title={currentT.developmentMetrics}>
