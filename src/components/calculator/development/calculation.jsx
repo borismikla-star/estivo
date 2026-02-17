@@ -230,11 +230,10 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const netProfit = netRevenue - totalProjectCosts;
     
     // NET PROFIT AFTER VAT (real profit considering VAT balance)
-    // VAT payer: VAT balance affects real profit (can get refund or pay)
-    // Non-VAT payer: VAT already included in costs, no further adjustment
-    const netProfitAfterVAT = isVATpayer 
-        ? grossProfit - vatBalance  // VAT balance impacts cash flow & profit
-        : grossProfit;  // VAT cost already included in totalProjectCosts
+    // For VAT payer: VAT is neutral - costs already exclude VAT, they get refund from state
+    // For non-VAT payer: VAT already included in costs - no further adjustment
+    // In both cases: netProfitAfterVAT = grossProfit (VAT already correctly accounted for)
+    const netProfitAfterVAT = grossProfit;
     
     const profitMargin = totalRevenueExclVAT > 0 ? (grossProfit / totalRevenueExclVAT) * 100 : 0;
     const developerMargin = totalProjectCosts > 0 ? (grossProfit / totalProjectCosts) * 100 : 0;
