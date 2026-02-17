@@ -31,9 +31,11 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
         project_info_data = {},
         cost_data = {},
         revenue_data = {},
-        financing_data = {},
-        entity_type = 'FO'
+        financing_data = {}
     } = projectData;
+    
+    // Get entity_type from project_info_data OR fallback to projectData root
+    const entity_type = project_info_data.entity_type || projectData.entity_type || 'FO';
 
     const num = (value) => {
         const parsed = Number(value);
