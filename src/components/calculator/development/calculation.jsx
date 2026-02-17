@@ -189,13 +189,14 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
                           salesCosts + marketingCosts + totalOtherServices + reserveProvision;
 
     if (isVATpayer) {
-        // VAT payer - adds VAT on costs, collects VAT on taxable revenue
+        // VAT payer - adds VAT on costs, collects VAT on ALL taxable revenue
         vatInput = totalCostsNet * VAT_RATE; // VAT paid on costs (deductible)
         totalCostsExclVAT = totalCostsNet; // Base for financing calculations
         
-        // VAT on revenue (apartments are VAT exempt, non-residential and parking are taxable)
-        const taxableRevenue = nonResidentialRevenue + parkingIndoorRevenue + parkingOutdoorRevenue;
-        vatOutput = taxableRevenue * VAT_RATE; // VAT collected from customers
+        // VAT on revenue - ALL real estate sales are subject to 20% VAT in SK/EU development
+        // This includes apartments, non-residential, parking, balconies, gardens, basements
+        // (First-time housing may have reduced rate, but standard rate is 20%)
+        vatOutput = totalGrossRevenue * VAT_RATE; // VAT collected from all sales
     } else {
         // Non-VAT payer - pays costs with VAT included, no VAT on revenue
         vatInput = totalCostsNet * VAT_RATE; // VAT paid but cannot be deducted
@@ -229,11 +230,13 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const grossProfit = totalRevenueExclVAT - totalProjectCosts;
     const netProfit = netRevenue - totalProjectCosts;
     
-    // NET PROFIT AFTER VAT (real profit considering VAT balance)
-    // For VAT payer: VAT is neutral - costs already exclude VAT, they get refund from state
-    // For non-VAT payer: VAT already included in costs - no further adjustment
-    // In both cases: netProfitAfterVAT = grossProfit (VAT already correctly accounted for)
-    const netProfitAfterVAT = grossProfit;
+    // VAT IMPACT ON CASH FLOW (not on profit!)
+    // For VAT payer: VAT is cash-flow neutral over project lifecycle
+    //   - They pay VAT on costs but get it refunded
+    //   - They collect VAT on revenue but must pay it to tax authority
+    //   - Net effect: saldo DPH affects timing of cash flows, not profit
+    // For non-VAT payer: VAT is already included in costs, no separate cash flow
+    const netProfitAfterVAT = grossProfit; // VAT does not change economic profit
     
     const profitMargin = totalRevenueExclVAT > 0 ? (grossProfit / totalRevenueExclVAT) * 100 : 0;
     const developerMargin = totalProjectCosts > 0 ? (grossProfit / totalProjectCosts) * 100 : 0;
@@ -492,10 +495,12 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
             vat_input: vatInput,
             vat_output: vatOutput,
             vat_balance: vatBalance,
-            net_profit_after_vat: netProfitAfterVAT,
+            vat_cash_flow_impact: vatBalance, // Same as balance, but clearer name for reporting
             is_vat_payer: isVATpayer,
             total_costs_net: totalCostsNet,
             total_costs_excl_vat: totalCostsExclVAT,
+            total_revenue_excl_vat: totalRevenueExclVAT,
+            vat_rate_percent: VAT_RATE * 100,
             
             // TAX METRICS (NEW!)
             entity_type: entity_type,
