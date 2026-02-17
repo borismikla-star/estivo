@@ -21,6 +21,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
         en: {
             analysis_results: "Analysis Results",
             airbnb_results: "Short-Term Rental Analysis Results",
+            time_period_info: "Annual metrics (Year 1) • Long-term projections (10 years)",
             key_metrics: "Key Financial Metrics",
             overview: "Overview",
             details: "Details",
@@ -138,6 +139,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
         sk: {
             analysis_results: "Výsledky analýzy",
             airbnb_results: "Výsledky analýzy krátkodobého prenájmu",
+            time_period_info: "Ročné metriky (1. rok) • Dlhodobé projekcie (10 rokov)",
             key_metrics: "Kľúčové finančné ukazovatele",
             overview: "Prehľad",
             details: "Detaily",
@@ -253,6 +255,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
         },
         pl: {
             airbnb_results: "Wyniki analizy najmu krótkoterminowego",
+            time_period_info: "Wskaźniki roczne (Rok 1) • Projekcje długoterminowe (10 lat)",
             key_metrics: "Kluczowe wskaźniki finansowe",
             overview: "Przegląd",
             details: "Szczegóły",
@@ -368,6 +371,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
         },
         hu: {
             airbnb_results: "Rövid távú bérleti elemzés eredményei",
+            time_period_info: "Éves mutatók (1. év) • Hosszú távú előrejelzések (10 év)",
             key_metrics: "Kulcsfontosságú pénzügyi mutatók",
             overview: "Áttekintés",
             details: "Részletek",
@@ -483,6 +487,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
         },
         de: {
             airbnb_results: "Ergebnisse der Kurzzeitvermietungsanalyse",
+            time_period_info: "Jährliche Kennzahlen (Jahr 1) • Langfristige Prognosen (10 Jahre)",
             key_metrics: "Wichtige Finanzkennzahlen",
             overview: "Übersicht",
             details: "Details",
@@ -662,6 +667,13 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
 
                     {/* Overview Tab */}
                     <TabsContent value="overview" className="space-y-4 sm:space-y-6">
+                        {/* Time Period Info */}
+                        <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 text-center">
+                            <span className="text-sm text-blue-800 font-medium">
+                                ⏱ {t.time_period_info}
+                            </span>
+                        </div>
+                        
                         {/* TAX ANALYSIS SECTION */}
                         {kpis.effective_tax_rate !== undefined && (
                             <div className="space-y-4">

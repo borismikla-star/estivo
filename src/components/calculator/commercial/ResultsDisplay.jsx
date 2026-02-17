@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,6 +21,7 @@ export default function CommercialResults({ results, currency = '€', language 
     const translations = {
         en: {
             commercial_results: "Commercial Property Analysis Results",
+            time_period_info: "Annual metrics (Year 1) • Long-term projections (10 years)",
             overview: "Overview",
             details: "Details",
             projections: "10-Year Projections",
@@ -128,6 +128,7 @@ export default function CommercialResults({ results, currency = '€', language 
         },
         sk: {
             commercial_results: "Výsledky analýzy komerčnej nehnuteľnosti",
+            time_period_info: "Ročné metriky (1. rok) • Dlhodobé projekcie (10 rokov)",
             overview: "Prehľad",
             details: "Detaily",
             projections: "10-ročné projekcie",
@@ -234,6 +235,7 @@ export default function CommercialResults({ results, currency = '€', language 
         },
         pl: {
             commercial_results: "Wyniki analizy nieruchomości komercyjnej",
+            time_period_info: "Wskaźniki roczne (Rok 1) • Projekcje długoterminowe (10 lat)",
             overview: "Przegląd",
             details: "Szczegóły",
             projections: "Projekcje 10-letnie",
@@ -344,6 +346,7 @@ export default function CommercialResults({ results, currency = '€', language 
         },
         hu: {
             commercial_results: "Kereskedelmi ingatlan elemzési eredmények",
+            time_period_info: "Éves mutatók (1. év) • Hosszú távú előrejelzések (10 év)",
             overview: "Áttekintés",
             details: "Részletek",
             projections: "10 éves előrejelzések",
@@ -454,6 +457,7 @@ export default function CommercialResults({ results, currency = '€', language 
         },
         de: {
             commercial_results: "Ergebnisse der Gewerbeimmobilienanalyse",
+            time_period_info: "Jährliche Kennzahlen (Jahr 1) • Langfristige Prognosen (10 Jahre)",
             overview: "Übersicht",
             details: "Details",
             projections: "10-Jahres-Prognosen",
@@ -624,6 +628,13 @@ export default function CommercialResults({ results, currency = '€', language 
 
                     {/* Overview Tab */}
                     <TabsContent value="overview" className="space-y-4 sm:space-y-6">
+                        {/* Time Period Info */}
+                        <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 text-center">
+                            <span className="text-sm text-blue-800 font-medium">
+                                ⏱ {t.time_period_info}
+                            </span>
+                        </div>
+                        
                         {/* VAT Analysis Section - ONLY if VAT payer */}
                         {kpis.is_vat_payer && (
                             <div className="space-y-4">

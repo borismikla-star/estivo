@@ -21,6 +21,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         en: {
             analysis_results: "Analysis Results",
             long_term_lease_results: "Long-Term Lease Analysis Results",
+            time_period_info: "Annual metrics (Year 1) • Long-term projections (10 years)",
             key_metrics: "Key Financial Metrics",
             overview: "Overview",
             details: "Details",
@@ -122,6 +123,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         sk: {
             analysis_results: "Výsledky analýzy",
             long_term_lease_results: "Výsledky analýzy dlhodobého prenájmu",
+            time_period_info: "Ročné metriky (1. rok) • Dlhodobé projekcie (10 rokov)",
             key_metrics: "Kľúčové finančné ukazovatele",
             overview: "Prehľad",
             details: "Detaily",
@@ -222,6 +224,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         pl: {
             long_term_lease_results: "Wyniki analizy najmu długoterminowego",
+            time_period_info: "Wskaźniki roczne (Rok 1) • Projekcje długoterminowe (10 lat)",
             key_metrics: "Kluczowe wskaźniki finansowe",
             overview: "Przegląd",
             details: "Szczegóły",
@@ -322,6 +325,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         hu: {
             long_term_lease_results: "Hosszú távú bérleti elemzés eredményei",
+            time_period_info: "Éves mutatók (1. év) • Hosszú távú előrejelzések (10 év)",
             key_metrics: "Kulcsfontosságú pénzügyi mutatók",
             overview: "Áttekintés",
             details: "Részletek",
@@ -422,6 +426,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
         },
         de: {
             long_term_lease_results: "Ergebnisse der Langzeitvermietungsanalyse",
+            time_period_info: "Jährliche Kennzahlen (Jahr 1) • Langfristige Prognosen (10 Jahre)",
             key_metrics: "Wichtige Finanzkennzahlen",
             overview: "Übersicht",
             details: "Details",
@@ -576,6 +581,13 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-4 sm:space-y-6">
+                        {/* Time Period Info */}
+                        <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 text-center">
+                            <span className="text-sm text-blue-800 font-medium">
+                                ⏱ {t.time_period_info}
+                            </span>
+                        </div>
+                        
                         {kpis.effective_tax_rate !== undefined && (
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
