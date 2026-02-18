@@ -277,6 +277,10 @@ export default function PDFReport({ projectData, results, language, user }) {
             irrAfterTax: "IRR (after tax)",
             npvBeforeTax: "NPV (before tax)",
             npvAfterTax: "NPV (after tax)",
+            aiAnalysis: "AI Investment Analysis",
+            aiScore: "Investment Score",
+            aiInsights: "Key Insights",
+            aiRecommendations: "Recommendations",
         },
         sk: {
             reportTitle: "Správa o investičnej analýze",
@@ -425,6 +429,10 @@ export default function PDFReport({ projectData, results, language, user }) {
             irrAfterTax: "IRR (po zdanení)",
             npvBeforeTax: "NPV (pred zdanením)",
             npvAfterTax: "NPV (po zdanení)",
+            aiAnalysis: "AI Investičná analýza",
+            aiScore: "Investičné skóre",
+            aiInsights: "Kľúčové poznatky",
+            aiRecommendations: "Odporúčania",
         }
     };
     const currentT = t[language] || t.en;
@@ -1093,6 +1101,54 @@ export default function PDFReport({ projectData, results, language, user }) {
                         </Section>
                     </>
                 ) : null}
+
+                {/* AI Investment Analysis - shown for all project types if available */}
+                {hasAISummary && (
+                    <Section title={currentT.aiAnalysis}>
+                        <div style={{ backgroundColor: '#f0f9ff', padding: '12px', borderRadius: '8px', border: '1px solid #bae6fd' }}>
+                            {/* Score */}
+                            {ai_summary.score !== undefined && (
+                                <div style={{ textAlign: 'center', marginBottom: '12px', padding: '8px', backgroundColor: '#e0f2fe', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '10px', color: '#0369a1', marginBottom: '4px' }}>{currentT.aiScore}</div>
+                                    <div style={{ 
+                                        fontSize: '28px', fontWeight: 'bold',
+                                        color: ai_summary.score >= 75 ? '#059669' : ai_summary.score >= 50 ? '#d97706' : '#dc2626'
+                                    }}>
+                                        {ai_summary.score} <span style={{ fontSize: '14px', color: '#6b7280' }}>/ 100</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Insights */}
+                            {ai_summary.insights && (
+                                <div style={{ marginBottom: '10px' }}>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', color: '#0c4a6e', marginBottom: '4px' }}>
+                                        💡 {currentT.aiInsights}
+                                    </div>
+                                    <div style={{ fontSize: '11px', color: '#374151', lineHeight: '1.6', backgroundColor: 'white', padding: '8px', borderRadius: '4px', border: '1px solid #e0f2fe' }}>
+                                        {ai_summary.insights}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Recommendations */}
+                            {ai_summary.recommendations && ai_summary.recommendations.length > 0 && (
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: '600', color: '#0c4a6e', marginBottom: '4px' }}>
+                                        ✅ {currentT.aiRecommendations}
+                                    </div>
+                                    <div style={{ backgroundColor: 'white', padding: '8px', borderRadius: '4px', border: '1px solid #e0f2fe' }}>
+                                        {ai_summary.recommendations.map((rec, idx) => (
+                                            <div key={idx} style={{ fontSize: '11px', color: '#374151', paddingBottom: '4px', marginBottom: '4px', borderBottom: idx < ai_summary.recommendations.length - 1 ? '1px solid #e0f2fe' : 'none' }}>
+                                                • {rec}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </Section>
+                )}
             </main>
 
             <footer style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#6b7280', pageBreakInside: 'avoid', pageBreakBefore: 'avoid' }}>
