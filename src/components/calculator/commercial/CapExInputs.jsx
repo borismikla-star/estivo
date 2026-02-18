@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Sparkles, Calculator } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 
-export default function CapExInputs({ data, onChange, language = 'en' }) {
+export default function CapExInputs({ data, onChange, language = 'en', propertyData = {} }) {
     const [localData, setLocalData] = useState(data);
 
     useEffect(() => {
@@ -13,9 +13,74 @@ export default function CapExInputs({ data, onChange, language = 'en' }) {
     }, [data]);
 
     const handleChange = (field, value) => {
-        const updated = { ...localData, [field]: value };
+        const updated = { ...localData, [field]: value, [`${field}_auto`]: false };
         setLocalData(updated);
         onChange(updated);
+    };
+
+    const autoCalc = (field, value) => {
+        const updated = { ...localData, [field]: value, [`${field}_auto`]: true };
+        setLocalData(updated);
+        onChange(updated);
+    };
+
+    const toggleAuto = (field, computeFn) => {
+        const isAuto = localData[`${field}_auto`] !== false;
+        if (!isAuto) {
+            autoCalc(field, computeFn());
+        } else {
+            const updated = { ...localData, [`${field}_auto`]: false };
+            setLocalData(updated);
+            onChange(updated);
+        }
+    };
+
+    const price = propertyData.price || 0;
+
+    // Auto-recalculate when price changes
+    useEffect(() => {
+        if (price <= 0) return;
+        const updates = {};
+        if (localData.roof_replacement_auto !== false) { updates.roof_replacement = Math.round(price * 0.003); updates.roof_replacement_auto = true; }
+        if (localData.hvac_replacement_auto !== false) { updates.hvac_replacement = Math.round(price * 0.002); updates.hvac_replacement_auto = true; }
+        if (localData.tenant_improvements_auto !== false) { updates.tenant_improvements = Math.round(price * 0.005); updates.tenant_improvements_auto = true; }
+        if (Object.keys(updates).length > 0) {
+            const updated = { ...localData, ...updates };
+            setLocalData(updated);
+            onChange(updated);
+        }
+    }, [price]);
+
+    const AutoCapexField = ({ field, label, desc, computeFn }) => {
+        const isAuto = localData[`${field}_auto`] !== false;
+        return (
+            <div>
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                        <Label>{label}</Label>
+                        <InfoTooltip content={desc} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Switch checked={isAuto} onCheckedChange={() => toggleAuto(field, computeFn)} className="data-[state=checked]:bg-primary" />
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            {isAuto ? <Sparkles className="w-3 h-3 text-primary" /> : <Calculator className="w-3 h-3" />}
+                            {t.auto_calculate}
+                        </span>
+                    </div>
+                </div>
+                <div className="relative">
+                    <Input
+                        type="number"
+                        value={localData[field] || ''}
+                        onChange={(e) => handleChange(field, parseFloat(e.target.value) || 0)}
+                        disabled={isAuto}
+                        className={isAuto ? 'bg-primary/5 border-primary/30' : ''}
+                        placeholder="0"
+                    />
+                    {isAuto && <div className="absolute right-3 top-1/2 -translate-y-1/2"><Sparkles className="w-4 h-4 text-primary animate-pulse" /></div>}
+                </div>
+            </div>
+        );
     };
 
     const translations = {
