@@ -90,6 +90,8 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 if (field === 'property_tax') autoValue = price * 0.002;
                 if (field === 'insurance') autoValue = price * 0.002;
                 if (field === 'maintenance') autoValue = price * 0.015;
+                if (field === 'utilities') autoValue = price * 0.005;
+                if (field === 'other_expenses') autoValue = price * 0.003;
                 
                 const updated = { 
                     ...localData, 
