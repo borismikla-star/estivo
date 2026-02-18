@@ -59,16 +59,14 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
     };
 
     const toggleAutoMode = (field) => {
-        const currentlyAuto = localData[`${field}_auto`] !== false;
+        const currentlyAuto = localData[`${field}_auto`] === true;
         if (currentlyAuto) {
-            // turn off
             const updated = { ...localData, [`${field}_auto`]: false };
             setLocalData(updated);
             onChange(updated);
         } else {
-            // turn on and recalculate
             const price = propertyData.price || 0;
-            const autoValue = price * (autoRates[field] || 0);
+            const autoValue = price * (AUTO_RATES[field] || 0);
             const updated = { ...localData, [field]: autoValue, [`${field}_auto`]: true };
             setLocalData(updated);
             onChange(updated);
