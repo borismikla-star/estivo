@@ -38,6 +38,9 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           entity_type_fo: "Fyzická osoba (FO)",
           entity_type_po: "Právnická osoba (PO)",
           entity_type_tooltip: "Vyberte medzi fyzickou osobou (FO) alebo právnickou osobou (PO) - ovplyvňuje daňové výpočty",
+          vat_payer: "Platca DPH",
+          vat_payer_tooltip: "Ak ste platca DPH, DPH z investičných nákladov je možné odpočítať",
+          vat_rate: "Sadzba DPH (%)",
       },
       pl: {
           accordion_property_details: "Szczegóły nieruchomości",
