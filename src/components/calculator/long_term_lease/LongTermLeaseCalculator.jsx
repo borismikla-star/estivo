@@ -77,6 +77,9 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           entity_type_fo: "Natürliche Person (FO)",
           entity_type_po: "Juristische Person (PO)",
           entity_type_tooltip: "Wählen Sie zwischen natürlicher Person (FO) oder juristischer Person (PO) - beeinflusst Steuerberechnungen",
+          vat_payer: "Umsatzsteuerpflichtig",
+          vat_payer_tooltip: "Als Umsatzsteuerpflichtiger kann die Umsatzsteuer auf Investitionskosten erstattet werden",
+          vat_rate: "MwSt-Satz (%)",
       }
   };
 
