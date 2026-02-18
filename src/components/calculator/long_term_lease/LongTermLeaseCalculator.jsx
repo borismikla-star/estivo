@@ -207,6 +207,21 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           </div>
 
           <div className="flex flex-col gap-3">
+            {/* Long-term residential rental is typically VAT exempt */}
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
+              <span className="text-amber-600 text-xs">ℹ️</span>
+              <p className="text-xs text-amber-700">
+                {language === 'sk'
+                  ? 'Rezidenčný nájom je spravidla oslobodený od DPH. DPH sa uplatňuje len pri komerčnom prenájme.'
+                  : language === 'pl'
+                  ? 'Wynajem mieszkaniowy jest zazwyczaj zwolniony z VAT. VAT dotyczy tylko wynajmu komercyjnego.'
+                  : language === 'hu'
+                  ? 'A lakóingatlan bérbeadása általában ÁFA-mentes. Az ÁFA csak kereskedelmi bérbeadásra vonatkozik.'
+                  : language === 'de'
+                  ? 'Wohnraumvermietung ist in der Regel umsatzsteuerfrei. MwSt. gilt nur bei gewerblicher Vermietung.'
+                  : 'Residential rental is typically VAT exempt. VAT applies only to commercial leasing.'}
+              </p>
+            </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Label>{t_calc.vat_payer}</Label>
