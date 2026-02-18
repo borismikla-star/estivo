@@ -184,6 +184,31 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
           </Select>
           <p className="text-xs text-muted-foreground mt-1">{t_calc.entity_type_tooltip}</p>
         </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Label>{t_calc.vat_payer}</Label>
+              <InfoTooltip content={t_calc.vat_payer_tooltip} />
+            </div>
+            <Switch
+              checked={projectData.operating_data?.is_vat_payer === true}
+              onCheckedChange={handleVatPayerChange}
+            />
+          </div>
+          {projectData.operating_data?.is_vat_payer && (
+            <div>
+              <Label className="mb-1 block text-sm">{t_calc.vat_rate}</Label>
+              <Input
+                type="number"
+                step="0.1"
+                value={projectData.operating_data?.vat_rate ?? (projectData.country === 'SK' ? 20 : 21)}
+                onChange={(e) => handleVatRateChange(e.target.value)}
+                placeholder="20"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <Accordion type="multiple" defaultValue={['item-1', 'item-2']} className="w-full space-y-4">
