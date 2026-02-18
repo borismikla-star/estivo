@@ -72,8 +72,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             annual_revenue_tooltip: "Przewidywany roczny przychód brutto na podstawie ceny za noc i obłożenia",
         },
         hu: {
-            nightly_rate: "Átlagos éjszakai díj",
-            nightly_rate_tooltip: "Átlagos éjszakai ár (vegye figyelembe a szezonális eltéréseket és a hétvégi/hétköznapi árakat)",
+            nightly_rate: "Átlagos éjszakai díj (ÁFA nélkül)",
+            nightly_rate_tooltip: "Adja meg az éjszakai árat ÁFA nélkül – a vendégek által fizetett nettó összeget a platform díjak levonása előtt. A rövid távú bérbeadás (Airbnb) általában ÁFA-mentes. Ha ÁFA fizető, adja meg a nettó összeget.",
             occupancy: "Éves kihasználtság (%)",
             occupancy_tooltip: "A lefoglalt éjszakák százaléka évente (70% jellemző a sikeres Airbnb ingatlanoknál)",
             avg_length_of_stay: "Átlagos tartózkodási idő (éjszaka)",
