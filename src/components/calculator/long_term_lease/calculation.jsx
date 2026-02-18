@@ -245,7 +245,7 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         projections.push({
             year,
             gross_income: yearEffectiveIncome,
-            operating_expenses: currentOpex,
+            operating_expenses: currentOpexExclVacancy,
             debt_service: annualDebtService,
             net_cash_flow: yearCashFlow,
             income_tax: yearIncomeTax,
