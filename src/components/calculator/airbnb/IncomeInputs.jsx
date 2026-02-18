@@ -1,19 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Sparkles, Calculator } from "lucide-react";
 import InfoTooltip from '../../shared/InfoTooltip';
 
-export default function IncomeInputs({ data, onChange, language = 'en' }) {
-    const [localData, setLocalData] = useState(data);
+// Auto defaults
+const AUTO_DEFAULTS = {
+    platform_fee_rate: (purchasePrice, avgNightlyRate, occupancyRate) => 3,
+    revenue_growth_rate: (purchasePrice, avgNightlyRate, occupancyRate) => 3,
+    comparable_long_term_rent: (purchasePrice, avgNightlyRate, occupancyRate) => Math.round(purchasePrice * 0.004),
+};
+
+export default function IncomeInputs({ data, onChange, language = 'en', purchasePrice = 0 }) {
+    const [localData, setLocalData] = useState(() => {
+        const init = { ...data };
+        Object.keys(AUTO_DEFAULTS).forEach(field => {
+            if (init[`${field}_auto`] !== false) init[`${field}_auto`] = true;
+        });
+        return init;
+    });
 
     useEffect(() => {
-        setLocalData(data);
+        setLocalData(prev => {
+            const merged = { ...prev, ...data };
+            Object.keys(AUTO_DEFAULTS).forEach(field => {
+                merged[`${field}_auto`] = prev[`${field}_auto`] !== undefined ? prev[`${field}_auto`] : true;
+            });
+            return merged;
+        });
     }, [data]);
 
+    // Recalculate auto fields when inputs change
+    useEffect(() => {
+        const avgNightlyRate = localData.avg_nightly_rate || 0;
+        const occupancyRate = localData.occupancy_rate || 70;
+        setLocalData(prev => {
+            const updates = {};
+            Object.entries(AUTO_DEFAULTS).forEach(([field, fn]) => {
+                if (prev[`${field}_auto`] === true) {
+                    updates[field] = fn(purchasePrice, avgNightlyRate, occupancyRate);
+                }
+            });
+            if (Object.keys(updates).length === 0) return prev;
+            const updated = { ...prev, ...updates };
+            onChange(updated);
+            return updated;
+        });
+    }, [purchasePrice, localData.avg_nightly_rate, localData.occupancy_rate]);
+
     const handleChange = (field, value) => {
-        const updated = { ...localData, [field]: value };
-        setLocalData(updated);
-        onChange(updated);
+        setLocalData(prev => {
+            const updated = { ...prev, [field]: parseFloat(value) || 0, [`${field}_auto`]: false };
+            onChange(updated);
+            return updated;
+        });
+    };
+
+    const toggleAuto = (field) => {
+        setLocalData(prev => {
+            const nowAuto = prev[`${field}_auto`] !== true;
+            let updated;
+            if (nowAuto) {
+                const autoVal = AUTO_DEFAULTS[field](purchasePrice, prev.avg_nightly_rate || 0, prev.occupancy_rate || 70);
+                updated = { ...prev, [field]: autoVal, [`${field}_auto`]: true };
+            } else {
+                updated = { ...prev, [`${field}_auto`]: false };
+            }
+            onChange(updated);
+            return updated;
+        });
     };
 
     const translations = {
@@ -34,6 +90,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             comparable_long_term_tooltip: "What this property would rent for on long-term basis - for comparison",
             annual_revenue: "Estimated Annual Revenue",
             annual_revenue_tooltip: "Projected gross annual revenue based on nightly rate and occupancy",
+            auto_calculate: "Auto",
         },
         sk: {
             nightly_rate: "Priemerná cena za noc (bez DPH)",
@@ -52,6 +109,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             comparable_long_term_tooltip: "Za koľko by sa táto nehnuteľnosť prenajala dlhodobo - pre porovnanie",
             annual_revenue: "Odhadovaný ročný príjem",
             annual_revenue_tooltip: "Odhadovaný hrubý ročný príjem na základe ceny za noc a obsadenosti",
+            auto_calculate: "Auto",
         },
         pl: {
             nightly_rate: "Średnia cena za noc (bez VAT)",
@@ -70,6 +128,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             comparable_long_term_tooltip: "Za ile ta nieruchomość wynajmowałaby się długoterminowo - do porównania",
             annual_revenue: "Szacowany roczny przychód",
             annual_revenue_tooltip: "Przewidywany roczny przychód brutto na podstawie ceny za noc i obłożenia",
+            auto_calculate: "Auto",
         },
         hu: {
             nightly_rate: "Átlagos éjszakai díj (ÁFA nélkül)",
@@ -88,6 +147,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             comparable_long_term_tooltip: "Mennyiért bérelhető lenne ez az ingatlan hosszú távon - összehasonlításhoz",
             annual_revenue: "Becsült éves bevétel",
             annual_revenue_tooltip: "Várható éves bruttó bevétel az éjszakai ár és kihasználtság alapján",
+            auto_calculate: "Auto",
         },
         de: {
             nightly_rate: "Durchschnittlicher Übernachtungspreis (netto)",
@@ -96,6 +156,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             occupancy_tooltip: "Prozentsatz der gebuchten Nächte pro Jahr (70% ist üblich für erfolgreiche Airbnb-Immobilien)",
             avg_length_of_stay: "Durchschnittliche Aufenthaltsdauer (Nächte)",
             avg_length_tooltip: "Typische Anzahl der Nächte, die Gäste bleiben (beeinflusst Reinigungshäufigkeit)",
+            nights: "Nächte",
+            per_month: "/Mon",
             platform_fee_rate: "Plattformgebühr (%)",
             platform_fee_tooltip: "Airbnb/Booking.com Gastgebergebühr (typischerweise 3-5%)",
             revenue_growth_rate: "Jährliches Umsatzwachstum (%)",
@@ -104,8 +166,7 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             comparable_long_term_tooltip: "Wofür diese Immobilie langfristig vermietet würde - zum Vergleich",
             annual_revenue: "Geschätzter Jahresumsatz",
             annual_revenue_tooltip: "Prognostizierter jährlicher Bruttoumsatz basierend auf Übernachtungspreis und Auslastung",
-            nights: "Nächte",
-            per_month: "/Mon",
+            auto_calculate: "Auto",
         }
     };
 
@@ -114,6 +175,45 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
     const nightlyRate = localData.avg_nightly_rate || 0;
     const occupancyPercentage = (localData.occupancy_rate || 0) / 100;
     const annualRevenue = nightlyRate * 365 * occupancyPercentage;
+
+    const AutoField = ({ field, label, tooltip, value, placeholder, suffix, step = "0.1" }) => {
+        const isAuto = localData[`${field}_auto`] === true;
+        return (
+            <div>
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                        <Label>{label}</Label>
+                        <InfoTooltip content={tooltip} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Switch
+                            checked={isAuto}
+                            onCheckedChange={() => toggleAuto(field)}
+                            className="data-[state=checked]:bg-primary"
+                        />
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            {isAuto ? <Sparkles className="w-3 h-3 text-primary" /> : <Calculator className="w-3 h-3" />}
+                            {t.auto_calculate}
+                        </span>
+                    </div>
+                </div>
+                <div className="relative">
+                    <Input
+                        type="number"
+                        step={step}
+                        value={value ?? ''}
+                        onChange={(e) => handleChange(field, e.target.value)}
+                        placeholder={placeholder}
+                        disabled={isAuto}
+                        className={isAuto ? 'bg-primary/5 border-primary/30' : ''}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                        {isAuto ? <Sparkles className="w-4 h-4 text-primary animate-pulse" /> : suffix}
+                    </span>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="space-y-4">
@@ -127,7 +227,11 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                         <Input
                             type="number"
                             value={localData.avg_nightly_rate || ''}
-                            onChange={(e) => handleChange('avg_nightly_rate', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => setLocalData(prev => {
+                                const updated = { ...prev, avg_nightly_rate: parseFloat(e.target.value) || 0 };
+                                onChange(updated);
+                                return updated;
+                            })}
                             placeholder="80"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€</span>
@@ -143,7 +247,11 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                             type="number"
                             step="0.1"
                             value={localData.occupancy_rate || 70}
-                            onChange={(e) => handleChange('occupancy_rate', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => setLocalData(prev => {
+                                const updated = { ...prev, occupancy_rate: parseFloat(e.target.value) || 0 };
+                                onChange(updated);
+                                return updated;
+                            })}
                             placeholder="70"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
@@ -161,62 +269,46 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
                         <Input
                             type="number"
                             value={localData.avg_length_of_stay || 3}
-                            onChange={(e) => handleChange('avg_length_of_stay', parseFloat(e.target.value) || 1)}
+                            onChange={(e) => setLocalData(prev => {
+                                const updated = { ...prev, avg_length_of_stay: parseFloat(e.target.value) || 1 };
+                                onChange(updated);
+                                return updated;
+                            })}
                             placeholder="3"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{t.nights}</span>
                     </div>
                 </div>
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Label>{t.platform_fee_rate}</Label>
-                        <InfoTooltip content={t.platform_fee_tooltip} />
-                    </div>
-                    <div className="relative">
-                        <Input
-                            type="number"
-                            step="0.1"
-                            value={localData.platform_fee_rate || 3}
-                            onChange={(e) => handleChange('platform_fee_rate', parseFloat(e.target.value) || 0)}
-                            placeholder="3"
-                        />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
-                    </div>
-                </div>
+
+                <AutoField
+                    field="platform_fee_rate"
+                    label={t.platform_fee_rate}
+                    tooltip={t.platform_fee_tooltip}
+                    value={localData.platform_fee_rate}
+                    placeholder="3"
+                    suffix="%"
+                />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Label>{t.revenue_growth_rate}</Label>
-                        <InfoTooltip content={t.revenue_growth_tooltip} />
-                    </div>
-                    <div className="relative">
-                        <Input
-                            type="number"
-                            step="0.1"
-                            value={localData.revenue_growth_rate || 3}
-                            onChange={(e) => handleChange('revenue_growth_rate', parseFloat(e.target.value) || 0)}
-                            placeholder="3"
-                        />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
-                    </div>
-                </div>
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Label>{t.comparable_long_term_rent}</Label>
-                        <InfoTooltip content={t.comparable_long_term_tooltip} />
-                    </div>
-                    <div className="relative">
-                        <Input
-                            type="number"
-                            value={localData.comparable_long_term_rent || ''}
-                            onChange={(e) => handleChange('comparable_long_term_rent', parseFloat(e.target.value) || 0)}
-                            placeholder="1000"
-                        />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€{t.per_month}</span>
-                    </div>
-                </div>
+                <AutoField
+                    field="revenue_growth_rate"
+                    label={t.revenue_growth_rate}
+                    tooltip={t.revenue_growth_tooltip}
+                    value={localData.revenue_growth_rate}
+                    placeholder="3"
+                    suffix="%"
+                />
+
+                <AutoField
+                    field="comparable_long_term_rent"
+                    label={t.comparable_long_term_rent}
+                    tooltip={t.comparable_long_term_tooltip}
+                    value={localData.comparable_long_term_rent}
+                    placeholder="1000"
+                    suffix={`€${t.per_month}`}
+                    step="1"
+                />
             </div>
 
             {/* Estimated Annual Revenue Display */}
