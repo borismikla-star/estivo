@@ -113,7 +113,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             insurance: "Property Insurance",
             insurance_desc: "Annual building and liability insurance (auto: 0.2% of price)",
             utilities: "Utilities",
-            utilities_desc: "Water, electricity, gas if paid by owner",
+            utilities_desc: "Water, electricity, gas if paid by owner (auto: 0.5% of price)",
             maintenance: "Repairs & Maintenance",
             maintenance_desc: "Annual repairs and upkeep (auto: 1.5% of price)",
             property_management: "Property Management Fee (%)",
