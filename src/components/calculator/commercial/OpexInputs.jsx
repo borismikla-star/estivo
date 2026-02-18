@@ -260,18 +260,12 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 value={localData.maintenance}
             />
 
-            <div>
-                <div className="flex items-center gap-2 mb-2">
-                    <Label>{t.utilities}</Label>
-                    <InfoTooltip content={t.utilities_desc} />
-                </div>
-                <Input
-                    type="number"
-                    value={localData.utilities || ''}
-                    onChange={(e) => handleChange('utilities', parseFloat(e.target.value) || 0)}
-                    placeholder="0"
-                />
-            </div>
+            <AutoCalculateField
+                field="utilities"
+                label={t.utilities}
+                description={t.utilities_desc}
+                value={localData.utilities}
+            />
 
             <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -287,18 +281,12 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 />
             </div>
 
-            <div>
-                <div className="flex items-center gap-2 mb-2">
-                    <Label>{t.other_expenses}</Label>
-                    <InfoTooltip content={t.other_expenses_desc} />
-                </div>
-                <Input
-                    type="number"
-                    value={localData.other_expenses || ''}
-                    onChange={(e) => handleChange('other_expenses', parseFloat(e.target.value) || 0)}
-                    placeholder="0"
-                />
-            </div>
+            <AutoCalculateField
+                field="other_expenses"
+                label={t.other_expenses}
+                description={t.other_expenses_desc}
+                value={localData.other_expenses}
+            />
         </div>
     );
 }
