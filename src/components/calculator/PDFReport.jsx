@@ -1154,13 +1154,27 @@ export default function PDFReport({ projectData, results, language, user }) {
                 )}
             </main>
 
-            <footer style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#6b7280', pageBreakInside: 'avoid', pageBreakBefore: 'avoid' }}>
+            {/* Methodology Notes */}
+            <div style={{ marginTop: '16px', padding: '10px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '9px', color: '#64748b', pageBreakInside: 'avoid' }}>
+                <div style={{ fontWeight: '700', fontSize: '9px', color: '#475569', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {language === 'sk' ? 'Metodické poznámky' : 'Methodology Notes'}
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '14px', lineHeight: '1.7' }}>
+                    <li>{language === 'sk' ? 'IRR je vypočítaná Newton-Raphson metódou na ročných cash-flow vrátane predajnej hodnoty v poslednom roku.' : 'IRR is calculated using the Newton-Raphson method on annual cash flows including exit value in the final year.'}</li>
+                    <li>{language === 'sk' ? 'DPH je modelovaná ako cash-flow položka – neovplyvňuje NOI ani ekonomický zisk.' : 'VAT is modelled as a cash-flow item – it does not affect NOI or economic profit.'}</li>
+                    <li>{language === 'sk' ? 'Straty z jedného obdobia sa neprenášajú do budúcich období (bez daňového štítu z prenosu strát).' : 'Losses are not carried forward to future periods (no loss-carry-forward tax shield is modelled).'}</li>
+                    <li>{language === 'sk' ? 'Cap Rate, CoC a IRR sú počítané na NET báze (bez DPH) voči skutočne vloženému kapitálu (equity).' : 'Cap Rate, CoC and IRR are calculated on a NET basis (excl. VAT) against actual equity invested.'}</li>
+                    <li>{language === 'sk' ? 'Táto správa je informatívna a nepredstavuje finančné poradenstvo.' : 'This report is for informational purposes only and does not constitute financial advice.'}</li>
+                </ul>
+            </div>
+
+            <footer style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#6b7280', pageBreakInside: 'avoid', pageBreakBefore: 'avoid' }}>
                 {user?.entity_type === 'PO' && user.company_name ? (
                     <p style={{ fontWeight: 'bold', marginBottom: '2px', marginTop: 0 }}>{user.company_name}</p>
                 ) : (
                     <p style={{ marginBottom: '2px', marginTop: 0 }}>Estivo.app - Smarter Property Investing.</p>
                 )}
-                <p style={{ marginTop: 0, marginBottom: 0 }}>This report is for informational purposes only and does not constitute financial advice. All calculations are estimates.</p>
+                <p style={{ marginTop: 0, marginBottom: 0 }}>© {new Date().getFullYear()} Estivo. All calculations are estimates based on user-provided inputs.</p>
             </footer>
             
             {/* Print-specific CSS */}
