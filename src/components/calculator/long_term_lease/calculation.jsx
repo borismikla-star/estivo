@@ -1,7 +1,14 @@
-// Helper function to calculate IRR using Newton-Raphson method
+// Robust IRR calculation using Newton-Raphson method
 function calculateIRR(cashFlows, guess = 0.1) {
     const maxIterations = 100;
     const tolerance = 0.00001;
+    const epsilon = 1e-10;
+    
+    // Must have at least one sign change to have a valid IRR
+    const hasPositive = cashFlows.some(cf => cf > 0);
+    const hasNegative = cashFlows.some(cf => cf < 0);
+    if (!hasPositive || !hasNegative) return null;
+    
     let rate = guess;
     
     for (let i = 0; i < maxIterations; i++) {
@@ -14,16 +21,19 @@ function calculateIRR(cashFlows, guess = 0.1) {
             dnpv -= (t * cashFlows[t]) / Math.pow(1 + rate, t + 1);
         }
         
+        // Guard against division by zero
+        if (Math.abs(dnpv) < epsilon) break;
+        
         const newRate = rate - npv / dnpv;
         
         if (Math.abs(newRate - rate) < tolerance) {
-            return newRate * 100; // Return as percentage
+            return isFinite(newRate) ? newRate * 100 : null;
         }
         
         rate = newRate;
     }
     
-    return null; // If no convergence, return null
+    return null; // No convergence
 }
 
 export function calculateLongTermLease(projectData, preset, language = 'en') {
