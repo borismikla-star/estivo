@@ -64,6 +64,9 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           entity_type_fo: "Magánszemély (FO)",
           entity_type_po: "Jogi személy (PO)",
           entity_type_tooltip: "Válasszon magánszemély (FO) vagy jogi személy (PO) között - befolyásolja az adószámításokat",
+          vat_payer: "ÁFA fizető",
+          vat_payer_tooltip: "Ha ÁFA fizető, a befektetési költségek ÁFÁja visszaigényelhető",
+          vat_rate: "ÁFA kulcs (%)",
       },
       de: {
           accordion_property_details: "Immobiliendetails",
