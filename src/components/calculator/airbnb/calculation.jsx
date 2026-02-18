@@ -293,13 +293,14 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
         });
         
         // For IRR: Years 1-9 are just cash flows, Year 10 includes exit
+        const exitEquityY10 = Math.max(0, equity); // guard: can't be negative
         if (year < 10) {
             cashFlowsForIRR.push(yearCashFlow);
             cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax);
         } else {
             // Year 10: cash flow + exit equity
-            cashFlowsForIRR.push(yearCashFlow + equity);
-            cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax + equity);
+            cashFlowsForIRR.push(yearCashFlow + exitEquityY10);
+            cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax + exitEquityY10);
         }
     }
     
