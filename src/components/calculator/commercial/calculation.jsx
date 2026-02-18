@@ -371,7 +371,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             total_investment: totalInvestment,
             total_investment_gross: isVatPayer ? priceGross + acquisitionCostsGross : totalInvestment,
             total_equity: totalEquity,
-            down_payment: downPayment,
+            down_payment: totalEquity,
             loan_amount: loanAmount,
             monthly_mortgage_payment: monthlyMortgagePayment,
             annual_debt_service: annualDebtService,
