@@ -84,10 +84,14 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
     const annualDebtService = monthlyMortgagePayment * 12;
 
     // === INCOME ===
+    // avg_nightly_rate is entered as NET (excl. VAT)
     const avgNightlyRate = num(income_data.avg_nightly_rate);
     const occupancyRate = num(income_data.occupancy_rate) || 70;
     const nightsPerYear = 365 * (occupancyRate / 100);
+    // grossAnnualRevenue = revenue excl. VAT (base for NOI and tax)
     const grossAnnualRevenue = avgNightlyRate * nightsPerYear;
+    // Output VAT collected from guests (cash flow item, NOT part of NOI)
+    const annualOutputVat = isVatPayer ? grossAnnualRevenue * (vatRate / 100) : 0;
     
     // Platform fees (Airbnb typically takes 3% from host)
     const platformFeeRate = num(income_data.platform_fee_rate) || 3;
