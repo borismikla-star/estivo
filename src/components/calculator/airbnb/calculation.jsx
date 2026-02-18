@@ -177,8 +177,12 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
     const netYield = purchasePrice > 0 ? (netOperatingIncome / purchasePrice) * 100 : 0;
     
     // 7. Break-Even Occupancy
-    const breakEvenOccupancy = grossAnnualRevenue > 0 ? 
-        ((totalAnnualOperatingExpenses + annualDebtService + platformFees) / (avgNightlyRate * 365)) * 100 : 0;
+    // Gross revenue needed to cover all costs: opex + debt service
+    // Net revenue = gross * (1 - platformFeeRate/100), so:
+    // avgNightlyRate * 365 * occ * (1 - platformFeeRate/100) = opex + debtService
+    const netRevenuePerNight = avgNightlyRate * (1 - platformFeeRate / 100);
+    const breakEvenOccupancy = (avgNightlyRate > 0 && netRevenuePerNight > 0) ? 
+        ((totalAnnualOperatingExpenses + annualDebtService) / (netRevenuePerNight * 365)) * 100 : 0;
 
     // 8. Comparison to Long-Term Rental
     const estimatedLongTermRent = num(income_data.comparable_long_term_rent) || (purchasePrice * 0.005);
