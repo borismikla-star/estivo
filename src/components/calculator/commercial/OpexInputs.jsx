@@ -154,42 +154,45 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
 
     const t = translations[language] || translations.en;
 
-    const AutoCalculateField = ({ field, label, description, value, placeholder = "0" }) => (
-        <div>
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                    <Label>{label}</Label>
-                    <InfoTooltip content={description} />
-                </div>
-                <div className="flex items-center gap-2">
-                    <Switch
-                        checked={autoMode[field]}
-                        onCheckedChange={() => toggleAutoMode(field)}
-                        className="data-[state=checked]:bg-primary"
-                    />
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        {autoMode[field] ? <Sparkles className="w-3 h-3 text-primary" /> : <Calculator className="w-3 h-3" />}
-                        {t.auto_calculate}
-                    </span>
-                </div>
-            </div>
-            <div className="relative">
-                <Input
-                    type="number"
-                    value={value || ''}
-                    onChange={(e) => handleChange(field, parseFloat(e.target.value) || 0)}
-                    placeholder={placeholder}
-                    disabled={autoMode[field]}
-                    className={autoMode[field] ? 'bg-primary/5 border-primary/30' : ''}
-                />
-                {autoMode[field] && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+    const AutoCalculateField = ({ field, label, description, value, placeholder = "0" }) => {
+        const auto = isAuto(field);
+        return (
+            <div>
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                        <Label>{label}</Label>
+                        <InfoTooltip content={description} />
                     </div>
-                )}
+                    <div className="flex items-center gap-2">
+                        <Switch
+                            checked={auto}
+                            onCheckedChange={() => toggleAutoMode(field)}
+                            className="data-[state=checked]:bg-primary"
+                        />
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            {auto ? <Sparkles className="w-3 h-3 text-primary" /> : <Calculator className="w-3 h-3" />}
+                            {t.auto_calculate}
+                        </span>
+                    </div>
+                </div>
+                <div className="relative">
+                    <Input
+                        type="number"
+                        value={value || ''}
+                        onChange={(e) => handleChange(field, parseFloat(e.target.value) || 0)}
+                        placeholder={placeholder}
+                        disabled={auto}
+                        className={auto ? 'bg-primary/5 border-primary/30' : ''}
+                    />
+                    {auto && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="space-y-4">
