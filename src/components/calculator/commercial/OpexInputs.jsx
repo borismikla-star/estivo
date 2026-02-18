@@ -5,33 +5,44 @@ import { Switch } from "@/components/ui/switch";
 import { Calculator, Sparkles } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 
+const AUTO_RATES = {
+    property_tax: 0.002,
+    insurance: 0.002,
+    maintenance: 0.015,
+    utilities: 0.005,
+    other_expenses: 0.003,
+};
+
+// Initialize data: if _auto is undefined (never set), default to true and compute value
+function initOpexData(data, price) {
+    const result = { ...data };
+    Object.keys(AUTO_RATES).forEach(field => {
+        if (result[`${field}_auto`] === undefined) {
+            result[`${field}_auto`] = true;
+            if (price > 0) result[field] = price * AUTO_RATES[field];
+        }
+    });
+    return result;
+}
+
 export default function OpexInputs({ data, onChange, language = 'en', propertyData = {} }) {
-    const [localData, setLocalData] = useState(data);
+    const [localData, setLocalData] = useState(() => initOpexData(data, propertyData.price || 0));
 
     // Derive auto mode directly from localData so it stays in sync
-    const isAuto = (field) => localData[`${field}_auto`] !== false;
+    const isAuto = (field) => localData[`${field}_auto`] === true;
 
     useEffect(() => {
-        setLocalData(data);
+        setLocalData(initOpexData(data, propertyData.price || 0));
     }, [data]);
-
-    const autoRates = {
-        property_tax: 0.002,
-        insurance: 0.002,
-        maintenance: 0.015,
-        utilities: 0.005,
-        other_expenses: 0.003,
-    };
 
     // Auto-calculate when price changes for fields in auto mode
     useEffect(() => {
         const price = propertyData.price || 0;
         if (price <= 0) return;
         const updates = {};
-        Object.keys(autoRates).forEach(field => {
-            if (localData[`${field}_auto`] !== false) {
-                updates[field] = price * autoRates[field];
-                updates[`${field}_auto`] = true;
+        Object.keys(AUTO_RATES).forEach(field => {
+            if (localData[`${field}_auto`] === true) {
+                updates[field] = price * AUTO_RATES[field];
             }
         });
         if (Object.keys(updates).length > 0) {
