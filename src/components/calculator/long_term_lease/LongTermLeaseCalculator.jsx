@@ -102,6 +102,14 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
     onBulkUpdate('entity_type', value);
   }, [onBulkUpdate]);
 
+  const handleVatPayerChange = useCallback((checked) => {
+    onBulkUpdate('operating_data', { ...projectData.operating_data, is_vat_payer: checked });
+  }, [onBulkUpdate, projectData.operating_data]);
+
+  const handleVatRateChange = useCallback((value) => {
+    onBulkUpdate('operating_data', { ...projectData.operating_data, vat_rate: parseFloat(value) || 0 });
+  }, [onBulkUpdate, projectData.operating_data]);
+
   const accordionItems = useMemo(() => [
     {
       value: "item-1",
