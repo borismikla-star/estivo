@@ -119,7 +119,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management: "Property Management Fee (%)",
             property_management_desc: "% of Effective Gross Income (typically 5-10%)",
             other_expenses: "Other Operating Expenses",
-            other_expenses_desc: "Accounting, legal, HOA fees, etc.",
+            other_expenses_desc: "Accounting, legal, HOA fees, etc. (auto: 0.3% of price)",
             tip: "Tip: Enable auto-calculate for typical market rates, or enter your specific costs manually.",
         },
         sk: {
