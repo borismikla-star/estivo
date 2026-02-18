@@ -136,7 +136,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             property_management: "Správa nehnuteľnosti (%)",
             property_management_desc: "% z Efektívneho hrubého príjmu (typicky 5-10%)",
             other_expenses: "Ostatné prevádzkové náklady",
-            other_expenses_desc: "Účtovníctvo, právne, poplatky HOA, atď.",
+            other_expenses_desc: "Účtovníctvo, právne, poplatky HOA, atď. (auto: 0.3% z ceny)",
             tip: "Tip: Zapnite automatický výpočet pre typické trhové sadzby alebo zadajte vlastné náklady manuálne.",
         },
         pl: {
