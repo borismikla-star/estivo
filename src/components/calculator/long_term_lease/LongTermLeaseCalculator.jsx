@@ -119,6 +119,7 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
         <InitialCostsInputs
           data={projectData.initial_costs_data || {}}
           language={language}
+          purchasePrice={projectData.property_data?.purchase_price || 0}
           onChange={(updatedData) => onBulkUpdate('initial_costs_data', updatedData)}
           t={t_calc}
         />
