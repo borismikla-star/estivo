@@ -15,88 +15,52 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
         setLocalData(data);
     }, [data]);
 
-    // Auto-calculate when property data changes and auto mode is enabled
+    const autoRates = {
+        property_tax: 0.002,
+        insurance: 0.002,
+        maintenance: 0.015,
+        utilities: 0.005,
+        other_expenses: 0.003,
+    };
+
+    // Auto-calculate when price changes for fields in auto mode
     useEffect(() => {
         const price = propertyData.price || 0;
-        if (price > 0) {
-            const updates = {};
-            
-            // Property Tax: 0.1-0.5% of property value annually
-            if (autoMode.property_tax) {
-                updates.property_tax = price * 0.002; // 0.2% default
-                updates.property_tax_auto = true;
+        if (price <= 0) return;
+        const updates = {};
+        Object.keys(autoRates).forEach(field => {
+            if (localData[`${field}_auto`] !== false) {
+                updates[field] = price * autoRates[field];
+                updates[`${field}_auto`] = true;
             }
-            
-            // Insurance: 0.1-0.3% of property value annually
-            if (autoMode.insurance) {
-                updates.insurance = price * 0.002; // 0.2% default
-                updates.insurance_auto = true;
-            }
-            
-            // Maintenance: 1-2% of property value annually
-            if (autoMode.maintenance) {
-                updates.maintenance = price * 0.015; // 1.5% default
-                updates.maintenance_auto = true;
-            }
-            
-            // Utilities: 0.5% of property value annually
-            if (autoMode.utilities) {
-                updates.utilities = price * 0.005;
-                updates.utilities_auto = true;
-            }
-            
-            // Other expenses: 0.3% of property value annually
-            if (autoMode.other_expenses) {
-                updates.other_expenses = price * 0.003;
-                updates.other_expenses_auto = true;
-            }
-            
-            if (Object.keys(updates).length > 0) {
-                const updated = { ...localData, ...updates };
-                setLocalData(updated);
-                onChange(updated);
-            }
+        });
+        if (Object.keys(updates).length > 0) {
+            const updated = { ...localData, ...updates };
+            setLocalData(updated);
+            onChange(updated);
         }
-    }, [propertyData.price, autoMode.property_tax, autoMode.insurance, autoMode.maintenance, autoMode.utilities, autoMode.other_expenses]);
+    }, [propertyData.price]);
 
     const handleChange = (field, value) => {
-        const updated = { 
-            ...localData, 
-            [field]: value,
-            [`${field}_auto`]: false // Disable auto when manually changed
-        };
+        const updated = { ...localData, [field]: value, [`${field}_auto`]: false };
         setLocalData(updated);
         onChange(updated);
-        
-        // Update auto mode state
-        if (autoMode[field]) {
-            setAutoMode(prev => ({ ...prev, [field]: false }));
-        }
     };
 
     const toggleAutoMode = (field) => {
-        const newAutoMode = { ...autoMode, [field]: !autoMode[field] };
-        setAutoMode(newAutoMode);
-        
-        // If enabling auto mode, recalculate
-        if (newAutoMode[field]) {
+        const currentlyAuto = localData[`${field}_auto`] !== false;
+        if (currentlyAuto) {
+            // turn off
+            const updated = { ...localData, [`${field}_auto`]: false };
+            setLocalData(updated);
+            onChange(updated);
+        } else {
+            // turn on and recalculate
             const price = propertyData.price || 0;
-            if (price > 0) {
-                let autoValue = 0;
-                if (field === 'property_tax') autoValue = price * 0.002;
-                if (field === 'insurance') autoValue = price * 0.002;
-                if (field === 'maintenance') autoValue = price * 0.015;
-                if (field === 'utilities') autoValue = price * 0.005;
-                if (field === 'other_expenses') autoValue = price * 0.003;
-                
-                const updated = { 
-                    ...localData, 
-                    [field]: autoValue,
-                    [`${field}_auto`]: true
-                };
-                setLocalData(updated);
-                onChange(updated);
-            }
+            const autoValue = price * (autoRates[field] || 0);
+            const updated = { ...localData, [field]: autoValue, [`${field}_auto`]: true };
+            setLocalData(updated);
+            onChange(updated);
         }
     };
 
