@@ -11,6 +11,8 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
         property_tax: data.property_tax_auto !== false,
         insurance: data.insurance_auto !== false,
         maintenance: data.maintenance_auto !== false,
+        utilities: data.utilities_auto !== false,
+        other_expenses: data.other_expenses_auto !== false,
     });
 
     useEffect(() => {
