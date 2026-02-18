@@ -192,7 +192,7 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
               <InfoTooltip content={t_calc.vat_payer_tooltip} />
             </div>
             <Switch
-              checked={projectData.operating_data?.is_vat_payer === true}
+              checked={projectData.operating_data?.is_vat_payer !== false}
               onCheckedChange={handleVatPayerChange}
             />
           </div>
