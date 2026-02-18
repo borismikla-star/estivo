@@ -1,38 +1,4 @@
-// Robust IRR calculation using Newton-Raphson method
-function calculateIRR(cashFlows, guess = 0.1) {
-    const maxIterations = 100;
-    const tolerance = 0.00001;
-    const epsilon = 1e-10;
-    
-    const hasPositive = cashFlows.some(cf => cf > 0);
-    const hasNegative = cashFlows.some(cf => cf < 0);
-    if (!hasPositive || !hasNegative) return null;
-    
-    let rate = guess;
-    
-    for (let i = 0; i < maxIterations; i++) {
-        let npv = 0;
-        let dnpv = 0;
-        
-        for (let t = 0; t < cashFlows.length; t++) {
-            const denominator = Math.pow(1 + rate, t);
-            npv += cashFlows[t] / denominator;
-            dnpv -= (t * cashFlows[t]) / Math.pow(1 + rate, t + 1);
-        }
-        
-        if (Math.abs(dnpv) < epsilon) break;
-        
-        const newRate = rate - npv / dnpv;
-        
-        if (Math.abs(newRate - rate) < tolerance) {
-            return isFinite(newRate) ? newRate * 100 : null;
-        }
-        
-        rate = newRate;
-    }
-    
-    return null;
-}
+import { calculateIRR } from '../financialCalculations';
 
 export function calculateAirbnb(projectData, preset, language = 'en') {
     const {
