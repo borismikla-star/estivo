@@ -26,12 +26,17 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
     });
 
     useEffect(() => {
-        // When parent data changes, preserve existing _auto flags if they were already set
+        // When parent data changes, preserve _auto flags (default true if never set)
         setLocalData(prev => {
-            const merged = { ...data };
+            const merged = { ...prev, ...data };
             Object.keys(AUTO_RATES).forEach(field => {
-                if (merged[`${field}_auto`] === undefined) {
-                    merged[`${field}_auto`] = prev[`${field}_auto`] !== undefined ? prev[`${field}_auto`] : true;
+                // Only set to true if never explicitly set (not in data AND not in prev)
+                if (data[`${field}_auto`] === undefined && prev[`${field}_auto`] === undefined) {
+                    merged[`${field}_auto`] = true;
+                } else if (data[`${field}_auto`] !== undefined) {
+                    merged[`${field}_auto`] = data[`${field}_auto`];
+                } else {
+                    merged[`${field}_auto`] = prev[`${field}_auto`];
                 }
             });
             return merged;
