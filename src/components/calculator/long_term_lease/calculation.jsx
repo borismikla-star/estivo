@@ -104,11 +104,12 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
                                          annualUtilities + otherExpenses + annualVacancyLoss;
     
     // === CORE METRICS ===
-    // effectiveGrossIncome = rent after vacancy
     const effectiveGrossIncome = annualRent - annualVacancyLoss;
-    // totalAnnualOperatingExpenses already includes annualVacancyLoss, so NOI uses effectiveGrossIncome minus the rest
-    const operatingExpensesWithoutVacancy = totalAnnualOperatingExpenses - annualVacancyLoss;
-    const netOperatingIncome = effectiveGrossIncome - operatingExpensesWithoutVacancy;
+    // NOI = EGI minus all operating expenses (excl. vacancy – already deducted above)
+    const operatingExpensesExclVacancy = annualPropertyTax + annualInsurance + annualHOA +
+                                         annualMaintenance + annualPropertyManagement +
+                                         annualUtilities + otherExpenses;
+    const netOperatingIncome = effectiveGrossIncome - operatingExpensesExclVacancy;
     const annualCashFlow = netOperatingIncome - annualDebtService;
     const monthlyCashFlow = annualCashFlow / 12;
     
