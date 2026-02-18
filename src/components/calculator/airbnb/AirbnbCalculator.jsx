@@ -2,12 +2,15 @@ import React, { useState, useCallback, useMemo } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import CountrySelector from "../CountrySelector";
 import PropertyInputs from "./PropertyInputs";
 import IncomeInputs from "./IncomeInputs";
 import OperatingInputs from "./OperatingInputs";
 import FinancingInputsAirbnb from "../long_term_lease/FinancingInputs";
 import LegislativeNotes from "../LegislativeNotes";
+import InfoTooltip from "../../shared/InfoTooltip";
 
 export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpdate, language, countryPresets, t }) {
   const [isEstimatingRate, setIsEstimatingRate] = useState(false);
