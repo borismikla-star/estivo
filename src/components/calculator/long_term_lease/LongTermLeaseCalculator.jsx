@@ -51,6 +51,9 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           entity_type_fo: "Osoba fizyczna (FO)",
           entity_type_po: "Osoba prawna (PO)",
           entity_type_tooltip: "Wybierz między osobą fizyczną (FO) a osobą prawną (PO) - wpływa na obliczenia podatkowe",
+          vat_payer: "Podatnik VAT",
+          vat_payer_tooltip: "Jeśli jesteś podatnikiem VAT, VAT od kosztów inwestycji można odliczyć",
+          vat_rate: "Stawka VAT (%)",
       },
       hu: {
           accordion_property_details: "Ingatlan részletei",
