@@ -90,8 +90,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             annual_revenue_tooltip: "Várható éves bruttó bevétel az éjszakai ár és kihasználtság alapján",
         },
         de: {
-            nightly_rate: "Durchschnittlicher Übernachtungspreis",
-            nightly_rate_tooltip: "Ihr durchschnittlicher Preis pro Nacht (berücksichtigen Sie saisonale Schwankungen und Wochenend-/Wochentagsraten)",
+            nightly_rate: "Durchschnittlicher Übernachtungspreis (netto)",
+            nightly_rate_tooltip: "Geben Sie den Preis pro Nacht ohne MwSt. ein – den Nettobetrag, den Gäste vor Plattformgebühren zahlen. Kurzfristige Vermietung (Airbnb) ist in den meisten Ländern von der MwSt. befreit. Falls Sie umsatzsteuerpflichtig sind, geben Sie den Nettobetrag an.",
             occupancy: "Jährliche Auslastung (%)",
             occupancy_tooltip: "Prozentsatz der gebuchten Nächte pro Jahr (70% ist üblich für erfolgreiche Airbnb-Immobilien)",
             avg_length_of_stay: "Durchschnittliche Aufenthaltsdauer (Nächte)",
