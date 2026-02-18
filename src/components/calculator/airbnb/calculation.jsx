@@ -35,6 +35,11 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
         entity_type = 'FO',
     } = projectData;
 
+    // === VAT SETTINGS ===
+    const isVatPayer = property_data.is_vat_payer || false;
+    const vatRate = num(property_data.vat_rate) || num(preset?.vat_rate) || 20;
+    const vatMultiplier = 1 + (vatRate / 100);
+
     const num = (value) => {
         const parsed = Number(value);
         return isNaN(parsed) ? 0 : parsed;
