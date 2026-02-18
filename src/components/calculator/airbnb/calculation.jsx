@@ -40,8 +40,19 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
         return isNaN(parsed) ? 0 : parsed;
     };
 
+    // === VAT SETTINGS ===
+    // Airbnb short-term rental is typically VAT exempt for residential use.
+    // Toggle is kept for commercial Airbnb use cases.
+    const isVatPayer = property_data.is_vat_payer || false;
+    const vatRate = num(property_data.vat_rate) || num(preset?.vat_rate) || 20;
+    const vatMultiplier = 1 + (vatRate / 100);
+
     // === PROPERTY & INVESTMENT ===
-    const purchasePrice = num(property_data.purchase_price);
+    // If VAT payer, purchase price is entered as GROSS → convert to NET (can reclaim input VAT)
+    const purchasePriceGross = num(property_data.purchase_price);
+    const purchasePrice = isVatPayer ? purchasePriceGross / vatMultiplier : purchasePriceGross;
+    const vatOnPurchase = isVatPayer ? purchasePriceGross - purchasePrice : 0;
+
     const furnishingCost = num(property_data.furnishing_cost);
     const acquisitionCosts = num(property_data.acquisition_costs);
     const totalInvestment = purchasePrice + furnishingCost + acquisitionCosts;
