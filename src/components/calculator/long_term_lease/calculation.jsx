@@ -47,13 +47,11 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     const annualRent = monthlyRent * 12;
     
     // Initial costs
-    const legalFees = num(initial_costs_data.legal_fees);
-    const realEstateCommission = num(initial_costs_data.real_estate_commission);
-    const notaryFees = num(initial_costs_data.notary_fees);
+    const acquisitionCosts = num(initial_costs_data.acquisition_costs);
     const renovationCosts = num(initial_costs_data.renovation_costs);
     const furnishingCosts = num(initial_costs_data.furnishing_costs);
-    const otherCosts = num(initial_costs_data.other_costs);
-    const totalInitialCosts = legalFees + realEstateCommission + notaryFees + renovationCosts + furnishingCosts + otherCosts;
+    const otherInitialCosts = num(initial_costs_data.other_initial_costs);
+    const totalInitialCosts = acquisitionCosts + renovationCosts + furnishingCosts + otherInitialCosts;
     const totalInvestment = purchasePrice + totalInitialCosts;
     
     // === FINANCING - CORRECTED ===
