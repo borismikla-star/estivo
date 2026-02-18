@@ -43,6 +43,18 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 updates.maintenance_auto = true;
             }
             
+            // Utilities: 0.5% of property value annually
+            if (autoMode.utilities) {
+                updates.utilities = price * 0.005;
+                updates.utilities_auto = true;
+            }
+            
+            // Other expenses: 0.3% of property value annually
+            if (autoMode.other_expenses) {
+                updates.other_expenses = price * 0.003;
+                updates.other_expenses_auto = true;
+            }
+            
             if (Object.keys(updates).length > 0) {
                 const updated = { ...localData, ...updates };
                 setLocalData(updated);
