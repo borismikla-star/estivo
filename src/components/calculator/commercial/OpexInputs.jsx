@@ -130,7 +130,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             insurance: "Poistenie nehnuteľnosti",
             insurance_desc: "Ročné poistenie budovy a zodpovednosti (auto: 0.2% z ceny)",
             utilities: "Energie",
-            utilities_desc: "Voda, elektrina, plyn ak platí majiteľ",
+            utilities_desc: "Voda, elektrina, plyn ak platí majiteľ (auto: 0.5% z ceny)",
             maintenance: "Opravy a údržba",
             maintenance_desc: "Ročné opravy a údržba (auto: 1.5% z ceny)",
             property_management: "Správa nehnuteľnosti (%)",
