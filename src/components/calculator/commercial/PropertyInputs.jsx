@@ -81,16 +81,26 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
         });
     }, [data.size_m2, autoMode, data.rentable_area_m2, data, onChange]);
 
+    // Auto-recalculate acquisition_costs when price changes
+    useEffect(() => {
+        if (data.acquisition_costs_auto !== false && data.price > 0) {
+            const auto = Math.round(data.price * 0.04);
+            if (auto !== data.acquisition_costs) {
+                onChange({ ...data, acquisition_costs: auto, acquisition_costs_auto: true });
+            }
+        }
+    }, [data.price, data.acquisition_costs_auto]);
+
     const handleChange = (field, value) => {
         const updated = { 
             ...data, 
             [field]: value,
-            ...(field === 'rentable_area_m2' && { rentable_area_auto: false })
+            ...(field === 'rentable_area_m2' && { rentable_area_auto: false }),
+            ...(field === 'acquisition_costs' && { acquisition_costs_auto: false })
         };
         
         if (field === 'rentable_area_m2') {
             setAutoMode(false);
-            // Clear tracking so manual input takes precedence
             lastCalculatedTotalAreaRef.current = null;
             lastCalculatedRentableAreaRef.current = null;
         }
