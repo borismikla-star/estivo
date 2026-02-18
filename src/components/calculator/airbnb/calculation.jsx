@@ -434,6 +434,12 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
             annual_maintenance: annualMaintenance,
             annual_platform_fees: platformFees,
             annual_other_costs: otherExpenses,
+
+            // VAT Analysis
+            is_vat_payer: isVatPayer,
+            vat_rate: isVatPayer ? vatRate : 0,
+            vat_on_purchase: vatOnPurchase,
+            annual_output_vat: annualOutputVat,
         },
         cashFlowProjection: projections,
         equityBuildup: projections,
