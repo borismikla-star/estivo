@@ -18,8 +18,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
 
     const translations = {
         en: {
-            nightly_rate: "Average Nightly Rate",
-            nightly_rate_tooltip: "Your average price per night (consider seasonal variations and weekday/weekend rates)",
+            nightly_rate: "Average Nightly Rate (excl. VAT)",
+            nightly_rate_tooltip: "Enter the price per night excluding VAT – i.e. the net amount guests pay before platform fees are deducted. Short-term rental (Airbnb) is generally VAT-exempt in most countries, so this is typically the full price guests see. If you are a VAT payer, enter the net amount without VAT.",
             occupancy: "Annual Occupancy Rate (%)",
             occupancy_tooltip: "Percentage of nights booked per year (70% is common for successful Airbnb properties)",
             avg_length_of_stay: "Average Length of Stay (nights)",
