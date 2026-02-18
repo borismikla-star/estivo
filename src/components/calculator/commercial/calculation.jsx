@@ -282,16 +282,19 @@ export function calculateCommercial(projectData, preset, language = 'en') {
             cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax);
         } else {
             const finalYearNOI = yearNOI;
-            const exitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : currentPropertyValue;
-            const exitEquity = exitValue - remainingLoanBalance;
+            const rawExitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : currentPropertyValue;
+            // Guard: exit value cannot be negative
+            const exitValueSafe = Math.max(0, rawExitValue);
+            const exitEquity = Math.max(0, exitValueSafe - remainingLoanBalance);
             cashFlowsForIRR.push(yearCashFlow + exitEquity);
             cashFlowsForIRRAfterTax.push(yearCashFlowAfterTax + exitEquity);
         }
     }
     
     const finalYearNOI = projections[holdingPeriod - 1].noi;
-    const exitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : projections[holdingPeriod - 1].property_value;
-    const exitEquity = exitValue - projections[holdingPeriod - 1].loan_balance;
+    const rawExitValue = exitCapRate > 0 ? finalYearNOI / (exitCapRate / 100) : projections[holdingPeriod - 1].property_value;
+    const exitValue = Math.max(0, rawExitValue);
+    const exitEquity = Math.max(0, exitValue - projections[holdingPeriod - 1].loan_balance);
     const exitDiscountFactor = Math.pow(1 + discountRate / 100, holdingPeriod);
     const npv = npvSum + (exitEquity / exitDiscountFactor) - totalEquity;
     const npvAfterTax = npvSumAfterTax + (exitEquity / exitDiscountFactor) - totalEquity;
