@@ -118,6 +118,7 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
       title: t_calc.capex, 
       content: <CapExInputs 
         data={projectData.capex_data || {}} 
+        propertyData={projectData.property_data || {}}
         language={language} 
         onChange={(updatedData) => onBulkUpdate("capex_data", updatedData)} 
         t={t} 
