@@ -32,6 +32,9 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
           entity_type_fo: "Individual (FO)",
           entity_type_po: "Legal Entity (PO)",
           entity_type_tooltip: "Choose between Individual (FO) or Legal Entity (PO) - affects tax calculations",
+          vat_payer: "VAT Payer",
+          vat_payer_tooltip: "If you are a VAT payer, VAT on investment costs can be reclaimed",
+          vat_rate: "VAT Rate (%)",
       },
       sk: {
           accordion_property_details: "Detaily nehnuteľnosti",
@@ -42,6 +45,9 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
           entity_type_fo: "Fyzická osoba (FO)",
           entity_type_po: "Právnická osoba (PO)",
           entity_type_tooltip: "Vyberte medzi fyzickou osobou (FO) alebo právnickou osobou (PO) - ovplyvňuje daňové výpočty",
+          vat_payer: "Platca DPH",
+          vat_payer_tooltip: "Ak ste platca DPH, DPH z investičných nákladov je možné odpočítať",
+          vat_rate: "Sadzba DPH (%)",
       },
       pl: {
           accordion_property_details: "Szczegóły nieruchomości",
@@ -52,6 +58,9 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
           entity_type_fo: "Osoba fizyczna (FO)",
           entity_type_po: "Osoba prawna (PO)",
           entity_type_tooltip: "Wybierz między osobą fizyczną (FO) a osobą prawną (PO) - wpływa na obliczenia podatkowe",
+          vat_payer: "Podatnik VAT",
+          vat_payer_tooltip: "Jeśli jesteś podatnikiem VAT, VAT od kosztów inwestycji można odliczyć",
+          vat_rate: "Stawka VAT (%)",
       },
       hu: {
           accordion_property_details: "Ingatlan részletei",
@@ -62,6 +71,9 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
           entity_type_fo: "Magánszemély (FO)",
           entity_type_po: "Jogi személy (PO)",
           entity_type_tooltip: "Válasszon magánszemély (FO) vagy jogi személy (PO) között - befolyásolja az adószámításokat",
+          vat_payer: "ÁFA fizető",
+          vat_payer_tooltip: "Ha ÁFA fizető, a befektetési költségek ÁFÁja visszaigényelhető",
+          vat_rate: "ÁFA kulcs (%)",
       },
       de: {
           accordion_property_details: "Immobiliendetails",
@@ -72,6 +84,9 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
           entity_type_fo: "Natürliche Person (FO)",
           entity_type_po: "Juristische Person (PO)",
           entity_type_tooltip: "Wählen Sie zwischen natürlicher Person (FO) oder juristischer Person (PO) - beeinflusst Steuerberechnungen",
+          vat_payer: "Umsatzsteuerpflichtig",
+          vat_payer_tooltip: "Als Umsatzsteuerpflichtiger kann die Umsatzsteuer auf Investitionskosten erstattet werden",
+          vat_rate: "MwSt-Satz (%)",
       }
   };
 
