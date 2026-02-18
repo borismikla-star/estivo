@@ -19,10 +19,42 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
     };
 
     const handleNumberChange = (field, value) => {
-        const updated = { ...localData, [field]: parseFloat(value) || 0 };
+        const updated = { ...localData, [field]: parseFloat(value) || 0, [`${field}_auto`]: false };
         setLocalData(updated);
         onChange(updated);
     };
+
+    const toggleAuto = (field, autoValue) => {
+        const isAuto = localData[`${field}_auto`] !== false;
+        if (isAuto) {
+            const updated = { ...localData, [`${field}_auto`]: false };
+            setLocalData(updated);
+            onChange(updated);
+        } else {
+            const updated = { ...localData, [field]: autoValue, [`${field}_auto`]: true };
+            setLocalData(updated);
+            onChange(updated);
+        }
+    };
+
+    // Auto-set exit_cap_rate and discount_rate from country preset when preset changes
+    useEffect(() => {
+        if (!countryPreset) return;
+        const updates = {};
+        if (localData.exit_cap_rate_auto !== false) {
+            updates.exit_cap_rate = countryPreset.npv_discount_rate || 6;
+            updates.exit_cap_rate_auto = true;
+        }
+        if (localData.discount_rate_auto !== false) {
+            updates.discount_rate = countryPreset.npv_discount_rate || 8;
+            updates.discount_rate_auto = true;
+        }
+        if (Object.keys(updates).length > 0) {
+            const updated = { ...localData, ...updates };
+            setLocalData(updated);
+            onChange(updated);
+        }
+    }, [countryPreset?.country_code]);
 
     const translations = {
         en: {
@@ -41,9 +73,10 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
             rent_growth: "Annual Rent Growth (%)",
             rent_growth_desc: "Expected yearly rent increase",
             exit_cap_rate: "Exit Cap Rate (%)",
-            exit_cap_desc: "Cap rate assumption for property sale",
+            exit_cap_desc: "Cap rate assumption for property sale (auto: from country preset)",
             discount_rate: "Discount Rate for NPV (%)",
-            discount_desc: "Your required rate of return",
+            discount_desc: "Your required rate of return (auto: from country preset)",
+            auto_calculate: "Auto",
         },
         sk: {
             tax_section: "Daňové nastavenia",
@@ -61,58 +94,61 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
             rent_growth: "Ročný rast nájmu (%)",
             rent_growth_desc: "Očakávaný ročný nárast nájmu",
             exit_cap_rate: "Výstupný Cap Rate (%)",
-            exit_cap_desc: "Predpoklad Cap Rate pri predaji nehnuteľnosti",
+            exit_cap_desc: "Predpoklad Cap Rate pri predaji nehnuteľnosti (auto: z predvoľby krajiny)",
             discount_rate: "Diskontná sadzba pre NPV (%)",
-            discount_desc: "Vaša požadovaná miera návratnosti",
+            discount_desc: "Vaša požadovaná miera návratnosti (auto: z predvoľby krajiny)",
+            auto_calculate: "Auto",
         },
         pl: {
             tax_section: "Ustawienia podatkowe",
             vat_payer: "Płatnik VAT",
-            vat_payer_tooltip: "Zaznacz, jeśli jesteś zarejestrowanym płatnikiem VAT. Płatnicy VAT mogą odliczyć naliczony VAT od kosztów, co wpływa na kwoty inwestycji netto i przepływy pieniężne.",
+            vat_payer_tooltip: "Zaznacz, jeśli jesteś zarejestrowanym płatnikiem VAT.",
             vat_payer_yes: "Tak, jestem płatnikiem VAT",
             vat_payer_no: "Nie, nie jestem płatnikiem VAT",
             vat_rate: "Stawka VAT (%)",
-            vat_rate_tooltip: "Standardowa stawka VAT w Twoim kraju (automatycznie ustawiona na podstawie wyboru kraju)",
+            vat_rate_tooltip: "Standardowa stawka VAT w Twoim kraju",
             investment_section: "Założenia inwestycyjne",
             holding_period: "Okres utrzymywania (lata)",
             holding_desc: "Jak długo planujesz utrzymywać nieruchomość",
-            annual_appreciation: "Roczny wzrost wartości nieruchomości (%)",
+            annual_appreciation: "Roczny wzrost wartości (%)",
             appreciation_desc: "Oczekiwany roczny wzrost wartości nieruchomości",
             rent_growth: "Roczny wzrost czynszu (%)",
             rent_growth_desc: "Oczekiwany roczny wzrost czynszu",
             exit_cap_rate: "Współczynnik kapitalizacji wyjścia (%)",
-            exit_cap_desc: "Założenie Cap Rate przy sprzedaży nieruchomości",
+            exit_cap_desc: "Założenie Cap Rate przy sprzedaży (auto: z ustawień kraju)",
             discount_rate: "Stopa dyskontowa dla NPV (%)",
-            discount_desc: "Twoja wymagana stopa zwrotu",
+            discount_desc: "Twoja wymagana stopa zwrotu (auto: z ustawień kraju)",
+            auto_calculate: "Auto",
         },
         hu: {
             tax_section: "Adóbeállítások",
             vat_payer: "ÁFA fizető",
-            vat_payer_tooltip: "Jelölje be, ha regisztrált ÁFA fizető. Az ÁFA fizetők levonhatják a bemeneti ÁFÁ-t a költségekből, ami befolyásolja a nettó befektetési összegeket és a cash flow-t.",
+            vat_payer_tooltip: "Jelölje be, ha regisztrált ÁFA fizető.",
             vat_payer_yes: "Igen, ÁFA fizető vagyok",
             vat_payer_no: "Nem, nem vagyok ÁFA fizető",
             vat_rate: "ÁFA kulcs (%)",
-            vat_rate_tooltip: "Szabványos ÁFA kulcs az országban (automatikusan beállítva az ország kiválasztása alapján)",
+            vat_rate_tooltip: "Szabványos ÁFA kulcs az országban",
             investment_section: "Befektetési feltételezések",
             holding_period: "Tartási időszak (év)",
             holding_desc: "Mennyi ideig tervezi tartani az ingatlant",
-            annual_appreciation: "Éves ingatlanértékelés (%)",
+            annual_appreciation: "Éves értéknövekedés (%)",
             appreciation_desc: "Várható éves növekedés az ingatlan értékében",
             rent_growth: "Éves bérleti díj növekedés (%)",
             rent_growth_desc: "Várható éves bérleti díj növekedés",
             exit_cap_rate: "Kilépési Cap Rate (%)",
-            exit_cap_desc: "Cap Rate feltételezés az ingatlan eladásánál",
+            exit_cap_desc: "Cap Rate feltételezés az eladáshoz (auto: ország beállítás)",
             discount_rate: "Diszkontráta az NPV-hez (%)",
-            discount_desc: "Az Ön által megkövetelt megtérülési ráta",
+            discount_desc: "Az Ön által megkövetelt megtérülési ráta (auto: ország beállítás)",
+            auto_calculate: "Auto",
         },
         de: {
             tax_section: "Steuereinstellungen",
             vat_payer: "Umsatzsteuerpflichtig",
-            vat_payer_tooltip: "Ankreuzen, wenn Sie als Umsatzsteuerpflichtiger registriert sind. Umsatzsteuerpflichtige können die Vorsteuer von den Kosten abziehen, was die Nettoinvestitionsbeträge und Cashflows beeinflusst.",
+            vat_payer_tooltip: "Ankreuzen, wenn Sie als Umsatzsteuerpflichtiger registriert sind.",
             vat_payer_yes: "Ja, ich bin umsatzsteuerpflichtig",
             vat_payer_no: "Nein, ich bin nicht umsatzsteuerpflichtig",
             vat_rate: "Umsatzsteuersatz (%)",
-            vat_rate_tooltip: "Standard-Umsatzsteuersatz in Ihrem Land (automatisch auf Basis der Länderauswahl festgelegt)",
+            vat_rate_tooltip: "Standard-Umsatzsteuersatz in Ihrem Land",
             investment_section: "Investitionsannahmen",
             holding_period: "Haltedauer (Jahre)",
             holding_desc: "Wie lange Sie die Immobilie halten möchten",
@@ -121,24 +157,62 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
             rent_growth: "Jährliches Mietwachstum (%)",
             rent_growth_desc: "Erwartete jährliche Mieterhöhung",
             exit_cap_rate: "Exit Cap Rate (%)",
-            exit_cap_desc: "Cap Rate Annahme für Immobilienverkauf",
+            exit_cap_desc: "Cap Rate Annahme für Immobilienverkauf (auto: Ländereinstellung)",
             discount_rate: "Diskontsatz für NPV (%)",
-            discount_desc: "Ihre geforderte Rendite",
+            discount_desc: "Ihre geforderte Rendite (auto: Ländereinstellung)",
+            auto_calculate: "Auto",
         }
     };
 
     const t = translations[language] || translations.en;
-
-    // Get VAT rate from country preset
     const vatRate = countryPreset?.vat_rate || 20;
+
+    const AutoField = ({ field, label, desc, step = "0.1", defaultVal, autoValue }) => {
+        const isAuto = localData[`${field}_auto`] !== false;
+        return (
+            <div>
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                        <Label>{label}</Label>
+                        <InfoTooltip content={desc} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Switch
+                            checked={isAuto}
+                            onCheckedChange={() => toggleAuto(field, autoValue)}
+                            className="data-[state=checked]:bg-primary"
+                        />
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            {isAuto ? <Sparkles className="w-3 h-3 text-primary" /> : <Calculator className="w-3 h-3" />}
+                            {t.auto_calculate}
+                        </span>
+                    </div>
+                </div>
+                <div className="relative">
+                    <Input
+                        type="number"
+                        step={step}
+                        value={localData[field] ?? defaultVal}
+                        onChange={(e) => handleNumberChange(field, e.target.value)}
+                        disabled={isAuto}
+                        className={isAuto ? 'bg-primary/5 border-primary/30' : ''}
+                    />
+                    {isAuto && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="space-y-6">
             {/* Tax Settings Section */}
             <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h4 className="text-base font-semibold text-foreground">{t.tax_section}</h4>
-                
-                {/* VAT Payer Checkbox */}
+
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
                         <Label className="text-sm font-semibold">{t.vat_payer}</Label>
@@ -157,7 +231,6 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
                     </label>
                 </div>
 
-                {/* VAT Rate (readonly, from country preset) */}
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <Label>{t.vat_rate}</Label>
@@ -176,7 +249,7 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
             {/* Investment Assumptions Section */}
             <div className="space-y-4">
                 <h4 className="text-base font-semibold text-foreground">{t.investment_section}</h4>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
@@ -185,7 +258,7 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
                         </div>
                         <Input
                             type="number"
-                            value={localData.holding_period || 10}
+                            value={localData.holding_period ?? 10}
                             onChange={(e) => handleNumberChange('holding_period', e.target.value)}
                         />
                     </div>
@@ -197,7 +270,7 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
                         <Input
                             type="number"
                             step="0.1"
-                            value={localData.annual_appreciation || 2}
+                            value={localData.annual_appreciation ?? 2}
                             onChange={(e) => handleNumberChange('annual_appreciation', e.target.value)}
                         />
                     </div>
@@ -209,34 +282,30 @@ export default function AssumptionsInputs({ data, onChange, language = 'en', cou
                         <Input
                             type="number"
                             step="0.1"
-                            value={localData.rent_growth || 2}
+                            value={localData.rent_growth ?? 2}
                             onChange={(e) => handleNumberChange('rent_growth', e.target.value)}
                         />
                     </div>
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.exit_cap_rate}</Label>
-                            <InfoTooltip content={t.exit_cap_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            step="0.01"
-                            value={localData.exit_cap_rate || 6}
-                            onChange={(e) => handleNumberChange('exit_cap_rate', e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.discount_rate}</Label>
-                            <InfoTooltip content={t.discount_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            step="0.1"
-                            value={localData.discount_rate || 8}
-                            onChange={(e) => handleNumberChange('discount_rate', e.target.value)}
-                        />
-                    </div>
+
+                    {/* Exit Cap Rate – with auto switch */}
+                    <AutoField
+                        field="exit_cap_rate"
+                        label={t.exit_cap_rate}
+                        desc={t.exit_cap_desc}
+                        step="0.01"
+                        defaultVal={6}
+                        autoValue={countryPreset?.npv_discount_rate || 6}
+                    />
+
+                    {/* Discount Rate – with auto switch */}
+                    <AutoField
+                        field="discount_rate"
+                        label={t.discount_rate}
+                        desc={t.discount_desc}
+                        step="0.1"
+                        defaultVal={8}
+                        autoValue={countryPreset?.npv_discount_rate || 8}
+                    />
                 </div>
             </div>
         </div>
