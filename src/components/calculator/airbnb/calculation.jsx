@@ -131,8 +131,12 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
                                          annualMaintenance + annualHOA + otherExpenses;
 
     // === CORE METRICS ===
+    // NOI is on NET basis (excl. VAT) – VAT is a cash-flow item below
     const netOperatingIncome = netAnnualRevenue - totalAnnualOperatingExpenses;
+    // VAT cash flow: output VAT collected minus input VAT on purchase (one-time, year 1 only shown in KPIs)
+    const annualVatCashFlow = annualOutputVat; // net VAT payable each year (simplified: input VAT deducted at purchase)
     const annualCashFlow = netOperatingIncome - annualDebtService;
+    const annualCashFlowInclVat = isVatPayer ? annualCashFlow + annualVatCashFlow : annualCashFlow;
     const monthlyCashFlow = annualCashFlow / 12;
 
     // === TAX CALCULATIONS (NEW!) ===
