@@ -125,6 +125,7 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
         data={projectData.income_data || {}}
         onChange={(updatedData) => onBulkUpdate('income_data', updatedData)}
         language={language}
+        purchasePrice={ensureNumber(projectData.property_data?.purchase_price)}
         onEstimateRate={handleEstimateRate}
         isEstimatingRate={isEstimatingRate}
         t={t}
