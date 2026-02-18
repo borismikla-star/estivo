@@ -183,17 +183,20 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     let remainingLoanBalance = loanAmount;
     let currentPropertyValue = purchasePrice;
     let currentRent = annualRent;
-    let currentOpex = totalAnnualOperatingExpenses;
+    // Track opex WITHOUT vacancy (vacancy handled separately each year)
+    let currentOpexExclVacancy = operatingExpensesExclVacancy;
     
     for (let year = 1; year <= 10; year++) {
         if (year > 1) {
             currentPropertyValue *= (1 + appreciationRate / 100);
             currentRent *= (1 + rentGrowthRate / 100);
-            currentOpex *= (1 + expenseGrowthRate / 100);
+            currentOpexExclVacancy *= (1 + expenseGrowthRate / 100);
         }
         
+        // Vacancy deducted once from gross rent → effective income
         const yearEffectiveIncome = currentRent * (1 - vacancyRate / 100);
-        const yearNOI = yearEffectiveIncome - currentOpex;
+        // NOI = EGI - opex (vacancy already excluded from EGI, not counted again in opex)
+        const yearNOI = yearEffectiveIncome - currentOpexExclVacancy;
         const yearCashFlow = yearNOI - annualDebtService;
         cumulativeCashFlow += yearCashFlow;
         
