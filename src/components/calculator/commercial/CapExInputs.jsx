@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Sparkles, Calculator } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 
 export default function CapExInputs({ data, onChange, language = 'en' }) {
