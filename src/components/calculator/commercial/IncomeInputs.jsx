@@ -342,44 +342,33 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
             <div className="border-t pt-4">
                 <h4 className="font-semibold mb-3 text-sm">{t.reimbursements_title}</h4>
                 <div className="space-y-4">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.cam_reimbursements}</Label>
-                            <InfoTooltip content={t.cam_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            value={data.cam_reimbursements || ''}
-                            onChange={(e) => handleChange('cam_reimbursements', parseFloat(e.target.value) || 0)}
-                            placeholder="0"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.other_reimbursements}</Label>
-                            <InfoTooltip content={t.other_reimbursements_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            value={data.other_reimbursements || ''}
-                            onChange={(e) => handleChange('other_reimbursements', parseFloat(e.target.value) || 0)}
-                            placeholder="0"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.other_income}</Label>
-                            <InfoTooltip content={t.other_income_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            value={data.other_income || ''}
-                            onChange={(e) => handleChange('other_income', parseFloat(e.target.value) || 0)}
-                            placeholder="0"
-                        />
-                    </div>
+                    <AutoField
+                        field="cam_reimbursements"
+                        label={t.cam_reimbursements}
+                        desc={t.cam_desc}
+                        autoDesc={t.cam_auto_desc}
+                        value={data.cam_reimbursements}
+                        isAuto={data.cam_reimbursements_auto !== false}
+                        autoValue={() => Math.round((data.annual_rent || 0) * 0.10)}
+                    />
+                    <AutoField
+                        field="other_reimbursements"
+                        label={t.other_reimbursements}
+                        desc={t.other_reimbursements_desc}
+                        autoDesc={t.other_reimbursements_auto_desc}
+                        value={data.other_reimbursements}
+                        isAuto={data.other_reimbursements_auto !== false}
+                        autoValue={() => Math.round((data.annual_rent || 0) * 0.05)}
+                    />
+                    <AutoField
+                        field="other_income"
+                        label={t.other_income}
+                        desc={t.other_income_desc}
+                        autoDesc={t.other_income_auto_desc}
+                        value={data.other_income}
+                        isAuto={data.other_income_auto !== false}
+                        autoValue={() => Math.round((data.annual_rent || 0) * 0.02)}
+                    />
                 </div>
             </div>
         </div>
