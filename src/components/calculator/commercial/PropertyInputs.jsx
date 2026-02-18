@@ -349,13 +349,45 @@ export default function PropertyInputs({ data, onChange, language = 'en' }) {
             </div>
 
             <div>
-                <Label>{t.acquisition_costs}</Label>
-                <p className="text-sm text-muted-foreground mb-2">{t.acquisition_desc}</p>
-                <Input
-                    type="number"
-                    value={data.acquisition_costs || 0}
-                    onChange={(e) => handleChange('acquisition_costs', parseFloat(e.target.value) || 0)}
-                />
+                <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                        <Label>{t.acquisition_costs}</Label>
+                        <InfoTooltip content={t.acquisition_desc} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Switch
+                            checked={data.acquisition_costs_auto !== false}
+                            onCheckedChange={(checked) => {
+                                if (checked) {
+                                    const auto = Math.round((data.price || 0) * 0.04);
+                                    onChange({ ...data, acquisition_costs: auto, acquisition_costs_auto: true });
+                                } else {
+                                    onChange({ ...data, acquisition_costs_auto: false });
+                                }
+                            }}
+                            className="data-[state=checked]:bg-primary"
+                        />
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            {data.acquisition_costs_auto !== false ? <Sparkles className="w-3 h-3 text-primary" /> : <Calculator className="w-3 h-3" />}
+                            {t.auto_calculate}
+                        </span>
+                    </div>
+                </div>
+                <p className="text-xs text-muted-foreground mb-2">{data.acquisition_costs_auto !== false ? t.acquisition_auto_desc : t.acquisition_desc}</p>
+                <div className="relative">
+                    <Input
+                        type="number"
+                        value={data.acquisition_costs || 0}
+                        onChange={(e) => handleChange('acquisition_costs', parseFloat(e.target.value) || 0)}
+                        disabled={data.acquisition_costs_auto !== false}
+                        className={data.acquisition_costs_auto !== false ? 'bg-primary/5 border-primary/30' : ''}
+                    />
+                    {data.acquisition_costs_auto !== false && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
