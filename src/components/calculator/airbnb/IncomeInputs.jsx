@@ -54,8 +54,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             annual_revenue_tooltip: "Odhadovaný hrubý ročný príjem na základe ceny za noc a obsadenosti",
         },
         pl: {
-            nightly_rate: "Średnia cena za noc",
-            nightly_rate_tooltip: "Średnia cena za noc (uwzględnij wahania sezonowe i stawki weekendowe/robocze)",
+            nightly_rate: "Średnia cena za noc (bez VAT)",
+            nightly_rate_tooltip: "Podaj cenę za noc bez VAT – kwotę netto, którą płacą goście przed potrąceniem opłat platformy. Krótkoterminowy wynajem (Airbnb) jest zazwyczaj zwolniony z VAT. Jeśli jesteś podatnikiem VAT, podaj kwotę netto.",
             occupancy: "Roczny wskaźnik obłożenia (%)",
             occupancy_tooltip: "Procent zarezerwowanych nocy w roku (70% jest typowe dla udanych nieruchomości Airbnb)",
             avg_length_of_stay: "Średnia długość pobytu (noce)",
