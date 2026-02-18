@@ -1,5 +1,6 @@
 import React from 'react';
 import { currencyFormatter, percentFormatter } from '../lib/formatters';
+import EstivoLogo from '@/components/shared/EstivoLogo';
 
 const Section = ({ title, children }) => (
     <div className="mb-6 page-break-inside-avoid">
@@ -488,7 +489,9 @@ export default function PDFReport({ projectData, results, language, user }) {
                  {user?.entity_type === 'PO' && user.company_logo_url ? (
                     <img src={user.company_logo_url} alt="Company Logo" style={{ height: '60px', maxWidth: '200px', margin: '0 auto 16px', objectFit: 'contain' }} />
                  ) : (
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/478578f70_logo_transp120x40.png" alt="Estivo Logo" style={{ height: '40px', margin: '0 auto 16px' }} />
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                        <EstivoLogo className="h-10" />
+                    </div>
                  )}
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>{currentT.reportTitle}</h1>
                 <p style={{ color: '#6b7280', fontSize: '12px' }}>Generated on {new Date().toLocaleDateString()}</p>
