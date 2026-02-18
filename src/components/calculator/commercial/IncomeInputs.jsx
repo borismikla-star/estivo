@@ -20,6 +20,17 @@ export default function IncomeInputs({ data, onChange, language = 'en', property
         }
     }, [data.annual_rent_auto, autoMode]);
 
+    // Auto-recalculate reimbursements when annual_rent changes
+    useEffect(() => {
+        const rent = data.annual_rent || 0;
+        if (rent <= 0) return;
+        const updates = {};
+        if (data.cam_reimbursements_auto !== false) { updates.cam_reimbursements = Math.round(rent * 0.10); updates.cam_reimbursements_auto = true; }
+        if (data.other_reimbursements_auto !== false) { updates.other_reimbursements = Math.round(rent * 0.05); updates.other_reimbursements_auto = true; }
+        if (data.other_income_auto !== false) { updates.other_income = Math.round(rent * 0.02); updates.other_income_auto = true; }
+        if (Object.keys(updates).length > 0) onChange({ ...data, ...updates });
+    }, [data.annual_rent, data.cam_reimbursements_auto, data.other_reimbursements_auto, data.other_income_auto]);
+
     // Auto-calculate when rentable area becomes available or changes
     // CRITICAL: Only depend on the specific values we're tracking, not on 'data' or 'onChange'
     useEffect(() => {
