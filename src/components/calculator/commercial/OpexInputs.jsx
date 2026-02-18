@@ -15,10 +15,10 @@ const AUTO_RATES = {
 
 export default function OpexInputs({ data, onChange, language = 'en', propertyData = {} }) {
     const [localData, setLocalData] = useState(() => {
-        // On first load, if _auto flags are undefined, default them to true
+        // On first load, default _auto to true unless explicitly set to false
         const init = { ...data };
         Object.keys(AUTO_RATES).forEach(field => {
-            if (init[`${field}_auto`] === undefined) {
+            if (init[`${field}_auto`] !== false) {
                 init[`${field}_auto`] = true;
             }
         });
