@@ -61,7 +61,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 onChange(updated);
             }
         }
-    }, [propertyData.price, autoMode.property_tax, autoMode.insurance, autoMode.maintenance]);
+    }, [propertyData.price, autoMode.property_tax, autoMode.insurance, autoMode.maintenance, autoMode.utilities, autoMode.other_expenses]);
 
     const handleChange = (field, value) => {
         const updated = { 
