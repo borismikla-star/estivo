@@ -25,6 +25,9 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           entity_type_fo: "Individual (FO)",
           entity_type_po: "Legal Entity (PO)",
           entity_type_tooltip: "Choose between Individual (FO) or Legal Entity (PO) - affects tax calculations",
+          vat_payer: "VAT Payer",
+          vat_payer_tooltip: "If you are a VAT payer, VAT on investment costs can be reclaimed",
+          vat_rate: "VAT Rate (%)",
       },
       sk: {
           accordion_property_details: "Detaily nehnuteľnosti",
