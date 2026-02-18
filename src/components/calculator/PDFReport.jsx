@@ -114,7 +114,9 @@ export default function PDFReport({ projectData, results, language, user }) {
     if (!projectData || !results) return null;
 
     const { kpis, cost_breakdown, revenue_breakdown, expense_breakdown } = results;
-    const { name, type, country, property_data, income_data, assumptions_data } = projectData;
+    const { name, type, country, property_data, income_data, assumptions_data, ai_summary } = projectData;
+    
+    const hasAISummary = ai_summary && (ai_summary.insights || ai_summary.recommendations?.length > 0);
     
     // Country name mapping
     const countryNames = {
