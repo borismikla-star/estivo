@@ -192,44 +192,9 @@ export default function CapExInputs({ data, onChange, language = 'en', propertyD
             <div className="border-t pt-4">
                 <h4 className="font-semibold mb-3 text-sm">{t.specific_reserves}</h4>
                 <div className="space-y-4">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.roof_replacement}</Label>
-                            <InfoTooltip content={t.roof_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            value={localData.roof_replacement || ''}
-                            onChange={(e) => handleChange('roof_replacement', parseFloat(e.target.value) || 0)}
-                            placeholder="0"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.hvac_replacement}</Label>
-                            <InfoTooltip content={t.hvac_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            value={localData.hvac_replacement || ''}
-                            onChange={(e) => handleChange('hvac_replacement', parseFloat(e.target.value) || 0)}
-                            placeholder="0"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label>{t.tenant_improvements}</Label>
-                            <InfoTooltip content={t.tenant_improvements_desc} />
-                        </div>
-                        <Input
-                            type="number"
-                            value={localData.tenant_improvements || ''}
-                            onChange={(e) => handleChange('tenant_improvements', parseFloat(e.target.value) || 0)}
-                            placeholder="0"
-                        />
-                    </div>
+                    <AutoCapexField field="roof_replacement" label={t.roof_replacement} desc={t.roof_desc} computeFn={() => Math.round(price * 0.003)} />
+                    <AutoCapexField field="hvac_replacement" label={t.hvac_replacement} desc={t.hvac_desc} computeFn={() => Math.round(price * 0.002)} />
+                    <AutoCapexField field="tenant_improvements" label={t.tenant_improvements} desc={t.tenant_improvements_desc} computeFn={() => Math.round(price * 0.005)} />
                 </div>
             </div>
 
