@@ -13,69 +13,75 @@ const AUTO_RATES = {
     other_expenses: 0.003,
 };
 
-// Initialize data: if _auto is undefined (never set), default to true and compute value
-function initOpexData(data, price) {
-    const result = { ...data };
-    Object.keys(AUTO_RATES).forEach(field => {
-        if (result[`${field}_auto`] === undefined) {
-            result[`${field}_auto`] = true;
-            if (price > 0) result[field] = price * AUTO_RATES[field];
-        }
-    });
-    return result;
-}
-
 export default function OpexInputs({ data, onChange, language = 'en', propertyData = {} }) {
-    const [localData, setLocalData] = useState(() => initOpexData(data, propertyData.price || 0));
-
-    // Derive auto mode directly from localData so it stays in sync
-    const isAuto = (field) => localData[`${field}_auto`] === true;
+    const [localData, setLocalData] = useState(() => {
+        // On first load, if _auto flags are undefined, default them to true
+        const init = { ...data };
+        Object.keys(AUTO_RATES).forEach(field => {
+            if (init[`${field}_auto`] === undefined) {
+                init[`${field}_auto`] = true;
+            }
+        });
+        return init;
+    });
 
     useEffect(() => {
-        setLocalData(initOpexData(data, propertyData.price || 0));
+        // When parent data changes, preserve existing _auto flags if they were already set
+        setLocalData(prev => {
+            const merged = { ...data };
+            Object.keys(AUTO_RATES).forEach(field => {
+                if (merged[`${field}_auto`] === undefined) {
+                    merged[`${field}_auto`] = prev[`${field}_auto`] !== undefined ? prev[`${field}_auto`] : true;
+                }
+            });
+            return merged;
+        });
     }, [data]);
 
     // Auto-calculate when price changes for fields in auto mode
     useEffect(() => {
         const price = propertyData.price || 0;
         if (price <= 0) return;
-        const updates = {};
-        Object.keys(AUTO_RATES).forEach(field => {
-            if (localData[`${field}_auto`] === true) {
-                updates[field] = price * AUTO_RATES[field];
-            }
-        });
-        if (Object.keys(updates).length > 0) {
-            const updated = { ...localData, ...updates };
-            setLocalData(updated);
+        setLocalData(prev => {
+            const updates = {};
+            Object.keys(AUTO_RATES).forEach(field => {
+                if (prev[`${field}_auto`] === true) {
+                    updates[field] = price * AUTO_RATES[field];
+                }
+            });
+            if (Object.keys(updates).length === 0) return prev;
+            const updated = { ...prev, ...updates };
             onChange(updated);
-        }
+            return updated;
+        });
     }, [propertyData.price]);
 
     const handleChange = (field, value) => {
-        const updated = { ...localData, [field]: value, [`${field}_auto`]: false };
-        setLocalData(updated);
-        onChange(updated);
+        setLocalData(prev => {
+            const updated = { ...prev, [field]: value, [`${field}_auto`]: false };
+            onChange(updated);
+            return updated;
+        });
     };
 
     const toggleAutoMode = (field) => {
-        const currentlyAuto = localData[`${field}_auto`] === true;
-        if (currentlyAuto) {
-            const updated = { ...localData, [`${field}_auto`]: false };
-            setLocalData(updated);
+        setLocalData(prev => {
+            const currentlyAuto = prev[`${field}_auto`] === true;
+            let updated;
+            if (currentlyAuto) {
+                updated = { ...prev, [`${field}_auto`]: false };
+            } else {
+                const price = propertyData.price || 0;
+                const autoValue = price * (AUTO_RATES[field] || 0);
+                updated = { ...prev, [field]: autoValue, [`${field}_auto`]: true };
+            }
             onChange(updated);
-        } else {
-            const price = propertyData.price || 0;
-            const autoValue = price * (AUTO_RATES[field] || 0);
-            const updated = { ...localData, [field]: autoValue, [`${field}_auto`]: true };
-            setLocalData(updated);
-            onChange(updated);
-        }
+            return updated;
+        });
     };
 
     const translations = {
         en: {
-            title: "Operating Expenses (Annual)",
             auto_calculate: "Auto-calculate",
             property_tax: "Property Tax",
             property_tax_desc: "Annual property/real estate tax (auto: 0.2% of price)",
@@ -92,7 +98,6 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             tip: "Tip: Enable auto-calculate for typical market rates, or enter your specific costs manually.",
         },
         sk: {
-            title: "Prevádzkové náklady (ročné)",
             auto_calculate: "Automatický výpočet",
             property_tax: "Daň z nehnuteľnosti",
             property_tax_desc: "Ročná daň z nehnuteľnosti (auto: 0.2% z ceny)",
@@ -109,7 +114,6 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             tip: "Tip: Zapnite automatický výpočet pre typické trhové sadzby alebo zadajte vlastné náklady manuálne.",
         },
         pl: {
-            title: "Koszty operacyjne (roczne)",
             auto_calculate: "Automatyczne obliczanie",
             property_tax: "Podatek od nieruchomości",
             property_tax_desc: "Roczny podatek od nieruchomości (auto: 0.2% ceny)",
@@ -126,7 +130,6 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             tip: "Wskazówka: Włącz automatyczne obliczanie dla typowych stawek rynkowych lub wprowadź własne koszty ręcznie.",
         },
         hu: {
-            title: "Működési költségek (éves)",
             auto_calculate: "Automatikus számítás",
             property_tax: "Ingatlanadó",
             property_tax_desc: "Éves ingatlanadó (auto: 0.2% az árból)",
@@ -143,7 +146,6 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
             tip: "Tipp: Engedélyezze az automatikus számítást a tipikus piaci árakhoz, vagy adja meg saját költségeit manuálisan.",
         },
         de: {
-            title: "Betriebskosten (jährlich)",
             auto_calculate: "Automatische Berechnung",
             property_tax: "Grundsteuer",
             property_tax_desc: "Jährliche Grundsteuer (auto: 0.2% des Preises)",
@@ -163,10 +165,10 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
 
     const t = translations[language] || translations.en;
 
-    const AutoCalculateField = ({ field, label, description, value, placeholder = "0" }) => {
-        const auto = isAuto(field);
+    const renderAutoField = (field, label, description, value) => {
+        const auto = localData[`${field}_auto`] === true;
         return (
-            <div>
+            <div key={field}>
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                         <Label>{label}</Label>
@@ -189,7 +191,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                         type="number"
                         value={value || ''}
                         onChange={(e) => handleChange(field, parseFloat(e.target.value) || 0)}
-                        placeholder={placeholder}
+                        placeholder="0"
                         disabled={auto}
                         className={auto ? 'bg-primary/5 border-primary/30' : ''}
                     />
@@ -211,33 +213,10 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 </p>
             </div>
 
-            <AutoCalculateField
-                field="property_tax"
-                label={t.property_tax}
-                description={t.property_tax_desc}
-                value={localData.property_tax}
-            />
-
-            <AutoCalculateField
-                field="insurance"
-                label={t.insurance}
-                description={t.insurance_desc}
-                value={localData.insurance}
-            />
-
-            <AutoCalculateField
-                field="maintenance"
-                label={t.maintenance}
-                description={t.maintenance_desc}
-                value={localData.maintenance}
-            />
-
-            <AutoCalculateField
-                field="utilities"
-                label={t.utilities}
-                description={t.utilities_desc}
-                value={localData.utilities}
-            />
+            {renderAutoField("property_tax", t.property_tax, t.property_tax_desc, localData.property_tax)}
+            {renderAutoField("insurance", t.insurance, t.insurance_desc, localData.insurance)}
+            {renderAutoField("maintenance", t.maintenance, t.maintenance_desc, localData.maintenance)}
+            {renderAutoField("utilities", t.utilities, t.utilities_desc, localData.utilities)}
 
             <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -253,12 +232,7 @@ export default function OpexInputs({ data, onChange, language = 'en', propertyDa
                 />
             </div>
 
-            <AutoCalculateField
-                field="other_expenses"
-                label={t.other_expenses}
-                description={t.other_expenses_desc}
-                value={localData.other_expenses}
-            />
+            {renderAutoField("other_expenses", t.other_expenses, t.other_expenses_desc, localData.other_expenses)}
         </div>
     );
 }
