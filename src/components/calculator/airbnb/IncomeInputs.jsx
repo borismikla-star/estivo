@@ -36,8 +36,8 @@ export default function IncomeInputs({ data, onChange, language = 'en' }) {
             annual_revenue_tooltip: "Projected gross annual revenue based on nightly rate and occupancy",
         },
         sk: {
-            nightly_rate: "Priemerná cena za noc",
-            nightly_rate_tooltip: "Vaša priemerná cena za noc (zohľadnite sezónne výkyvy a víkendové/pracovné dni)",
+            nightly_rate: "Priemerná cena za noc (bez DPH)",
+            nightly_rate_tooltip: "Zadajte cenu za noc bez DPH – teda čistú sumu, ktorú hostia platia pred odpočítaním poplatkov platformy. Krátkodobý prenájom (Airbnb) je vo väčšine krajín oslobodený od DPH. Ak ste platca DPH, zadajte sumu bez DPH.",
             occupancy: "Ročná miera obsadenosti (%)",
             occupancy_tooltip: "Percento obsadených nocí za rok (70% je bežné pre úspešné Airbnb nehnuteľnosti)",
             avg_length_of_stay: "Priemerná dĺžka pobytu (noci)",
