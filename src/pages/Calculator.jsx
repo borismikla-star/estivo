@@ -467,7 +467,7 @@ export default function Calculator() {
                 default: return null;
             }
             const raw = res?.kpis?.irr;
-            return raw != null ? raw * 100 : null;
+            return raw != null ? raw : null;
         };
 
         // Deep clone helper
