@@ -6,19 +6,9 @@ import { Button } from "@/components/ui/button";
 import { percentFormatter } from '../lib/formatters';
 import UpgradePrompt from '@/components/shared/UpgradePrompt';
 import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import SensitivityAnalysis from './SensitivityAnalysis';
 import BenchmarkContext from './BenchmarkContext';
-
-// Helper function for creating URLs, common in routing setups
-// If createPageUrl is defined elsewhere or imported, remove this placeholder.
-const createPageUrl = (pageName) => {
-    switch (pageName) {
-        case 'Pricing':
-            return '/pricing';
-        default:
-            return `/${pageName.toLowerCase()}`;
-    }
-};
 
 const ScoreGauge = ({ score }) => {
     const radius = 50;

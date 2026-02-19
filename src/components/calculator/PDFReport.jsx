@@ -248,6 +248,8 @@ export default function PDFReport({ projectData, results, language, user }) {
         HU: { sk: 'Maďarsko', en: 'Hungary', pl: 'Węgry', hu: 'Magyarország', de: 'Ungarn' },
         AT: { sk: 'Rakúsko', en: 'Austria', pl: 'Austria', hu: 'Ausztria', de: 'Österreich' },
         DE: { sk: 'Nemecko', en: 'Germany', pl: 'Niemcy', hu: 'Németország', de: 'Deutschland' },
+        NL: { sk: 'Holandsko', en: 'Netherlands', pl: 'Holandia', hu: 'Hollandia', de: 'Niederlande' },
+        SI: { sk: 'Slovinsko', en: 'Slovenia', pl: 'Słowenia', hu: 'Szlovénia', de: 'Slowenien' },
     };
     const countryName = countryNames[country]?.[language] || country || 'N/A';
 
