@@ -620,6 +620,7 @@ export default function CommercialResults({ results, currency = '€', language 
     return (
         <Card className="bg-card">
             <ResultsHeader 
+                language={language}
                 title={t.commercial_results}
             />
             <CardContent className="p-3 sm:p-6">
