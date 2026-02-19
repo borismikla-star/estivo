@@ -1227,6 +1227,9 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                             onGenerate={generateAISummary}
                             canGenerate={!aiCooldown && !isAiLoading}
                             user={user}
+                            results={results}
+                            projectType={projectData?.type}
+                            country={projectData?.country}
                             t={{}} 
                         />
                         {renderResults()}
