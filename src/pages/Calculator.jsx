@@ -1177,6 +1177,7 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                             currency={currency} 
                             language={language}
                             holdingPeriod={projectData.timeline?.total_months || 24}
+                            sensitivityData={sensitivityData}
                         />
                     </React.Suspense>
                 );
