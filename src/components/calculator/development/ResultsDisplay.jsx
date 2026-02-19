@@ -6,10 +6,11 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Ba
 import { currencyFormatter, percentFormatter } from '@/components/lib/formatters';
 import { TrendingUp, TrendingDown, DollarSign, Target, PieChart as PieChartIcon, BarChart3, FileText, CheckCircle } from 'lucide-react';
 import InfoTooltip from '@/components/shared/InfoTooltip';
+import SensitivityAnalysis from '../SensitivityAnalysis';
 
 const COLORS = ['#003E7E', '#004C97', '#0066CC', '#0080FF', '#33A3FF', '#66BBFF', '#99D6FF'];
 
-export default function ResultsDisplay({ results, currency = '€', language = 'en' }) {
+export default function ResultsDisplay({ results, currency = '€', language = 'en', sensitivityData }) {
     if (!results || !results.kpis) return null;
 
     const { kpis, cost_breakdown, revenue_breakdown } = results;
