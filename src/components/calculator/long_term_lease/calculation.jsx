@@ -15,8 +15,18 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         return isNaN(parsed) ? 0 : parsed;
     };
 
+    // === VAT SETTINGS ===
+    // Long-term residential rental is typically VAT exempt.
+    // However, the toggle is available for edge cases (e.g. commercial-use properties).
+    const isVatPayer = operating_data.is_vat_payer === true;
+    const vatRate = num(operating_data.vat_rate) || num(preset?.vat_rate) || 20;
+    const vatMultiplier = 1 + (vatRate / 100);
+
     // === INPUTS ===
-    const purchasePrice = num(property_data.purchase_price);
+    // If VAT payer, purchase price is entered as gross → we deduct VAT to get net (reclaimable)
+    const purchasePriceGross = num(property_data.purchase_price);
+    const purchasePrice = isVatPayer ? purchasePriceGross / vatMultiplier : purchasePriceGross;
+    const vatOnPurchase = isVatPayer ? purchasePriceGross - purchasePrice : 0;
     const monthlyRent = num(property_data.monthly_rent);
     const annualRent = monthlyRent * 12;
     
