@@ -272,8 +272,8 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const totalReturnAfterTax = totalCashFlowsAfterTax + exitEquity;
     const overallROI = totalEquity > 0 ? ((totalReturn - totalEquity) / totalEquity) * 100 : 0;
     const overallROIAfterTax = totalEquity > 0 ? ((totalReturnAfterTax - totalEquity) / totalEquity) * 100 : 0;
-    const irr = calculateIRR(cashFlowsForIRR);
-    const irrAfterTax = calculateIRR(cashFlowsForIRRAfterTax);
+    const irr = irrComputable ? calculateIRR(cashFlowsForIRR) : null;
+    const irrAfterTax = irrComputable ? calculateIRR(cashFlowsForIRRAfterTax) : null;
     const equityMultiple = totalEquity > 0 ? totalReturn / totalEquity : 0;
     const equityMultipleAfterTax = totalEquity > 0 ? totalReturnAfterTax / totalEquity : 0;
 
