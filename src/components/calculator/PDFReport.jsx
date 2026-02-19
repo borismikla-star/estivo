@@ -235,13 +235,13 @@ const BenchmarkSection = ({ results, projectType, country, language }) => {
     const isDev = projectType === 'development';
 
     const rows = isDev ? [
-        { label: tl.profit_margin, value: kpis.profit_margin != null ? kpis.profit_margin * 100 : null, min: benchmarks.profit_margin?.[0], max: benchmarks.profit_margin?.[1], unit: '%' },
-        { label: tl.return_on_cost, value: kpis.return_on_cost != null ? kpis.return_on_cost * 100 : null, min: benchmarks.return_on_cost?.[0], max: benchmarks.return_on_cost?.[1], unit: '%' },
-        { label: tl.developer_margin, value: kpis.developer_margin != null ? kpis.developer_margin * 100 : null, min: benchmarks.developer_margin?.[0], max: benchmarks.developer_margin?.[1], unit: '%' },
+        { label: tl.profit_margin, value: kpis.profit_margin != null ? kpis.profit_margin : null, min: benchmarks.profit_margin?.[0], max: benchmarks.profit_margin?.[1], unit: '%' },
+        { label: tl.return_on_cost, value: kpis.return_on_cost != null ? kpis.return_on_cost : null, min: benchmarks.return_on_cost?.[0], max: benchmarks.return_on_cost?.[1], unit: '%' },
+        { label: tl.developer_margin, value: kpis.developer_margin != null ? kpis.developer_margin : null, min: benchmarks.developer_margin?.[0], max: benchmarks.developer_margin?.[1], unit: '%' },
     ] : [
-        { label: tl.cap_rate, value: kpis.cap_rate != null ? kpis.cap_rate * 100 : null, min: benchmarks.cap_rate?.[0], max: benchmarks.cap_rate?.[1], unit: '%' },
-        { label: tl.gross_yield, value: kpis.gross_rental_yield != null ? kpis.gross_rental_yield * 100 : null, min: benchmarks.gross_yield?.[0], max: benchmarks.gross_yield?.[1], unit: '%' },
-        { label: tl.cash_on_cash, value: kpis.cash_on_cash_return != null ? kpis.cash_on_cash_return * 100 : null, min: benchmarks.cash_on_cash?.[0], max: benchmarks.cash_on_cash?.[1], unit: '%' },
+        { label: tl.cap_rate, value: kpis.cap_rate != null ? kpis.cap_rate : null, min: benchmarks.cap_rate?.[0], max: benchmarks.cap_rate?.[1], unit: '%' },
+        { label: tl.gross_yield, value: kpis.gross_rental_yield != null ? kpis.gross_rental_yield : null, min: benchmarks.gross_yield?.[0], max: benchmarks.gross_yield?.[1], unit: '%' },
+        { label: tl.cash_on_cash, value: kpis.cash_on_cash_return != null ? kpis.cash_on_cash_return : null, min: benchmarks.cash_on_cash?.[0], max: benchmarks.cash_on_cash?.[1], unit: '%' },
         { label: tl.dscr, value: kpis.dscr, min: benchmarks.dscr?.[0], max: benchmarks.dscr?.[1], unit: 'x' },
     ].filter(r => r.value != null);
 
