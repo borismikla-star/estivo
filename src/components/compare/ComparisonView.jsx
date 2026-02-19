@@ -44,6 +44,8 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
             price: "Purchase Price",
             rent: "Annual Rent",
             noi: "Net Operating Income",
+            profit: "Gross Profit",
+            net_profit: "Net Profit",
             long_term_lease: "Long-Term Lease",
             commercial: "Commercial",
             airbnb: "Short-Term Rental",
