@@ -122,6 +122,7 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           onChange={(updatedData) => onBulkUpdate('property_data', updatedData)}
           onEstimateRent={handleEstimateRent}
           isEstimatingRent={isEstimatingRent}
+          isVatPayer={projectData.operating_data?.is_vat_payer === true}
           t={t_calc}
         />
       ),
