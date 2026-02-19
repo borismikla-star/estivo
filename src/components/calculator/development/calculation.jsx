@@ -264,10 +264,10 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     
     // Calculate IRR on monthly cash flows, then annualize
     const irrComputable = ownResources > 0;
-    const monthlyIRRpct = irrComputable ? calculateIRR(cashFlowsForIRR, 0.01) : null;
+    const monthlyIRRpct = irrComputable ? calculateIRR(cashFlowsForIRR, 0.01) : null; // Returns % (e.g., 1.5)
     const irrAnnual = monthlyIRRpct !== null
         ? (Math.pow(1 + monthlyIRRpct / 100, 12) - 1) * 100
-        : null;
+        : null; // Returns % (e.g., 19.6)
 
     // === BREAKEVEN & RISK METRICS ===
     const breakEvenRevenue = totalProjectCosts;
