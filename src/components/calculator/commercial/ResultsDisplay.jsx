@@ -869,7 +869,7 @@ export default function CommercialResults({ results, currency = '€', language 
                                 )}
                                 <KPICard
                                     title={t.dscr}
-                                    value={kpis.dscr ? kpis.dscr.toFixed(2) : 'N/A'}
+                                    value={kpis.dscr !== null && kpis.dscr !== undefined ? kpis.dscr.toFixed(2) : dscrNaLabel}
                                     description={t.dscr_desc}
                                     tooltip={t.dscr_tooltip}
                                     warning={getDSCRStatus(kpis.dscr) === 'warning' ? t.dscr_warning : null}
@@ -911,21 +911,21 @@ export default function CommercialResults({ results, currency = '€', language 
                                 )}
                                 <KPICard
                                     title={t.irr}
-                                    value={percentFormatter(kpis.irr, 2)}
+                                    value={kpis.irr !== null && kpis.irr !== undefined ? percentFormatter(kpis.irr, 2) : irrNaLabel}
                                     description={`${t.irr_desc} (${t.before_tax})`}
                                     tooltip={t.irr_tooltip}
-                                    warning={kpis.irr < 8 ? t.irr_warning : null}
-                                    excellent={kpis.irr > 15}
-                                    good={kpis.irr > 10}
+                                    warning={kpis.irr !== null && kpis.irr < 8 ? t.irr_warning : null}
+                                    excellent={kpis.irr !== null && kpis.irr > 15}
+                                    good={kpis.irr !== null && kpis.irr > 10}
                                 />
                                 {kpis.irr_after_tax !== undefined && (
                                     <KPICard
                                         title={t.irr_after_tax}
-                                        value={percentFormatter(kpis.irr_after_tax, 2)}
+                                        value={kpis.irr_after_tax !== null ? percentFormatter(kpis.irr_after_tax, 2) : irrNaLabel}
                                         description={t.irr_after_tax_desc}
-                                        warning={kpis.irr_after_tax < 8 ? t.irr_warning : null}
-                                        excellent={kpis.irr_after_tax > 15}
-                                        good={kpis.irr_after_tax > 10}
+                                        warning={kpis.irr_after_tax !== null && kpis.irr_after_tax < 8 ? t.irr_warning : null}
+                                        excellent={kpis.irr_after_tax !== null && kpis.irr_after_tax > 15}
+                                        good={kpis.irr_after_tax !== null && kpis.irr_after_tax > 10}
                                     />
                                 )}
                                 <KPICard
