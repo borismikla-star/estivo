@@ -197,7 +197,8 @@ export default function PropertyInputs({ data, onChange, onEstimateRent, isEstim
                     </Button>
                     */}
                 </div>
-            </div>
-        </div>
-    );
-}
+                <p className="text-xs text-muted-foreground mt-1">{vatHints.hint_rent}</p>
+                </div>
+                </div>
+                );
+                }
