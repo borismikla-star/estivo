@@ -12,7 +12,7 @@ const messages = {
         hint_nightly: "Enter net nightly rate (excl. VAT)",
     },
     sk: {
-        no_vat: "Zadávajte všetky sumy bez DPH (čisté ceny). DPH sa na tento výpočet nevzťahuje.",
+        no_vat: "Zadávajte všetky sumy bez DPH (čisté ceny).",
         vat_payer: "Ste platca DPH. Kúpnu cenu zadajte vrátane DPH (brutto) — systém DPH automaticky odpočíta. Ostatné sumy zadávajte bez DPH (netto).",
         hint_price_no_vat: "Zadajte sumu bez DPH (netto)",
         hint_price_vat: "Zadajte sumu s DPH (brutto) — DPH bude automaticky odpočítaná",

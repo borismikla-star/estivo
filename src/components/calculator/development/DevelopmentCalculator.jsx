@@ -153,8 +153,11 @@ export default function DevelopmentCalculator({ projectData, onBulkUpdate, langu
     },
   ], [t, projectData, project_info, cost_data, revenue_data, totalCosts, totalRevenue, language, onBulkUpdate]);
 
+  const isVatPayer = projectData.project_info_data?.is_vat_payer === true;
+
   return (
     <div className="space-y-6">
+        <VatInputBanner isVatPayer={isVatPayer} language={language} />
         <CountrySelector
           projectData={projectData}
           onBulkUpdate={onBulkUpdate}
