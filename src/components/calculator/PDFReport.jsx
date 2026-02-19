@@ -1105,6 +1105,9 @@ export default function PDFReport({ projectData, results, language, user }) {
                     </>
                 ) : null}
 
+                {/* Methodology & Assumptions Section */}
+                <MethodologySection language={language} type={type} kpis={kpis} />
+
                 {/* AI Investment Analysis - shown for all project types if available */}
                 {hasAISummary && (
                     <Section title={currentT.aiAnalysis}>
