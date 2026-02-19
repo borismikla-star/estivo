@@ -161,6 +161,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     
     // Project cash flows with RENT ESCALATION
     const projections = [];
+    const irrComputable = totalEquity > 0;
     const cashFlowsForIRR = [-totalEquity];
     const cashFlowsForIRRAfterTax = [-totalEquity];
     let cumulativeCashFlow = 0;
