@@ -174,11 +174,69 @@ const PrintCashFlowTimeline = ({ data, t }) => {
     );
 };
 
+const SensitivitySection = ({ sensitivityData, language }) => {
+    if (!sensitivityData || sensitivityData.length === 0) return null;
+    const isNewFormat = 'irr_minus10' in sensitivityData[0];
+    if (!isNewFormat) return null;
+
+    const baseIrr = sensitivityData[0]?.base_irr ?? null;
+
+    const titles = { en: 'Sensitivity Analysis (IRR)', sk: 'Analýza citlivosti (IRR)', pl: 'Analiza wrażliwości (IRR)', hu: 'Érzékenységi elemzés (IRR)', de: 'Sensitivitätsanalyse (IRR)' };
+    const baseLabel = { en: 'Base IRR', sk: 'Základné IRR', pl: 'Bazowe IRR', hu: 'Alap IRR', de: 'Basis-IRR' };
+    const varLabel = { en: 'Variable', sk: 'Premenná', pl: 'Zmienna', hu: 'Változó', de: 'Variable' };
+    const desc = { en: 'Impact of ±10% change in key variables on IRR (in percentage points vs. base).', sk: 'Vplyv zmeny kľúčových premenných o ±10 % na IRR (v percentuálnych bodoch voči základu).', pl: 'Wpływ zmiany kluczowych zmiennych o ±10% na IRR.', hu: 'A kulcsváltozók ±10%-os változásának hatása az IRR-re.', de: 'Auswirkung einer ±10%-Änderung der Schlüsselvariablen auf den IRR.' };
+
+    const title = titles[language] || titles.en;
+
+    const fmtVal = (v) => v != null ? `${v.toFixed(1)}%` : 'N/A';
+    const fmtDelta = (v, base) => {
+        if (v == null || base == null) return { text: 'N/A', color: '#6b7280' };
+        const d = v - base;
+        if (Math.abs(d) < 0.05) return { text: `${v.toFixed(1)}%`, color: '#6b7280' };
+        return d > 0
+            ? { text: `${v.toFixed(1)}% (+${Math.abs(d).toFixed(1)}pp)`, color: '#059669' }
+            : { text: `${v.toFixed(1)}% (−${Math.abs(d).toFixed(1)}pp)`, color: '#dc2626' };
+    };
+
+    return (
+        <Section title={title}>
+            <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '8px' }}>{desc[language] || desc.en}</div>
+            {baseIrr != null && (
+                <div style={{ fontSize: '11px', marginBottom: '8px', color: '#374151' }}>
+                    {baseLabel[language] || baseLabel.en}: <strong style={{ color: '#003E7E' }}>{baseIrr.toFixed(1)}%</strong>
+                </div>
+            )}
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+                <thead>
+                    <tr style={{ backgroundColor: '#f1f5f9' }}>
+                        <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>{varLabel[language] || varLabel.en}</th>
+                        <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>−10%</th>
+                        <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>+10%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {sensitivityData.map((row, i) => {
+                        const minus = fmtDelta(row.irr_minus10, baseIrr);
+                        const plus = fmtDelta(row.irr_plus10, baseIrr);
+                        return (
+                            <tr key={i} style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: i % 2 === 0 ? 'white' : '#fafafa' }}>
+                                <td style={{ padding: '6px 8px', color: '#1f2937', fontWeight: '500' }}>{row.label}</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'right', color: minus.color, fontWeight: '600' }}>{minus.text}</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'right', color: plus.color, fontWeight: '600' }}>{plus.text}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </Section>
+    );
+};
+
 export default function PDFReport({ projectData, results, language, user }) {
     if (!projectData || !results) return null;
 
     const { kpis, cost_breakdown, revenue_breakdown, expense_breakdown } = results;
-    const { name, type, country, property_data, income_data, assumptions_data, ai_summary } = projectData;
+    const { name, type, country, property_data, income_data, assumptions_data, ai_summary, sensitivity_data } = projectData;
     
     const hasAISummary = ai_summary && (ai_summary.insights || ai_summary.recommendations?.length > 0);
     
