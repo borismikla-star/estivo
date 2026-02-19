@@ -115,7 +115,8 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
       content: <PropertyInputs 
         data={projectData.property_data || {}} 
         onChange={(updatedData) => onBulkUpdate('property_data', updatedData)} 
-        language={language} 
+        language={language}
+        isVatPayer={projectData.operating_data?.is_vat_payer === true}
         t={t} 
       />,
     },
