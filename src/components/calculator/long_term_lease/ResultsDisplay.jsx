@@ -684,9 +684,14 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                         {/* Section: Annual metrics (Year 1) */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
-                                    {language === 'sk' ? '📅 Ročné metriky – 1. rok' : language === 'pl' ? '📅 Wskaźniki roczne – Rok 1' : language === 'hu' ? '📅 Éves mutatók – 1. év' : language === 'de' ? '📅 Jährliche Kennzahlen – Jahr 1' : '📅 Annual Metrics – Year 1'}
-                                </span>
+                                <div className="h-1 w-6 rounded bg-blue-500"></div>
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {language === 'sk' ? 'Ročné metriky – Rok 1' :
+                                     language === 'pl' ? 'Wskaźniki roczne – Rok 1' :
+                                     language === 'hu' ? 'Éves mutatók – 1. év' :
+                                     language === 'de' ? 'Jährliche Kennzahlen – Jahr 1' :
+                                     'Annual Metrics – Year 1'}
+                                </h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <KPICard
