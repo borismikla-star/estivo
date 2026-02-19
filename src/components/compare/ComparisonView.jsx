@@ -183,7 +183,7 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
         },
         {
             key: 'annual_cashflow',
-            label: isDev(undefined) ? t.profit : t.cashflow, // label override per row handled below
+            label: t.cashflow,
             formatter: currency,
             accessor: (p) => isDev(p)
                 ? (p.results?.kpis?.gross_profit || 0)
