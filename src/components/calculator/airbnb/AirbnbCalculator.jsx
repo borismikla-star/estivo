@@ -10,6 +10,7 @@ import IncomeInputs from "./IncomeInputs";
 import OperatingInputs from "./OperatingInputs";
 import FinancingInputsAirbnb from "../long_term_lease/FinancingInputs";
 import LegislativeNotes from "../LegislativeNotes";
+import VatInputBanner from "../VatInputBanner";
 import InfoTooltip from "../../shared/InfoTooltip";
 
 export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpdate, language, countryPresets, t }) {

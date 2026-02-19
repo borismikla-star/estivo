@@ -10,6 +10,7 @@ import CapExInputs from "./CapExInputs";
 import FinancingInputs from "./FinancingInputs";
 import AssumptionsInputs from "./AssumptionsInputs";
 import LegislativeNotes from "../LegislativeNotes";
+import VatInputBanner from "../VatInputBanner";
 
 
 export default function CommercialCalculator({ projectData, onBulkUpdate, language, countryPresets, t }) {

@@ -11,6 +11,7 @@ import FinancingInputs from "./FinancingInputs";
 import InitialCostsInputs from "./InitialCostsInputs";
 import OperatingInputs from "./OperatingInputs";
 import LegislativeNotes from "../LegislativeNotes";
+import VatInputBanner from "../VatInputBanner";
 
 export default function LongTermLeaseCalculator({ projectData, onFieldChange, onBulkUpdate, language, user, countryPresets, t }) {
   const [isEstimatingRent, setIsEstimatingRent] = useState(false);
