@@ -172,6 +172,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', purchase
     };
 
     const t = translations[language] || translations.en;
+    const vatHints = useVatHints(language);
 
     const nightlyRate = localData.avg_nightly_rate || 0;
     const occupancyPercentage = (localData.occupancy_rate || 0) / 100;
