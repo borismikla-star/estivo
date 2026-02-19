@@ -1033,9 +1033,9 @@ export default function PDFReport({ projectData, results, language, user }) {
                                 {/* IRR - Before and After Tax */}
                                 {kpis.irr !== undefined && (
                                     <>
-                                        <KeyValue label={currentT.irrBeforeTax} value={percentFormatter(kpis.irr)} />
+                                        <KeyValue label={currentT.irrBeforeTax} value={kpis.irr !== null ? percentFormatter(kpis.irr) : 'N/A'} />
                                         {kpis.irr_after_tax !== undefined && (
-                                            <KeyValue label={currentT.irrAfterTax} value={percentFormatter(kpis.irr_after_tax)} isBold />
+                                            <KeyValue label={currentT.irrAfterTax} value={kpis.irr_after_tax !== null ? percentFormatter(kpis.irr_after_tax) : 'N/A'} isBold />
                                         )}
                                     </>
                                 )}
@@ -1058,7 +1058,7 @@ export default function PDFReport({ projectData, results, language, user }) {
                                 )}
                                 
                                 {kpis.dscr !== undefined && (
-                                    <KeyValue label={currentT.dscr} value={kpis.dscr.toFixed(2)} />
+                                    <KeyValue label={currentT.dscr} value={kpis.dscr !== null ? kpis.dscr.toFixed(2) : 'N/A'} />
                                 )}
                                 
                                 {kpis.gross_rental_yield !== undefined && (
