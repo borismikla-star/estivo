@@ -189,7 +189,7 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
     
     const projections = [];
     // For VAT payers: input VAT on purchase is refundable → reduces effective equity at t=0
-    const effectiveEquityForIRR = isVatPayer ? totalEquity - vatOnPurchase : totalEquity;
+    const effectiveEquityForIRR = isVatPayer ? Math.max(1, totalEquity - vatOnPurchase) : totalEquity;
     const cashFlowsForIRR = [-effectiveEquityForIRR];
     const cashFlowsForIRRAfterTax = [-effectiveEquityForIRR];
     let cumulativeCashFlow = 0;
