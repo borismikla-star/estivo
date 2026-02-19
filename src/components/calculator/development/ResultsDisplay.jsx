@@ -799,23 +799,31 @@ export default function ResultsDisplay({ results, currency = '€', language = '
                         </TabsContent>
 
                         {/* Cash Flow Tab */}
-                        <TabsContent value="cashflow" className="space-y-6">
-                            <h3 className="text-lg font-semibold flex items-center gap-2">
-                                <TrendingUp className="w-5 h-5" />
-                                {t.cashflow_timeline}
-                            </h3>
-                            <ResponsiveContainer width="100%" height={400}>
-                                <LineChart data={cashFlowData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="period" />
-                                    <YAxis tickFormatter={(value) => `${currency}${(value / 1000).toFixed(0)}k`} />
-                                    <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="costs" stroke="#E53935" name={t.costs} strokeWidth={2} />
-                                    <Line type="monotone" dataKey="revenue" stroke="#00B894" name={t.revenue} strokeWidth={2} />
-                                    <Line type="monotone" dataKey="cumulative" stroke="#003E7E" name={t.cumulative_cashflow} strokeWidth={3} />
-                                </LineChart>
-                            </ResponsiveContainer>
+                        <TabsContent value="cashflow" className="space-y-8">
+                            <div>
+                                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+                                    <TrendingUp className="w-5 h-5" />
+                                    {t.cashflow_timeline}
+                                </h3>
+                                <ResponsiveContainer width="100%" height={400}>
+                                    <LineChart data={cashFlowData}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="period" />
+                                        <YAxis tickFormatter={(value) => `${currency}${(value / 1000).toFixed(0)}k`} />
+                                        <Tooltip formatter={(value) => currencyFormatter(value, 'EUR', currency, 0)} />
+                                        <Legend />
+                                        <Line type="monotone" dataKey="costs" stroke="#E53935" name={t.costs} strokeWidth={2} />
+                                        <Line type="monotone" dataKey="revenue" stroke="#00B894" name={t.revenue} strokeWidth={2} />
+                                        <Line type="monotone" dataKey="cumulative" stroke="#003E7E" name={t.cumulative_cashflow} strokeWidth={3} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                            
+                            {sensitivityData && sensitivityData.length > 0 && (
+                                <div>
+                                    <SensitivityAnalysis sensitivityData={sensitivityData} language={language} />
+                                </div>
+                            )}
                         </TabsContent>
                     </Tabs>
                 </CardContent>
