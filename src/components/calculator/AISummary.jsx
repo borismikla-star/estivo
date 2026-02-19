@@ -329,6 +329,15 @@ const AISummary = ({ summary, sensitivityData, isLoading, error, onGenerate, can
                         </>
                     )}
 
+                     {results && projectType && (
+                        <BenchmarkContext
+                            results={results}
+                            projectType={projectType}
+                            country={country}
+                            language={language}
+                        />
+                     )}
+
                      {hasSensitivity && (
                         <div>
                             <h4 className="flex items-center text-md font-semibold mb-2 text-foreground">
