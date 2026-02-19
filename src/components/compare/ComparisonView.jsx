@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -158,24 +157,62 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
 
     const t = translations[language] || translations.en;
 
+    const currency = (val) => currencyFormatter(val, 'EUR', '€', 0);
+
     const metrics = [
         {
-            key: 'equity_required', // Changed key to reflect 'equity'
+            key: 'total_investment',
+            label: t.investment,
+            formatter: currency,
+            accessor: (p) => p.results?.kpis?.total_investment || 0,
+        },
+        {
+            key: 'equity_required',
             label: t.equity,
-            formatter: (val) => currencyFormatter(val, 'EUR', '€', 0),
+            formatter: currency,
             accessor: (p) => p.results?.kpis?.total_equity || 0,
+        },
+        {
+            key: 'annual_cashflow',
+            label: t.cashflow,
+            formatter: currency,
+            accessor: (p) => p.results?.kpis?.annual_cash_flow || p.results?.kpis?.net_cash_flow || 0,
         },
         {
             key: 'roi',
             label: t.roi,
             formatter: percentFormatter,
-            accessor: (p) => p.results?.kpis?.roi || 0,
+            accessor: (p) => p.results?.kpis?.roi_10_year ?? p.results?.kpis?.roi ?? 0,
         },
         {
-            key: 'annual_cashflow',
-            label: t.cashflow, // Used new translation key
-            formatter: (val) => currencyFormatter(val, 'EUR', '€', 0),
-            accessor: (p) => (p.results?.kpis?.avg_monthly_cash_flow || 0) * 12,
+            key: 'irr',
+            label: t.irr,
+            formatter: percentFormatter,
+            accessor: (p) => p.results?.kpis?.irr ?? null,
+        },
+        {
+            key: 'cash_on_cash',
+            label: t.cash_on_cash,
+            formatter: percentFormatter,
+            accessor: (p) => p.results?.kpis?.cash_on_cash_return ?? 0,
+        },
+        {
+            key: 'cap_rate',
+            label: t.cap_rate,
+            formatter: percentFormatter,
+            accessor: (p) => p.results?.kpis?.cap_rate ?? 0,
+        },
+        {
+            key: 'noi',
+            label: t.noi,
+            formatter: currency,
+            accessor: (p) => p.results?.kpis?.net_operating_income ?? 0,
+        },
+        {
+            key: 'payback',
+            label: t.payback,
+            formatter: (val) => val === null || val === undefined ? '—' : val === '>10' ? '>10 r.' : `${val} r.`,
+            accessor: (p) => p.results?.kpis?.payback_period ?? null,
         },
     ];
 
