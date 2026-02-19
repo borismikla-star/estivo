@@ -268,7 +268,7 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
                         {metrics.map(metric => (
                             <TableRow key={metric.key}>
                                 <TableCell className="font-medium text-muted-foreground">
-                                    {metric.labelFn ? metric.labelFn(projects[0]) : metric.label}
+                                    {metric.label}
                                 </TableCell>
                                 {projects.map(p => {
                                     const val = metric.accessor(p);
