@@ -763,7 +763,7 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                 )}
                                 <KPICard
                                     title={t.dscr}
-                                    value={kpis.dscr ? kpis.dscr.toFixed(2) : 'N/A'}
+                                    value={kpis.dscr !== null && kpis.dscr !== undefined ? kpis.dscr.toFixed(2) : dscrNaLabel}
                                     description={t.dscrDesc}
                                     tooltip={t.dscrTooltip}
                                     warning={getDSCRStatus(kpis.dscr) === 'warning' ? t.dscrWarning : null}
