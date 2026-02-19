@@ -594,7 +594,7 @@ export default function Calculator() {
     } catch (error) {
         console.error("Sensitivity Analysis Error:", error);
     }
-  }, [language, projectData, calculateLongTermLease, calculateAirbnb, calculateCommercial]);
+  }, [language, projectData]);
 
   const generateAISummary = useCallback(async () => {
     if (!results || !results.kpis) {
