@@ -806,22 +806,22 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                                 )}
                                 <KPICard
                                     title={t.irr}
-                                    value={percentFormatter(kpis.irr, 2)}
+                                    value={kpis.irr !== null && kpis.irr !== undefined ? percentFormatter(kpis.irr, 2) : irrNaLabel}
                                     description={t.irrDesc}
                                     tooltip={t.irrTooltip}
-                                    warning={kpis.irr < 10 ? t.irrWarning : null}
-                                    excellent={kpis.irr > 18}
-                                    good={kpis.irr > 12}
+                                    warning={kpis.irr !== null && kpis.irr < 10 ? t.irrWarning : null}
+                                    excellent={kpis.irr !== null && kpis.irr > 18}
+                                    good={kpis.irr !== null && kpis.irr > 12}
                                 />
                                 {kpis.irr_after_tax !== undefined && (
                                     <KPICard
                                         title={t.irrAfterTax}
-                                        value={percentFormatter(kpis.irr_after_tax, 2)}
+                                        value={kpis.irr_after_tax !== null ? percentFormatter(kpis.irr_after_tax, 2) : irrNaLabel}
                                         description={t.irrAfterTaxDesc}
                                         tooltip={t.irrAfterTaxTooltip}
-                                        warning={kpis.irr_after_tax < 10 ? t.irrWarning : null}
-                                        excellent={kpis.irr_after_tax > 18}
-                                        good={kpis.irr_after_tax > 12}
+                                        warning={kpis.irr_after_tax !== null && kpis.irr_after_tax < 10 ? t.irrWarning : null}
+                                        excellent={kpis.irr_after_tax !== null && kpis.irr_after_tax > 18}
+                                        good={kpis.irr_after_tax !== null && kpis.irr_after_tax > 12}
                                     />
                                 )}
                             </div>
