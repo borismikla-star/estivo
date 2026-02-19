@@ -21,7 +21,7 @@ const messages = {
         hint_nightly: "Zadajte cenu za noc bez DPH (netto)",
     },
     pl: {
-        no_vat: "Wprowadź wszystkie kwoty bez VAT (ceny netto). VAT nie dotyczy tego obliczenia.",
+        no_vat: "Wprowadź wszystkie kwoty bez VAT (ceny netto).",
         vat_payer: "Jesteś podatnikiem VAT. Cenę zakupu wprowadź z VAT (brutto) — system automatycznie odliczy VAT. Pozostałe kwoty wprowadź bez VAT (netto).",
         hint_price_no_vat: "Wprowadź kwotę netto (bez VAT)",
         hint_price_vat: "Wprowadź kwotę brutto (z VAT) — VAT zostanie automatycznie odliczony",
@@ -30,7 +30,7 @@ const messages = {
         hint_nightly: "Wprowadź cenę za noc netto (bez VAT)",
     },
     hu: {
-        no_vat: "Minden összeget ÁFA nélkül (nettó áron) adjon meg. Az ÁFA nem vonatkozik erre a számításra.",
+        no_vat: "Minden összeget ÁFA nélkül (nettó áron) adjon meg.",
         vat_payer: "Ön ÁFA fizető. A vételárat ÁFÁ-val (bruttó) adja meg — a rendszer automatikusan levonja az ÁFÁ-t. Az összes többi összeget ÁFA nélkül (nettó) adja meg.",
         hint_price_no_vat: "Adja meg a nettó összeget (ÁFA nélkül)",
         hint_price_vat: "Adja meg a bruttó összeget (ÁFÁ-val) — az ÁFA automatikusan levonásra kerül",
@@ -39,7 +39,7 @@ const messages = {
         hint_nightly: "Adja meg az éjszakánkénti nettó árat (ÁFA nélkül)",
     },
     de: {
-        no_vat: "Geben Sie alle Beträge ohne MwSt. (Nettopreise) ein. MwSt. gilt nicht für diese Berechnung.",
+        no_vat: "Geben Sie alle Beträge ohne MwSt. (Nettopreise) ein.",
         vat_payer: "Sie sind umsatzsteuerpflichtig. Geben Sie den Kaufpreis inkl. MwSt. (brutto) ein — das System zieht die MwSt. automatisch ab. Alle anderen Beträge netto (ohne MwSt.) eingeben.",
         hint_price_no_vat: "Nettobetrag eingeben (ohne MwSt.)",
         hint_price_vat: "Bruttobetrag eingeben (inkl. MwSt.) — MwSt. wird automatisch abgezogen",
