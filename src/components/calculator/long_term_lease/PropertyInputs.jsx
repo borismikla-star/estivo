@@ -168,13 +168,14 @@ export default function PropertyInputs({ data, onChange, onEstimateRent, isEstim
                     <InfoTooltip content={t.monthly_rent_tooltip} />
                 </div>
                 <div className="flex gap-2">
-                    <Input
-                        id="monthly_rent"
-                        type="number"
-                        value={localData.monthly_rent || ''}
-                        onChange={(e) => handleChange('monthly_rent', parseFloat(e.target.value) || 0)}
-                        className="flex-1"
-                    />
+                <Input
+                    id="monthly_rent"
+                    type="number"
+                    value={localData.monthly_rent || ''}
+                    onChange={(e) => handleChange('monthly_rent', parseFloat(e.target.value) || 0)}
+                    className="flex-1"
+                />
+
                     {/* AI Estimate button disabled for now */}
                     {/*
                     <Button
