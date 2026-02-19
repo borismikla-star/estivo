@@ -267,12 +267,17 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
                     <TableBody>
                         {metrics.map(metric => (
                             <TableRow key={metric.key}>
-                                <TableCell className="font-medium text-muted-foreground">{metric.label}</TableCell>
-                                {projects.map(p => (
-                                    <TableCell key={p.id} className="text-center font-bold text-lg text-primary">
-                                        {metric.formatter(metric.accessor(p))}
-                                    </TableCell>
-                                ))}
+                                <TableCell className="font-medium text-muted-foreground">
+                                    {metric.labelFn ? metric.labelFn(projects[0]) : metric.label}
+                                </TableCell>
+                                {projects.map(p => {
+                                    const val = metric.accessor(p);
+                                    return (
+                                        <TableCell key={p.id} className="text-center font-bold text-lg text-primary">
+                                            {val === null || val === undefined ? '—' : metric.formatter(val)}
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         ))}
                     </TableBody>
