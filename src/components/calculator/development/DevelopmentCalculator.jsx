@@ -6,6 +6,7 @@ import CostInputs from "./CostInputs";
 import RevenueInputs from "./RevenueInputs";
 import FinancingInputs from "./FinancingInputs";
 import LegislativeNotes from "../LegislativeNotes";
+import VatInputBanner from "../VatInputBanner";
 
 export default function DevelopmentCalculator({ projectData, onBulkUpdate, language, countryPresets }) {
   const translations = {

@@ -3,7 +3,7 @@ import { Info } from 'lucide-react';
 
 const messages = {
     en: {
-        no_vat: "Enter all amounts excluding VAT (net prices). VAT is not applicable to this calculation.",
+        no_vat: "Enter all amounts excluding VAT (net prices).",
         vat_payer: "You are a VAT payer. Enter the purchase price including VAT (gross) — the system will automatically deduct VAT. Enter all other amounts excluding VAT (net).",
         hint_price_no_vat: "Enter net amount (excl. VAT)",
         hint_price_vat: "Enter gross amount (incl. VAT) — VAT will be deducted automatically",
