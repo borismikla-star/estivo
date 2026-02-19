@@ -5,6 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sparkles, Calculator } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
+import { useVatHints } from "../VatInputBanner";
 
 export default function PropertyInputs({ data, onChange, language = 'en' }) {
     const [autoMode, setAutoMode] = useState(data.rentable_area_auto !== false);
