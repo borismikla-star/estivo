@@ -1330,17 +1330,6 @@ export default function PDFReport({ projectData, results, language, user }) {
                     </>
                 ) : null}
 
-                {/* Market Benchmarks */}
-                <BenchmarkSection results={results} projectType={type} country={country} language={language} />
-
-                {/* Sensitivity Analysis */}
-                {sensitivity_data && sensitivity_data.length > 0 && (
-                    <SensitivitySection sensitivityData={sensitivity_data} language={language} />
-                )}
-
-                {/* Methodology & Assumptions Section */}
-                <MethodologySection language={language} type={type} kpis={kpis} />
-
                 {/* AI Investment Analysis - shown for all project types if available */}
                 {hasAISummary && (
                     <Section title={currentT.aiAnalysis}>
