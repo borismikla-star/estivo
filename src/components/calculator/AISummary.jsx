@@ -7,6 +7,7 @@ import { percentFormatter } from '../lib/formatters';
 import UpgradePrompt from '@/components/shared/UpgradePrompt';
 import { Link } from 'react-router-dom';
 import SensitivityAnalysis from './SensitivityAnalysis';
+import BenchmarkContext from './BenchmarkContext';
 
 // Helper function for creating URLs, common in routing setups
 // If createPageUrl is defined elsewhere or imported, remove this placeholder.
