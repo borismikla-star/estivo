@@ -179,6 +179,8 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
         </div>
       </div>
 
+      <VatInputBanner isVatPayer={projectData.assumptions_data?.is_vat_payer === true} language={language} />
+
       <Accordion type="multiple" defaultValue={['item-1', 'item-2']} className="w-full space-y-4">
           {accordionItems.map(item => (
             <AccordionItem key={item.value} value={item.value} className="border rounded-lg bg-white shadow-sm">

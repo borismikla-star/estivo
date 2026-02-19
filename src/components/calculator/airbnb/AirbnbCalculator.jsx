@@ -213,6 +213,8 @@ export default function AirbnbCalculator({ projectData, onFieldChange, onBulkUpd
         </div>
       </div>
 
+      <VatInputBanner isVatPayer={projectData.operating_data?.is_vat_payer === true} language={language} />
+
       <Accordion type="multiple" defaultValue={['item-1', 'item-2']} className="w-full space-y-4">
         {accordionItems.map(item => (
           <AccordionItem key={item.value} value={item.value} className="border rounded-lg bg-white">
