@@ -72,6 +72,8 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
             price: "Kúpna cena",
             rent: "Ročný nájom",
             noi: "Čistý prevádzkový príjem",
+            profit: "Hrubý zisk",
+            net_profit: "Čistý zisk",
             long_term_lease: "Dlhodobý prenájom",
             commercial: "Komerčný",
             airbnb: "Krátky prenájom",
