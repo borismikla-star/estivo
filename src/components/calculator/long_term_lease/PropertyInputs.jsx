@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { useVatHints } from '../VatInputBanner';
 
-export default function PropertyInputs({ data, onChange, onEstimateRent, isEstimatingRent, language = 'en' }) {
+export default function PropertyInputs({ data, onChange, onEstimateRent, isEstimatingRent, language = 'en', isVatPayer = false }) {
     const [localData, setLocalData] = useState(data);
+    const vatHints = useVatHints(language);
 
     useEffect(() => {
         setLocalData(data);
