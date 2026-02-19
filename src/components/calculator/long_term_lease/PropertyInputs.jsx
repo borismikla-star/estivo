@@ -144,6 +144,9 @@ export default function PropertyInputs({ data, onChange, onEstimateRent, isEstim
                         value={localData.purchase_price || ''}
                         onChange={(e) => handleChange('purchase_price', parseFloat(e.target.value) || 0)}
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                        {isVatPayer ? vatHints.hint_price_vat : vatHints.hint_price_no_vat}
+                    </p>
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
