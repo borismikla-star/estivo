@@ -27,6 +27,7 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     const purchasePriceGross = num(property_data.purchase_price);
     const purchasePrice = isVatPayer ? purchasePriceGross / vatMultiplier : purchasePriceGross;
     const vatOnPurchase = isVatPayer ? purchasePriceGross - purchasePrice : 0;
+    
     const monthlyRent = num(property_data.monthly_rent);
     const annualRent = monthlyRent * 12;
     
