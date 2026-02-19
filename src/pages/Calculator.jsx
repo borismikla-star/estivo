@@ -438,117 +438,149 @@ export default function Calculator() {
 
   const runSensitivityAnalysis = useCallback(async (baseResults, preset) => {
     try {
-        if (!projectData) return;
+        if (!projectData || !baseResults?.kpis) return;
         const projectType = projectData.type;
+
+        const baseIrr = baseResults.kpis.irr != null ? baseResults.kpis.irr * 100 : null;
+
+        const LABELS = {
+            en: { rent: 'Rent / Nightly Rate', occupancy: 'Occupancy (±5%)', purchasePrice: 'Purchase Price', exitCapRate: 'Exit Cap Rate (+0.5%)', interestRate: 'Interest Rate (+1%)', salePrice: 'Sale Price', constructionCost: 'Construction Cost' },
+            sk: { rent: 'Nájom / Cena za noc', occupancy: 'Obsadenosť (±5%)', purchasePrice: 'Kúpna cena', exitCapRate: 'Exit Cap Rate (+0,5%)', interestRate: 'Úroková sadzba (+1%)', salePrice: 'Predajná cena', constructionCost: 'Náklady výstavby' },
+            pl: { rent: 'Czynsz / Stawka nocna', occupancy: 'Obłożenie (±5%)', purchasePrice: 'Cena zakupu', exitCapRate: 'Exit Cap Rate (+0,5%)', interestRate: 'Stopa procentowa (+1%)', salePrice: 'Cena sprzedaży', constructionCost: 'Koszty budowy' },
+            hu: { rent: 'Bérleti díj / Éjszakai díj', occupancy: 'Foglaltság (±5%)', purchasePrice: 'Vételár', exitCapRate: 'Exit Cap Rate (+0,5%)', interestRate: 'Kamatláb (+1%)', salePrice: 'Eladási ár', constructionCost: 'Építési költségek' },
+            de: { rent: 'Miete / Nachtpreis', occupancy: 'Belegung (±5%)', purchasePrice: 'Kaufpreis', exitCapRate: 'Exit Cap Rate (+0,5%)', interestRate: 'Zinssatz (+1%)', salePrice: 'Verkaufspreis', constructionCost: 'Baukosten' },
+        };
+        const L = LABELS[language] || LABELS.en;
+
+        // Helper: run calculation and extract IRR
+        const calcIrr = async (modifiedData) => {
+            let res;
+            switch (projectType) {
+                case 'long_term_lease': res = calculateLongTermLease(modifiedData, preset, language); break;
+                case 'commercial': res = calculateCommercial(modifiedData, preset, language); break;
+                case 'airbnb': res = calculateAirbnb(modifiedData, preset, language); break;
+                case 'development': {
+                    const { calculateDevelopment } = await import('../components/calculator/development/calculation');
+                    res = calculateDevelopment(modifiedData, preset, language);
+                    break;
+                }
+                default: return null;
+            }
+            const raw = res?.kpis?.irr;
+            return raw != null ? raw * 100 : null;
+        };
+
+        // Deep clone helper
+        const clone = (d) => JSON.parse(JSON.stringify(d));
+
         let scenarios = [];
-        
+
         if (projectType === 'development') {
-            const devScenarios = {
-                sk: [
-                    { name: 'Predajná cena +10%', change: 15 },
-                    { name: 'Predajná cena -10%', change: -15 },
-                    { name: 'Náklady výstavby +10%', change: -12 },
-                    { name: 'Predĺženie projektu +3 mesiace', change: -8 },
-                    { name: 'Úrok +1%', change: -4 },
-                ],
-                en: [
-                    { name: 'Sale Price +10%', change: 15 },
-                    { name: 'Sale Price -10%', change: -15 },
-                    { name: 'Construction Costs +10%', change: -12 },
-                    { name: 'Project Delay +3 months', change: -8 },
-                    { name: 'Interest Rate +1%', change: -4 },
-                ],
-                pl: [
-                    { name: 'Cena sprzedaży +10%', change: 15 },
-                    { name: 'Cena sprzedaży -10%', change: -15 },
-                    { name: 'Koszty budowy +10%', change: -12 },
-                    { name: 'Opóźnienie projektu +3 miesiące', change: -8 },
-                    { name: 'Stopa procentowa +1%', change: -4 },
-                ],
-                hu: [
-                    { name: 'Eladási ár +10%', change: 15 },
-                    { name: 'Eladási ár -10%', change: -15 },
-                    { name: 'Építési költségek +10%', change: -12 },
-                    { name: 'Projekt késés +3 hónap', change: -8 },
-                    { name: 'Kamatláb +1%', change: -4 },
-                ],
-                de: [
-                    { name: 'Verkaufspreis +10%', change: 15 },
-                    { name: 'Verkaufspreis -10%', change: -15 },
-                    { name: 'Baukosten +10%', change: -12 },
-                    { name: 'Projektverzögerung +3 Monate', change: -8 },
-                    { name: 'Zinssatz +1%', change: -4 },
-                ]
-            };
-            scenarios = devScenarios[language] || devScenarios.en;
+            // Sale price ±10%
+            const saleMinus = clone(projectData);
+            if (saleMinus.revenue_data?.avg_price_per_m2) saleMinus.revenue_data.avg_price_per_m2 *= 0.9;
+            const salePlus = clone(projectData);
+            if (salePlus.revenue_data?.avg_price_per_m2) salePlus.revenue_data.avg_price_per_m2 *= 1.1;
+
+            // Construction cost ±10%
+            const constrMinus = clone(projectData);
+            if (constrMinus.construction_data?.construction_cost_per_m2) constrMinus.construction_data.construction_cost_per_m2 *= 0.9;
+            const constrPlus = clone(projectData);
+            if (constrPlus.construction_data?.construction_cost_per_m2) constrPlus.construction_data.construction_cost_per_m2 *= 1.1;
+
+            // Interest rate +1%
+            const intMinus = clone(projectData);
+            if (intMinus.financing_data?.interest_rate != null) intMinus.financing_data.interest_rate = Math.max(0, (Number(intMinus.financing_data.interest_rate) || 0) - 1);
+            const intPlus = clone(projectData);
+            if (intPlus.financing_data?.interest_rate != null) intPlus.financing_data.interest_rate = (Number(intPlus.financing_data.interest_rate) || 0) + 1;
+
+            const [sM, sP, cM, cP, iM, iP] = await Promise.all([
+                calcIrr(saleMinus), calcIrr(salePlus), calcIrr(constrMinus), calcIrr(constrPlus), calcIrr(intMinus), calcIrr(intPlus)
+            ]);
+
+            scenarios = [
+                { label: L.salePrice, irr_minus10: sM, irr_plus10: sP, base_irr: baseIrr },
+                { label: L.constructionCost, irr_minus10: cM, irr_plus10: cP, base_irr: baseIrr },
+                { label: L.interestRate, irr_minus10: iM, irr_plus10: iP, base_irr: baseIrr },
+            ];
+
         } else if (projectType === 'airbnb') {
-            const airbnbScenarios = {
-                sk: [
-                    { name: 'Obsadenosť +10%', change: 12 },
-                    { name: 'Denná sadzba +10%', change: 10 },
-                    { name: 'Úrok +1%', change: -5 },
-                    { name: 'Prevádzkové náklady +10%', change: -4 },
-                ],
-                en: [
-                    { name: 'Occupancy +10%', change: 12 },
-                    { name: 'Daily Rate +10%', change: 10 },
-                    { name: 'Interest Rate +1%', change: -5 },
-                    { name: 'Operating Costs +10%', change: -4 },
-                ],
-                pl: [
-                    { name: 'Obłożenie +10%', change: 12 },
-                    { name: 'Stawka dzienna +10%', change: 10 },
-                    { name: 'Stopa procentowa +1%', change: -5 },
-                    { name: 'Koszty operacyjne +10%', change: -4 },
-                ],
-                hu: [
-                    { name: 'Foglaltság +10%', change: 12 },
-                    { name: 'Napi díj +10%', change: 10 },
-                    { name: 'Kamatláb +1%', change: -5 },
-                    { name: 'Üzemi költségek +10%', change: -4 },
-                ],
-                de: [
-                    { name: 'Belegung +10%', change: 12 },
-                    { name: 'Tagesrate +10%', change: 10 },
-                    { name: 'Zinssatz +1%', change: -5 },
-                    { name: 'Betriebskosten +10%', change: -4 },
-                ]
-            };
-            scenarios = airbnbScenarios[language] || airbnbScenarios.en;
+            // Occupancy ±5%
+            const occMinus = clone(projectData);
+            occMinus.income_data = { ...occMinus.income_data, occupancy_rate: Math.max(0, (Number(occMinus.income_data?.occupancy_rate) || 70) - 5) };
+            const occPlus = clone(projectData);
+            occPlus.income_data = { ...occPlus.income_data, occupancy_rate: Math.min(100, (Number(occPlus.income_data?.occupancy_rate) || 70) + 5) };
+
+            // Nightly rate ±10%
+            const rateMinus = clone(projectData);
+            rateMinus.income_data = { ...rateMinus.income_data, avg_nightly_rate: (Number(rateMinus.income_data?.avg_nightly_rate) || 0) * 0.9 };
+            const ratePlus = clone(projectData);
+            ratePlus.income_data = { ...ratePlus.income_data, avg_nightly_rate: (Number(ratePlus.income_data?.avg_nightly_rate) || 0) * 1.1 };
+
+            // Purchase price ±10%
+            const priceMinus = clone(projectData);
+            priceMinus.property_data = { ...priceMinus.property_data, purchase_price: (Number(priceMinus.property_data?.purchase_price) || 0) * 0.9 };
+            const pricePlus = clone(projectData);
+            pricePlus.property_data = { ...pricePlus.property_data, purchase_price: (Number(pricePlus.property_data?.purchase_price) || 0) * 1.1 };
+
+            // Interest ±1%
+            const intMinus = clone(projectData);
+            intMinus.financing_data = { ...intMinus.financing_data, interest_rate: Math.max(0, (Number(intMinus.financing_data?.interest_rate) || 0) - 1) };
+            const intPlus = clone(projectData);
+            intPlus.financing_data = { ...intPlus.financing_data, interest_rate: (Number(intPlus.financing_data?.interest_rate) || 0) + 1 };
+
+            const [oM, oP, rM, rP, prM, prP, iM, iP] = await Promise.all([
+                calcIrr(occMinus), calcIrr(occPlus), calcIrr(rateMinus), calcIrr(ratePlus),
+                calcIrr(priceMinus), calcIrr(pricePlus), calcIrr(intMinus), calcIrr(intPlus)
+            ]);
+
+            scenarios = [
+                { label: L.rent, irr_minus10: rM, irr_plus10: rP, base_irr: baseIrr },
+                { label: L.occupancy, irr_minus10: oM, irr_plus10: oP, base_irr: baseIrr },
+                { label: L.purchasePrice, irr_minus10: prM, irr_plus10: prP, base_irr: baseIrr },
+                { label: L.interestRate, irr_minus10: iM, irr_plus10: iP, base_irr: baseIrr },
+            ];
+
         } else {
-            const generalScenarios = {
-                sk: [
-                    { name: 'Kúpna cena +10%', change: -10 },
-                    { name: 'Nájom +10%', change: 8 },
-                    { name: 'Úrok +1%', change: -5 },
-                    { name: 'Neobsadenosť +5%', change: -3 },
-                ],
-                en: [
-                    { name: 'Purchase Price +10%', change: -10 },
-                    { name: 'Rent +10%', change: 8 },
-                    { name: 'Interest Rate +1%', change: -5 },
-                    { name: 'Vacancy +5%', change: -3 },
-                ],
-                pl: [
-                    { name: 'Cena zakupu +10%', change: -10 },
-                    { name: 'Czynsz +10%', change: 8 },
-                    { name: 'Stopa procentowa +1%', change: -5 },
-                    { name: 'Pustostany +5%', change: -3 },
-                ],
-                hu: [
-                    { name: 'Vételár +10%', change: -10 },
-                    { name: 'Bérleti díj +10%', change: 8 },
-                    { name: 'Kamatláb +1%', change: -5 },
-                    { name: 'Üresedés +5%', change: -3 },
-                ],
-                de: [
-                    { name: 'Kaufpreis +10%', change: -10 },
-                    { name: 'Miete +10%', change: 8 },
-                    { name: 'Zinssatz +1%', change: -5 },
-                    { name: 'Leerstand +5%', change: -3 },
-                ]
-            };
-            scenarios = generalScenarios[language] || generalScenarios.en;
+            // long_term_lease / commercial
+            // Rent ±10%
+            const rentMinus = clone(projectData);
+            if (rentMinus.property_data?.monthly_rent) rentMinus.property_data.monthly_rent *= 0.9;
+            if (rentMinus.income_data?.base_rent) rentMinus.income_data.base_rent *= 0.9;
+            const rentPlus = clone(projectData);
+            if (rentPlus.property_data?.monthly_rent) rentPlus.property_data.monthly_rent *= 1.1;
+            if (rentPlus.income_data?.base_rent) rentPlus.income_data.base_rent *= 1.1;
+
+            // Purchase price ±10%
+            const priceMinus = clone(projectData);
+            const priceField = priceMinus.property_data?.purchase_price != null ? 'purchase_price' : 'price';
+            priceMinus.property_data = { ...priceMinus.property_data, [priceField]: (Number(priceMinus.property_data?.[priceField]) || 0) * 0.9 };
+            const pricePlus = clone(projectData);
+            pricePlus.property_data = { ...pricePlus.property_data, [priceField]: (Number(pricePlus.property_data?.[priceField]) || 0) * 1.1 };
+
+            // Interest rate ±1%
+            const intMinus = clone(projectData);
+            intMinus.financing_data = { ...intMinus.financing_data, interest_rate: Math.max(0, (Number(intMinus.financing_data?.interest_rate) || 0) - 1) };
+            const intPlus = clone(projectData);
+            intPlus.financing_data = { ...intPlus.financing_data, interest_rate: (Number(intPlus.financing_data?.interest_rate) || 0) + 1 };
+
+            // Exit cap rate: shift assumptions ±0.5%
+            const exitMinus = clone(projectData);
+            exitMinus.assumptions_data = { ...exitMinus.assumptions_data, exit_cap_rate: Math.max(0.1, (Number(exitMinus.assumptions_data?.exit_cap_rate) || (baseResults.kpis.cap_rate || 5)) - 0.5) };
+            const exitPlus = clone(projectData);
+            exitPlus.assumptions_data = { ...exitPlus.assumptions_data, exit_cap_rate: (Number(exitPlus.assumptions_data?.exit_cap_rate) || (baseResults.kpis.cap_rate || 5)) + 0.5 };
+
+            const [rM, rP, prM, prP, iM, iP, eM, eP] = await Promise.all([
+                calcIrr(rentMinus), calcIrr(rentPlus), calcIrr(priceMinus), calcIrr(pricePlus),
+                calcIrr(intMinus), calcIrr(intPlus), calcIrr(exitMinus), calcIrr(exitPlus)
+            ]);
+
+            scenarios = [
+                { label: L.rent, irr_minus10: rM, irr_plus10: rP, base_irr: baseIrr },
+                { label: L.purchasePrice, irr_minus10: prM, irr_plus10: prP, base_irr: baseIrr },
+                { label: L.interestRate, irr_minus10: iM, irr_plus10: iP, base_irr: baseIrr },
+                { label: L.exitCapRate, irr_minus10: eM, irr_plus10: eP, base_irr: baseIrr },
+            ];
         }
         
         setSensitivityData(scenarios);
@@ -562,7 +594,7 @@ export default function Calculator() {
     } catch (error) {
         console.error("Sensitivity Analysis Error:", error);
     }
-  }, [language, projectData]);
+  }, [language, projectData, calculateLongTermLease, calculateAirbnb, calculateCommercial]);
 
   const generateAISummary = useCallback(async () => {
     if (!results || !results.kpis) {
