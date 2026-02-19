@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Download, Save, FileText } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
+import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function ResultsHeader({ language = 'en' }) {
     const translations = {
@@ -30,9 +29,16 @@ export default function ResultsHeader({ language = 'en' }) {
     const t = translations[language] || translations.en;
 
     return (
-        <div className="mb-6">
-            <h2 className="text-2xl font-bold text-foreground">{t.results_title}</h2>
-            <p className="text-muted-foreground">{t.key_metrics}</p>
-        </div>
+        <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                    <BarChart3 className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                    <CardTitle className="text-2xl">{t.results_title}</CardTitle>
+                    <CardDescription>{t.key_metrics}</CardDescription>
+                </div>
+            </div>
+        </CardHeader>
     );
 }
