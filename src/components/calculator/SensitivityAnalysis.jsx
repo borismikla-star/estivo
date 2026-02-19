@@ -152,7 +152,7 @@ export default function SensitivityAnalysis({ sensitivityData, language = 'en' }
             <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                     {t.title}
-                    <InfoTooltip info={t.description} />
+                    <InfoTooltip info={t.tooltip} />
                 </CardTitle>
                 {baseIrr !== null && (
                     <p className="text-sm text-muted-foreground">
