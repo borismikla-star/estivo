@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import InfoTooltip from '../../shared/InfoTooltip';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
+import { useVatHints } from '../VatInputBanner';
 
 export default function PropertyInputs({ data, onChange, onEstimateRent, isEstimatingRent, language = 'en' }) {
     const [localData, setLocalData] = useState(data);
