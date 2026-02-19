@@ -13,7 +13,7 @@ const AUTO_DEFAULTS = {
     comparable_long_term_rent: (purchasePrice, avgNightlyRate, occupancyRate) => Math.round(purchasePrice * 0.004),
 };
 
-export default function IncomeInputs({ data, onChange, language = 'en', purchasePrice = 0 }) {
+export default function IncomeInputs({ data, onChange, language = 'en', purchasePrice = 0, isVatPayer = false }) {
     const [localData, setLocalData] = useState(() => {
         const init = { ...data };
         Object.keys(AUTO_DEFAULTS).forEach(field => {

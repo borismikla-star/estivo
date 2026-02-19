@@ -7,8 +7,9 @@ import { Sparkles, Calculator } from "lucide-react";
 import InfoTooltip from "../../shared/InfoTooltip";
 import { useVatHints } from "../VatInputBanner";
 
-export default function PropertyInputs({ data, onChange, language = 'en' }) {
+export default function PropertyInputs({ data, onChange, language = 'en', isVatPayer = false }) {
     const [autoMode, setAutoMode] = useState(data.rentable_area_auto !== false);
+    const vatHints = useVatHints(language);
     
     // Track last calculated values to prevent unnecessary updates
     const lastCalculatedTotalAreaRef = useRef(null);
