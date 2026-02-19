@@ -4,8 +4,9 @@ import { Label } from "@/components/ui/label";
 import InfoTooltip from '../../shared/InfoTooltip';
 import { useVatHints } from '../VatInputBanner';
 
-export default function PropertyInputs({ data, onChange, language = 'en' }) {
+export default function PropertyInputs({ data, onChange, language = 'en', isVatPayer = false }) {
     const [localData, setLocalData] = useState(data);
+    const vatHints = useVatHints(language);
 
     useEffect(() => {
         setLocalData(data);
