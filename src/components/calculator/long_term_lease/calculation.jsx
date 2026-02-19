@@ -375,6 +375,11 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         renovation_costs: renovationCosts,
         furnishing_costs: furnishingCosts,
         other_initial_costs: otherInitialCosts,
+
+        // VAT info
+        is_vat_payer: isVatPayer,
+        vat_rate: isVatPayer ? vatRate : 0,
+        vat_on_purchase: vatOnPurchase,
         },
         cashFlowProjection: projections,
         equityBuildup: projections,
