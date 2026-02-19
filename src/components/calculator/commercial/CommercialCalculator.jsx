@@ -88,7 +88,8 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
       content: <PropertyInputs 
         data={projectData.property_data || {}} 
         language={language} 
-        onChange={(updatedData) => onBulkUpdate("property_data", updatedData)} 
+        onChange={(updatedData) => onBulkUpdate("property_data", updatedData)}
+        isVatPayer={projectData.assumptions_data?.is_vat_payer === true}
         t={t} 
       /> 
     },
