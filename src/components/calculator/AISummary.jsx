@@ -80,7 +80,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const AISummary = ({ summary, sensitivityData, isLoading, error, onGenerate, canGenerate, user }) => {
+const AISummary = ({ summary, sensitivityData, isLoading, error, onGenerate, canGenerate, user, results, projectType, country }) => {
     const language = user?.preferred_language || 'en';
 
     const translations = {
