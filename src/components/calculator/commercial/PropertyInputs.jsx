@@ -270,6 +270,9 @@ export default function PropertyInputs({ data, onChange, language = 'en', isVatP
                         value={data.price || ''}
                         onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                        {isVatPayer ? vatHints.hint_price_vat : vatHints.hint_price_no_vat}
+                    </p>
                 </div>
                 <div>
                     <Label>{t.size}</Label>
