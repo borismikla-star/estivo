@@ -174,6 +174,108 @@ const PrintCashFlowTimeline = ({ data, t }) => {
     );
 };
 
+// Benchmark section for PDF
+const BenchmarkSection = ({ results, projectType, country, language }) => {
+    if (!results?.kpis) return null;
+
+    const BENCHMARKS = {
+        long_term_lease: {
+            SK: { cap_rate: [4.5, 6.5], gross_yield: [5.0, 7.5], cash_on_cash: [3.0, 6.0], dscr: [1.2, 1.8] },
+            CZ: { cap_rate: [4.0, 6.0], gross_yield: [4.5, 7.0], cash_on_cash: [2.5, 5.5], dscr: [1.2, 1.8] },
+            PL: { cap_rate: [5.0, 7.5], gross_yield: [5.5, 8.5], cash_on_cash: [3.5, 7.0], dscr: [1.2, 1.8] },
+            HU: { cap_rate: [5.0, 7.5], gross_yield: [5.5, 8.0], cash_on_cash: [3.0, 6.5], dscr: [1.2, 1.8] },
+            AT: { cap_rate: [3.0, 5.0], gross_yield: [3.5, 5.5], cash_on_cash: [1.5, 4.0], dscr: [1.2, 1.8] },
+            DE: { cap_rate: [3.0, 5.0], gross_yield: [3.5, 5.5], cash_on_cash: [1.5, 4.0], dscr: [1.2, 1.8] },
+            DEFAULT: { cap_rate: [4.5, 6.5], gross_yield: [5.0, 7.5], cash_on_cash: [3.0, 6.0], dscr: [1.2, 1.8] },
+        },
+        airbnb: {
+            SK: { cap_rate: [5.5, 8.5], gross_yield: [8.0, 14.0], cash_on_cash: [5.0, 10.0], dscr: [1.2, 1.8] },
+            CZ: { cap_rate: [5.0, 8.0], gross_yield: [7.5, 13.0], cash_on_cash: [4.5, 9.5], dscr: [1.2, 1.8] },
+            PL: { cap_rate: [6.0, 9.5], gross_yield: [9.0, 15.0], cash_on_cash: [5.5, 11.0], dscr: [1.2, 1.8] },
+            HU: { cap_rate: [6.0, 9.5], gross_yield: [8.5, 14.0], cash_on_cash: [5.0, 10.5], dscr: [1.2, 1.8] },
+            DEFAULT: { cap_rate: [5.5, 8.5], gross_yield: [8.0, 14.0], cash_on_cash: [5.0, 10.0], dscr: [1.2, 1.8] },
+        },
+        commercial: {
+            SK: { cap_rate: [5.5, 8.0], gross_yield: [6.0, 9.0], cash_on_cash: [4.0, 7.5], dscr: [1.25, 2.0] },
+            CZ: { cap_rate: [5.0, 7.5], gross_yield: [5.5, 8.5], cash_on_cash: [3.5, 7.0], dscr: [1.25, 2.0] },
+            PL: { cap_rate: [6.0, 9.0], gross_yield: [6.5, 10.0], cash_on_cash: [4.5, 8.5], dscr: [1.25, 2.0] },
+            HU: { cap_rate: [6.0, 9.0], gross_yield: [6.5, 9.5], cash_on_cash: [4.5, 8.5], dscr: [1.25, 2.0] },
+            DEFAULT: { cap_rate: [5.5, 8.0], gross_yield: [6.0, 9.0], cash_on_cash: [4.0, 7.5], dscr: [1.25, 2.0] },
+        },
+        development: {
+            SK: { profit_margin: [15, 25], return_on_cost: [18, 30], developer_margin: [20, 35] },
+            CZ: { profit_margin: [15, 25], return_on_cost: [18, 30], developer_margin: [20, 35] },
+            PL: { profit_margin: [18, 28], return_on_cost: [20, 35], developer_margin: [22, 38] },
+            HU: { profit_margin: [18, 28], return_on_cost: [20, 35], developer_margin: [22, 38] },
+            DEFAULT: { profit_margin: [15, 25], return_on_cost: [18, 30], developer_margin: [20, 35] },
+        },
+    };
+
+    const LABELS = {
+        en: { title: 'Market Benchmarks', cap_rate: 'Cap Rate', gross_yield: 'Gross Yield', cash_on_cash: 'Cash-on-Cash', dscr: 'DSCR', profit_margin: 'Profit Margin', return_on_cost: 'Return on Cost', developer_margin: 'Developer Margin', marketRange: 'Market range', below: 'Below market', inRange: 'In range', above: 'Above market' },
+        sk: { title: 'Trhové benchmarky', cap_rate: 'Cap Rate', gross_yield: 'Hrubý výnos', cash_on_cash: 'Cash-on-Cash', dscr: 'DSCR', profit_margin: 'Zisková marža', return_on_cost: 'Návratnosť nákladov', developer_margin: 'Marža developera', marketRange: 'Trhový rozsah', below: 'Pod trhom', inRange: 'V rozsahu', above: 'Nad trhom' },
+        pl: { title: 'Benchmarki rynkowe', cap_rate: 'Cap Rate', gross_yield: 'Stopa brutto', cash_on_cash: 'Cash-on-Cash', dscr: 'DSCR', profit_margin: 'Marża zysku', return_on_cost: 'Zwrot z kosztów', developer_margin: 'Marża dewelopera', marketRange: 'Zakres rynkowy', below: 'Poniżej rynku', inRange: 'W zakresie', above: 'Powyżej rynku' },
+        hu: { title: 'Piaci benchmarkok', cap_rate: 'Cap Rate', gross_yield: 'Bruttó hozam', cash_on_cash: 'Cash-on-Cash', dscr: 'DSCR', profit_margin: 'Profitmarzs', return_on_cost: 'Költség megtérülés', developer_margin: 'Fejlesztői marzs', marketRange: 'Piaci tartomány', below: 'Piac alatt', inRange: 'Tartományon belül', above: 'Piac felett' },
+        de: { title: 'Markt-Benchmarks', cap_rate: 'Cap Rate', gross_yield: 'Bruttorendite', cash_on_cash: 'Cash-on-Cash', dscr: 'DSCR', profit_margin: 'Gewinnmarge', return_on_cost: 'Kostenrendite', developer_margin: 'Entwicklermarge', marketRange: 'Marktbereich', below: 'Unter Markt', inRange: 'Im Bereich', above: 'Über Markt' },
+    };
+
+    const tl = LABELS[language] || LABELS.en;
+    const typeMap = BENCHMARKS[projectType];
+    if (!typeMap) return null;
+    const benchmarks = typeMap[country] || typeMap.DEFAULT;
+    const kpis = results.kpis;
+
+    const getStatus = (value, min, max) => {
+        if (value == null) return null;
+        if (value < min) return { label: tl.below, color: '#d97706' };
+        if (value > max) return { label: tl.above, color: '#059669' };
+        return { label: tl.inRange, color: '#059669' };
+    };
+
+    const isDev = projectType === 'development';
+
+    const rows = isDev ? [
+        { label: tl.profit_margin, value: kpis.profit_margin != null ? kpis.profit_margin * 100 : null, min: benchmarks.profit_margin?.[0], max: benchmarks.profit_margin?.[1], unit: '%' },
+        { label: tl.return_on_cost, value: kpis.return_on_cost != null ? kpis.return_on_cost * 100 : null, min: benchmarks.return_on_cost?.[0], max: benchmarks.return_on_cost?.[1], unit: '%' },
+        { label: tl.developer_margin, value: kpis.developer_margin != null ? kpis.developer_margin * 100 : null, min: benchmarks.developer_margin?.[0], max: benchmarks.developer_margin?.[1], unit: '%' },
+    ] : [
+        { label: tl.cap_rate, value: kpis.cap_rate != null ? kpis.cap_rate * 100 : null, min: benchmarks.cap_rate?.[0], max: benchmarks.cap_rate?.[1], unit: '%' },
+        { label: tl.gross_yield, value: kpis.gross_rental_yield != null ? kpis.gross_rental_yield * 100 : null, min: benchmarks.gross_yield?.[0], max: benchmarks.gross_yield?.[1], unit: '%' },
+        { label: tl.cash_on_cash, value: kpis.cash_on_cash_return != null ? kpis.cash_on_cash_return * 100 : null, min: benchmarks.cash_on_cash?.[0], max: benchmarks.cash_on_cash?.[1], unit: '%' },
+        { label: tl.dscr, value: kpis.dscr, min: benchmarks.dscr?.[0], max: benchmarks.dscr?.[1], unit: 'x' },
+    ].filter(r => r.value != null);
+
+    if (rows.length === 0) return null;
+
+    return (
+        <Section title={tl.title}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+                <thead>
+                    <tr style={{ backgroundColor: '#f1f5f9' }}>
+                        <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>Metric</th>
+                        <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>{language === 'sk' ? 'Váš projekt' : 'Your project'}</th>
+                        <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>{tl.marketRange}</th>
+                        <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e2e8f0' }}>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows.map((row, i) => {
+                        const status = getStatus(row.value, row.min, row.max);
+                        return (
+                            <tr key={i} style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: i % 2 === 0 ? 'white' : '#fafafa' }}>
+                                <td style={{ padding: '6px 8px', color: '#1f2937', fontWeight: '500' }}>{row.label}</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'right', color: '#003E7E', fontWeight: '700' }}>{row.value != null ? `${row.value.toFixed(row.unit === 'x' ? 2 : 1)}${row.unit}` : 'N/A'}</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'right', color: '#6b7280' }}>{row.min != null ? `${row.min.toFixed(1)}–${row.max.toFixed(1)}${row.unit}` : 'N/A'}</td>
+                                <td style={{ padding: '6px 8px', textAlign: 'right', color: status?.color || '#6b7280', fontWeight: '600', fontSize: '10px' }}>{status?.label || '—'}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </Section>
+    );
+};
+
 const SensitivitySection = ({ sensitivityData, language }) => {
     if (!sensitivityData || sensitivityData.length === 0) return null;
     const isNewFormat = 'irr_minus10' in sensitivityData[0];
