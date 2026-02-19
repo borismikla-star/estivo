@@ -164,9 +164,10 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     
     const projections = [];
     // For VAT payers: input VAT on purchase is refundable → reduces effective equity at t=0
-    const effectiveEquityForIRR = isVatPayer ? Math.max(1, totalEquity - vatOnPurchase) : totalEquity;
-    const cashFlowsForIRR = [-effectiveEquityForIRR];
-    const cashFlowsForIRRAfterTax = [-effectiveEquityForIRR];
+    const effectiveEquityForIRR = isVatPayer ? totalEquity - vatOnPurchase : totalEquity;
+    const irrComputable = effectiveEquityForIRR > 0;
+    const cashFlowsForIRR = [-(irrComputable ? effectiveEquityForIRR : totalEquity)];
+    const cashFlowsForIRRAfterTax = [-(irrComputable ? effectiveEquityForIRR : totalEquity)];
     let cumulativeCashFlow = 0;
     let cumulativeCashFlowAfterTax = 0;
     let remainingLoanBalance = loanAmount;
@@ -261,8 +262,8 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     const overallROI = totalEquity > 0 ? ((totalReturn - totalEquity) / totalEquity) * 100 : 0;
     const overallROIAfterTax = totalEquity > 0 ? ((totalReturnAfterTax - totalEquity) / totalEquity) * 100 : 0;
     
-    const irr = calculateIRR(cashFlowsForIRR);
-    const irrAfterTax = calculateIRR(cashFlowsForIRRAfterTax);
+    const irr = irrComputable ? calculateIRR(cashFlowsForIRR) : null;
+    const irrAfterTax = irrComputable ? calculateIRR(cashFlowsForIRRAfterTax) : null;
     
     const equityMultiple = totalEquity > 0 ? totalReturn / totalEquity : 0;
     const equityMultipleAfterTax = totalEquity > 0 ? totalReturnAfterTax / totalEquity : 0;
