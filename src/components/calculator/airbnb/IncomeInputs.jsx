@@ -238,6 +238,7 @@ export default function IncomeInputs({ data, onChange, language = 'en', purchase
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€</span>
                     </div>
+                    <p className="text-xs text-muted-foreground mt-1">{vatHints.hint_nightly}</p>
                 </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
