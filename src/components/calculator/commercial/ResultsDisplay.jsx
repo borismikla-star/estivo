@@ -591,11 +591,15 @@ export default function CommercialResults({ results, currency = '€', language 
     };
 
     const getDSCRStatus = (dscr) => {
+        if (dscr === null) return 'neutral';
         if (dscr < 1.25) return 'warning';
         if (dscr > 2.0) return 'excellent';
         if (dscr > 1.5) return 'good';
         return 'neutral';
     };
+
+    const irrNaLabel = language === 'sk' ? 'N/A – bez úveru' : language === 'pl' ? 'N/A – bez kredytu' : language === 'hu' ? 'N/A – hitel nélkül' : language === 'de' ? 'N/A – kein Kredit' : 'N/A – no loan';
+    const dscrNaLabel = irrNaLabel;
 
     const getROIStatus = (roi) => {
         // Assuming roi is already a percentage (e.g., 50 for 50%)
