@@ -772,9 +772,14 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
                         {/* Section: Long-term projections (10 years) */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-purple-700 bg-purple-100 px-2 py-1 rounded-full">
-                                    {language === 'sk' ? '📈 Dlhodobé projekcie – 10 rokov' : language === 'pl' ? '📈 Projekcje długoterminowe – 10 lat' : language === 'hu' ? '📈 Hosszú távú előrejelzések – 10 év' : language === 'de' ? '📈 Langfristige Prognosen – 10 Jahre' : '📈 Long-Term Projections – 10 Years'}
-                                </span>
+                                <div className="h-1 w-6 rounded bg-emerald-500"></div>
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {language === 'sk' ? 'Dlhodobé projekcie – 10 rokov' :
+                                     language === 'pl' ? 'Projekcje długoterminowe – 10 lat' :
+                                     language === 'hu' ? 'Hosszú távú előrejelzések – 10 év' :
+                                     language === 'de' ? 'Langfristige Prognosen – 10 Jahre' :
+                                     'Long-Term Projections – 10 Years'}
+                                </h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <KPICard
