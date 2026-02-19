@@ -441,7 +441,7 @@ export default function Calculator() {
         if (!projectData || !baseResults?.kpis) return;
         const projectType = projectData.type;
 
-        const baseIrr = baseResults.kpis.irr != null ? baseResults.kpis.irr * 100 : null;
+        const baseIrr = baseResults.kpis.irr; // IRR is already in percentage format from calculation
 
         const LABELS = {
             en: { rent: 'Rent / Nightly Rate', occupancy: 'Occupancy (±5%)', purchasePrice: 'Purchase Price', exitCapRate: 'Exit Cap Rate (+0.5%)', interestRate: 'Interest Rate (+1%)', salePrice: 'Sale Price', constructionCost: 'Construction Cost' },
