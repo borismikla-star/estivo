@@ -1,13 +1,12 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Lightbulb, Cog, BarChart, Gem, CheckCircle, AlertTriangle, XCircle, Sparkles, Crown } from 'lucide-react';
+import { Loader2, Lightbulb, Cog, BarChart2, Gem, CheckCircle, AlertTriangle, XCircle, Sparkles, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ResponsiveContainer, BarChart as ReBarChart, Bar, XAxis, YAxis, Tooltip as ReTooltip } from 'recharts';
 import { percentFormatter } from '../lib/formatters';
 import UpgradePrompt from '@/components/shared/UpgradePrompt';
-import { Link } from 'react-router-dom'; // Assuming react-router-dom for Link
+import { Link } from 'react-router-dom';
+import SensitivityAnalysis from './SensitivityAnalysis';
 
 // Helper function for creating URLs, common in routing setups
 // If createPageUrl is defined elsewhere or imported, remove this placeholder.
