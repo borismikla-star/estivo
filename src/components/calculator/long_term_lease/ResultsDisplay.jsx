@@ -561,11 +561,15 @@ export default function LongTermLeaseResults({ results, currency = '€', langua
     };
 
     const getDSCRStatus = (dscr) => {
+        if (dscr === null) return 'neutral';
         if (dscr < 1.25) return 'warning';
         if (dscr > 2.0) return 'excellent';
         if (dscr > 1.5) return 'good';
         return 'neutral';
     };
+
+    const irrNaLabel = language === 'sk' ? 'N/A – bez úveru' : language === 'pl' ? 'N/A – bez kredytu' : language === 'hu' ? 'N/A – hitel nélkül' : language === 'de' ? 'N/A – kein Kredit' : 'N/A – no loan';
+    const dscrNaLabel = irrNaLabel;
 
     return (
         <Card className="bg-card">
