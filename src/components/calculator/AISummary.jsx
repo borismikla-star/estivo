@@ -331,22 +331,10 @@ const AISummary = ({ summary, sensitivityData, isLoading, error, onGenerate, can
                      {hasSensitivity && (
                         <div>
                             <h4 className="flex items-center text-md font-semibold mb-2 text-foreground">
-                                <BarChart className="w-4 h-4 mr-2 text-primary" />
+                                <BarChart2 className="w-4 h-4 mr-2 text-primary" />
                                 {t.sensitivity_label}
                             </h4>
-                            <p className="text-xs text-muted-foreground mb-2">{t.sensitivity_desc}</p>
-                             <ResponsiveContainer width="100%" height={150}>
-                                 <ReBarChart data={sensitivityData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                                     <XAxis type="number" hide />
-                                     <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} width={120}/>
-                                     <ReTooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--accent))' }} />
-                                     <Bar dataKey="change" barSize={10} radius={[0, 5, 5, 0]}>
-                                         {sensitivityData.map((entry, index) => (
-                                             <cell key={`cell-${index}`} fill={entry.change > 0 ? "hsl(var(--success))" : "hsl(var(--destructive))"} />
-                                         ))}
-                                     </Bar>
-                                 </ReBarChart>
-                             </ResponsiveContainer>
+                            <SensitivityAnalysis sensitivityData={sensitivityData} language={language} />
                         </div>
                      )}
                 </CardContent>
