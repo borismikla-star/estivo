@@ -7,6 +7,7 @@ const TRANSLATIONS = {
     en: {
         title: "Sensitivity Analysis",
         description: "Shows how a ±10% change in key variables impacts IRR (Internal Rate of Return). Base IRR is the value from your current calculation.",
+        tooltip: "Each row shows the IRR when a variable changes by ±10%. Green indicates improvement, red indicates decline.",
         variable: "Variable",
         minus10: "−10%",
         plus10: "+10%",
@@ -25,6 +26,7 @@ const TRANSLATIONS = {
     sk: {
         title: "Analýza citlivosti",
         description: "Zobrazuje, ako zmena kľúčových premenných o ±10 % ovplyvní IRR (vnútornú mieru návratnosti). Základné IRR zodpovedá aktuálnemu výpočtu.",
+        tooltip: "Každý riadok ukazuje IRR, keď sa premenná zmení o ±10%. Zelená znamená zlepšenie, červená znamená pokles.",
         variable: "Premenná",
         minus10: "−10%",
         plus10: "+10%",
@@ -43,6 +45,7 @@ const TRANSLATIONS = {
     pl: {
         title: "Analiza wrażliwości",
         description: "Pokazuje, jak zmiana kluczowych zmiennych o ±10% wpływa na IRR. Bazowe IRR odpowiada bieżącemu obliczeniu.",
+        tooltip: "Każdy wiersz pokazuje IRR, gdy zmienna zmienia się o ±10%. Zielony oznacza poprawę, czerwony oznacza spadek.",
         variable: "Zmienna",
         minus10: "−10%",
         plus10: "+10%",
@@ -61,6 +64,7 @@ const TRANSLATIONS = {
     hu: {
         title: "Érzékenységi elemzés",
         description: "Megmutatja, hogyan befolyásolja a kulcsváltozók ±10%-os változása az IRR-t. Az alap IRR a jelenlegi számításból származik.",
+        tooltip: "Minden sor az IRR-t mutatja, amikor egy változó ±10%-kal változik. Zöld javulást jelent, piros visszaesést.",
         variable: "Változó",
         minus10: "−10%",
         plus10: "+10%",
@@ -79,6 +83,7 @@ const TRANSLATIONS = {
     de: {
         title: "Sensitivitätsanalyse",
         description: "Zeigt, wie eine ±10%-Änderung der Schlüsselvariablen den IRR beeinflusst. Basis-IRR entspricht der aktuellen Berechnung.",
+        tooltip: "Jede Zeile zeigt den IRR, wenn sich eine Variable um ±10% ändert. Grün deutet auf Verbesserung hin, rot auf Rückgang.",
         variable: "Variable",
         minus10: "−10%",
         plus10: "+10%",
