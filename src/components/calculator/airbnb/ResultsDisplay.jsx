@@ -815,7 +815,7 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
                                 <KPICard
                                     title={t.annualCashFlow}
                                     value={currencyFormatter(kpis.annual_cash_flow, currency, currencySymbol, 0)}
-                                    description={`${t.annualCashFlowDesc} (${t.beforeTax})`}
+                                    description={t.annualCashFlowDesc}
                                     tooltip={t.annualCashFlowTooltip}
                                     excellent={kpis.annual_cash_flow > 0}
                                     good={kpis.annual_cash_flow > 0}
