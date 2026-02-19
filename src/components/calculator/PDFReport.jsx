@@ -16,6 +16,69 @@ const KeyValue = ({ label, value, isBold = false }) => (
     </div>
 );
 
+const MethodologySection = ({ language, type, kpis }) => {
+    const issk = language === 'sk';
+    const isDev = type === 'development';
+    const isCommercial = type === 'commercial';
+    const isAirbnb = type === 'airbnb';
+    const isLongTerm = type === 'long_term_lease';
+
+    const title = issk ? 'Metodika a predpoklady modelu' : 'Model Methodology & Assumptions';
+
+    const points = {
+        irr: issk
+            ? 'IRR (vnútorná miera návratnosti) je vypočítaná numerickou Newton-Raphson metódou na ročných cash-flow. Zahŕňa predajnú hodnotu nehnuteľnosti v poslednom roku (exit).'
+            : 'IRR (Internal Rate of Return) is calculated using the numerical Newton-Raphson method on annual cash flows, including the property exit value in the final year.',
+        vat: issk
+            ? 'DPH je modelovaná ako zjednodušený cash-flow efekt. Pre platcu DPH znižuje efektívnu výšku investície (odpočítateľná DPH), ale neovplyvňuje NOI ani ekonomický zisk projektu.'
+            : 'VAT is modelled as a simplified cash-flow effect. For VAT-registered entities, deductible VAT reduces the effective investment amount but does not affect NOI or economic profit.',
+        taxLoss: issk
+            ? 'Model neprenáša daňové straty do budúcich období. Každý rok je zdanený samostatne. Reálny daňový základ môže byť nižší pri uplatnení prenosu strát.'
+            : 'Tax losses are not carried forward between periods. Each year is taxed independently. The actual tax base may be lower when loss carry-forward rules apply.',
+        rentGrowth: issk
+            ? 'Nájomné rastie lineárne podľa zadaného ročného rastu. Model nezohľadňuje výnimočné roky ani renegociáciu nájmu.'
+            : 'Rent grows linearly at the specified annual rate. The model does not account for exceptional years or lease renegotiations.',
+        exitCapRate: issk
+            ? 'Výstupná (exit) cap rate určuje predajnú hodnotu nehnuteľnosti v poslednom roku projekcie. Ak nie je zadaná, model používa vstupnú cap rate.'
+            : 'The exit cap rate determines the property sale value in the final projection year. If not specified, the model defaults to the acquisition cap rate.',
+        devExit: issk
+            ? 'Výnosy z predaja sú modelované ako jednorazové príjmy. Náklady na predaj (provízie, dane) sú zahrnuté v predajných nákladoch.'
+            : 'Sales revenues are modelled as one-time receipts. Selling costs (commissions, taxes) are included in sales costs.',
+        airbnbPremium: issk
+            ? 'Airbnb prémia je vypočítaná ako rozdiel medzi ročnými príjmami zo short-term prenájmu a odhadovaným dlhodobým nájmom pri plnej obsadenosti.'
+            : 'Airbnb premium is calculated as the difference between annual short-term rental income and estimated long-term rent at full occupancy.',
+        basis: issk
+            ? 'Cap Rate, Cash-on-Cash a IRR sú počítané na NET báze (bez DPH) voči skutočne vloženému kapitálu (equity / vlastné zdroje).'
+            : 'Cap Rate, Cash-on-Cash and IRR are calculated on a NET basis (excl. VAT) against actual equity / own funds invested.',
+    };
+
+    const relevantPoints = [
+        points.irr,
+        points.vat,
+        points.taxLoss,
+        !isDev && points.rentGrowth,
+        !isDev && points.exitCapRate,
+        isDev && points.devExit,
+        isAirbnb && points.airbnbPremium,
+        points.basis,
+    ].filter(Boolean);
+
+    return (
+        <Section title={title}>
+            <div style={{ backgroundColor: '#f0f4ff', border: '1px solid #c7d2fe', borderRadius: '8px', padding: '12px' }}>
+                <div style={{ fontSize: '10px', color: '#3730a3', fontWeight: '600', marginBottom: '8px' }}>
+                    {issk ? '⚠️ Tento model je zjednodušenou finančnou projekciou. Predpoklady modelu:' : '⚠️ This model is a simplified financial projection. Model assumptions:'}
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '16px', lineHeight: '1.9' }}>
+                    {relevantPoints.map((point, i) => (
+                        <li key={i} style={{ fontSize: '10px', color: '#4338ca', marginBottom: '2px' }}>{point}</li>
+                    ))}
+                </ul>
+            </div>
+        </Section>
+    );
+};
+
 // NEW: Print-friendly Progress Bar using table
 const PrintProgressBar = ({ label, value, max, color = '#003E7E', showPercentage = true }) => {
     const percentage = max > 0 ? (value / max) * 100 : 0;
