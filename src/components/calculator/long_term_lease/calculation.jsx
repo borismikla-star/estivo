@@ -6,8 +6,10 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
         financing_data = {},
         initial_costs_data = {},
         operating_data = {},
-        entity_type = 'FO',
     } = projectData;
+
+    // entity_type is a top-level field on projectData
+    const entity_type = projectData.entity_type || 'FO';
 
     // Helper function to ensure number
     const num = (value) => {
