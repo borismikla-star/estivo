@@ -772,148 +772,178 @@ export default function AirbnbResults({ results, currency = '€', language = 'e
                             </div>
                         )}
 
-                        {/* Key Performance Indicators */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <KPICard
-                                title={t.totalInvestment}
-                                value={currencyFormatter(kpis.total_investment, currency, currencySymbol, 0)}
-                                description={t.totalInvestmentDesc}
-                                tooltip={t.totalInvestmentTooltip}
-                            />
-                            
-                            {/* ROI - Show both */}
-                            <KPICard
-                                title={t.roi}
-                                value={percentFormatter(kpis.roi_10_year, 1)}
-                                description={t.roiDesc}
-                                tooltip={t.roiTooltip}
-                                warning={getROIStatus(kpis.roi_10_year) === 'warning' ? t.roiWarning : null}
-                                excellent={getROIStatus(kpis.roi_10_year) === 'excellent'}
-                                good={getROIStatus(kpis.roi_10_year) === 'good'}
-                            />
-                            {kpis.roi_10_year_after_tax !== undefined && (
+                        {/* === ANNUAL METRICS - YEAR 1 === */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                                <div className="h-1 w-6 rounded bg-blue-500"></div>
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {language === 'sk' ? 'Ročné metriky – Rok 1' :
+                                     language === 'pl' ? 'Wskaźniki roczne – Rok 1' :
+                                     language === 'hu' ? 'Éves mutatók – 1. év' :
+                                     language === 'de' ? 'Jährliche Kennzahlen – Jahr 1' :
+                                     'Annual Metrics – Year 1'}
+                                </h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <KPICard
-                                    title={t.roiAfterTax}
-                                    value={percentFormatter(kpis.roi_10_year_after_tax, 1)}
-                                    description={t.roiAfterTaxDesc}
-                                    tooltip={t.roiAfterTaxTooltip}
-                                    status={getROIStatus(kpis.roi_10_year_after_tax)}
+                                    title={t.totalInvestment}
+                                    value={currencyFormatter(kpis.total_investment, currency, currencySymbol, 0)}
+                                    description={t.totalInvestmentDesc}
+                                    tooltip={t.totalInvestmentTooltip}
                                 />
-                            )}
-                            
-                            {/* Cash-on-Cash - Show both */}
-                            <KPICard
-                                title={t.cashOnCash}
-                                value={percentFormatter(kpis.cash_on_cash_return, 2)}
-                                description={t.cashOnCashDesc}
-                                tooltip={t.cashOnCashTooltip}
-                                warning={getCashOnCashStatus(kpis.cash_on_cash_return) === 'warning' ? t.cashOnCashWarning : null}
-                                excellent={getCashOnCashStatus(kpis.cash_on_cash_return) === 'excellent'}
-                                good={getCashOnCashStatus(kpis.cash_on_cash_return) === 'good'}
-                            />
-                            {kpis.cash_on_cash_return_after_tax !== undefined && (
                                 <KPICard
-                                    title={t.cashOnCashAfterTax}
-                                    value={percentFormatter(kpis.cash_on_cash_return_after_tax, 2)}
-                                    description={t.cashOnCashAfterTaxDesc}
-                                    tooltip={t.cashOnCashAfterTaxTooltip}
-                                    status={getCashOnCashStatus(kpis.cash_on_cash_return_after_tax)}
+                                    title={t.occupancyRate}
+                                    value={percentFormatter(kpis.occupancy_rate, 1)}
+                                    description={t.occupancyRateDesc}
+                                    tooltip={t.occupancyRateTooltip}
+                                    warning={getOccupancyStatus(kpis.occupancy_rate) === 'warning' ? t.occupancyRateWarning : null}
+                                    excellent={getOccupancyStatus(kpis.occupancy_rate) === 'excellent'}
+                                    good={getOccupancyStatus(kpis.occupancy_rate) === 'good'}
                                 />
-                            )}
-                            
-                            {/* IRR - Show both */}
-                            <KPICard
-                                title={t.irr}
-                                value={percentFormatter(kpis.irr, 2)}
-                                description={t.irrDesc}
-                                tooltip={t.irrTooltip}
-                                warning={kpis.irr < 10 ? t.irrWarning : null}
-                                excellent={kpis.irr > 18}
-                                good={kpis.irr > 12}
-                            />
-                            {kpis.irr_after_tax !== undefined && (
                                 <KPICard
-                                    title={t.irrAfterTax}
-                                    value={percentFormatter(kpis.irr_after_tax, 2)}
-                                    description={t.irrAfterTaxDesc}
-                                    tooltip={t.irrAfterTaxTooltip}
-                                    warning={kpis.irr_after_tax < 10 ? t.irrWarning : null}
-                                    excellent={kpis.irr_after_tax > 18}
-                                    good={kpis.irr_after_tax > 12}
+                                    title={t.avgNightlyRevenue}
+                                    value={currencyFormatter(kpis.avg_revenue_per_night, currency, currencySymbol, 0)}
+                                    description={t.avgNightlyRevenueDesc}
+                                    tooltip={t.avgNightlyRevenueTooltip}
                                 />
-                            )}
-                            
-                            <KPICard
-                                title={t.capRate}
-                                value={percentFormatter(kpis.cap_rate, 2)}
-                                description={t.capRateDesc}
-                                tooltip={t.capRateTooltip}
-                                warning={getCapRateStatus(kpis.cap_rate) === 'warning' ? t.capRateWarning : null}
-                                excellent={getCapRateStatus(kpis.cap_rate) === 'excellent'}
-                                good={getCapRateStatus(kpis.cap_rate) === 'good'}
-                            />
-                            
-                            <KPICard
-                                title={t.dscr}
-                                value={kpis.dscr ? kpis.dscr.toFixed(2) : 'N/A'}
-                                description={t.dscrDesc}
-                                tooltip={t.dscrTooltip}
-                                warning={getDSCRStatus(kpis.dscr) === 'warning' ? t.dscrWarning : null}
-                                excellent={getDSCRStatus(kpis.dscr) === 'excellent'}
-                                good={getDSCRStatus(kpis.dscr) === 'good'}
-                            />
-                            
-                            <KPICard
-                                title={t.avgNightlyRevenue}
-                                value={currencyFormatter(kpis.avg_revenue_per_night, currency, currencySymbol, 0)}
-                                description={t.avgNightlyRevenueDesc}
-                                tooltip={t.avgNightlyRevenueTooltip}
-                            />
-                            
-                            <KPICard
-                                title={t.occupancyRate}
-                                value={percentFormatter(kpis.occupancy_rate, 1)}
-                                description={t.occupancyRateDesc}
-                                tooltip={t.occupancyRateTooltip}
-                                warning={getOccupancyStatus(kpis.occupancy_rate) === 'warning' ? t.occupancyRateWarning : null}
-                                excellent={getOccupancyStatus(kpis.occupancy_rate) === 'excellent'}
-                                good={getOccupancyStatus(kpis.occupancy_rate) === 'good'}
-                            />
-                            
-                            <KPICard
-                                title={t.avgBookingLength}
-                                value={`${kpis.avg_booking_length?.toFixed(1) || 'N/A'} ${t.nights}`}
-                                description={t.avgBookingLengthDesc}
-                                tooltip={t.avgBookingLengthTooltip}
-                            />
-                            
-                            <KPICard
-                                title={t.annualBookings}
-                                value={kpis.annual_bookings?.toFixed(0) || 'N/A'}
-                                description={t.annualBookingsDesc}
-                                tooltip={t.annualBookingsTooltip}
-                            />
-                            
-                            <KPICard
-                                title={t.monthlyCashFlow}
-                                value={currencyFormatter(kpis.monthly_cash_flow, currency, currencySymbol, 0)}
-                                description={t.monthlyCashFlowDesc}
-                                tooltip={t.monthlyCashFlowTooltip}
-                            />
-                            
-                            <KPICard
-                                title={t.annualCashFlow}
-                                value={currencyFormatter(kpis.annual_cash_flow, currency, currencySymbol, 0)}
-                                description={t.annualCashFlowDesc}
-                                tooltip={t.annualCashFlowTooltip}
-                            />
-                            
-                            <KPICard
-                                title={t.noi}
-                                value={currencyFormatter(kpis.net_operating_income, currency, currencySymbol, 0)}
-                                description={t.noiDesc}
-                                tooltip={t.noiTooltip}
-                            />
+                                <KPICard
+                                    title={t.noi}
+                                    value={currencyFormatter(kpis.net_operating_income, currency, currencySymbol, 0)}
+                                    description={t.noiDesc}
+                                    tooltip={t.noiTooltip}
+                                />
+                                <KPICard
+                                    title={t.annualCashFlow}
+                                    value={currencyFormatter(kpis.annual_cash_flow, currency, currencySymbol, 0)}
+                                    description={`${t.annualCashFlowDesc} (${t.beforeTax})`}
+                                    tooltip={t.annualCashFlowTooltip}
+                                    excellent={kpis.annual_cash_flow > 0}
+                                    good={kpis.annual_cash_flow > 0}
+                                />
+                                {kpis.annual_cash_flow_after_tax !== undefined && (
+                                    <KPICard
+                                        title={`${t.annualCashFlow} (${t.afterTax})`}
+                                        value={currencyFormatter(kpis.annual_cash_flow_after_tax, currency, currencySymbol, 0)}
+                                        description={t.afterTax}
+                                        excellent={kpis.annual_cash_flow_after_tax > 0}
+                                        good={kpis.annual_cash_flow_after_tax > 0}
+                                    />
+                                )}
+                                <KPICard
+                                    title={t.monthlyCashFlow}
+                                    value={currencyFormatter(kpis.monthly_cash_flow, currency, currencySymbol, 0)}
+                                    description={t.monthlyCashFlowDesc}
+                                    tooltip={t.monthlyCashFlowTooltip}
+                                />
+                                <KPICard
+                                    title={t.capRate}
+                                    value={percentFormatter(kpis.cap_rate, 2)}
+                                    description={t.capRateDesc}
+                                    tooltip={t.capRateTooltip}
+                                    warning={getCapRateStatus(kpis.cap_rate) === 'warning' ? t.capRateWarning : null}
+                                    excellent={getCapRateStatus(kpis.cap_rate) === 'excellent'}
+                                    good={getCapRateStatus(kpis.cap_rate) === 'good'}
+                                />
+                                <KPICard
+                                    title={t.cashOnCash}
+                                    value={percentFormatter(kpis.cash_on_cash_return, 2)}
+                                    description={`${t.cashOnCashDesc}`}
+                                    tooltip={t.cashOnCashTooltip}
+                                    warning={getCashOnCashStatus(kpis.cash_on_cash_return) === 'warning' ? t.cashOnCashWarning : null}
+                                    excellent={getCashOnCashStatus(kpis.cash_on_cash_return) === 'excellent'}
+                                    good={getCashOnCashStatus(kpis.cash_on_cash_return) === 'good'}
+                                />
+                                {kpis.cash_on_cash_return_after_tax !== undefined && (
+                                    <KPICard
+                                        title={t.cashOnCashAfterTax}
+                                        value={percentFormatter(kpis.cash_on_cash_return_after_tax, 2)}
+                                        description={t.cashOnCashAfterTaxDesc}
+                                        tooltip={t.cashOnCashAfterTaxTooltip}
+                                        status={getCashOnCashStatus(kpis.cash_on_cash_return_after_tax)}
+                                    />
+                                )}
+                                <KPICard
+                                    title={t.dscr}
+                                    value={kpis.dscr ? kpis.dscr.toFixed(2) : 'N/A'}
+                                    description={t.dscrDesc}
+                                    tooltip={t.dscrTooltip}
+                                    warning={getDSCRStatus(kpis.dscr) === 'warning' ? t.dscrWarning : null}
+                                    excellent={getDSCRStatus(kpis.dscr) === 'excellent'}
+                                    good={getDSCRStatus(kpis.dscr) === 'good'}
+                                />
+                                <KPICard
+                                    title={t.avgBookingLength}
+                                    value={`${kpis.avg_booking_length?.toFixed(1) || 'N/A'} ${t.nights}`}
+                                    description={t.avgBookingLengthDesc}
+                                    tooltip={t.avgBookingLengthTooltip}
+                                />
+                                <KPICard
+                                    title={t.annualBookings}
+                                    value={kpis.annual_bookings?.toFixed(0) || 'N/A'}
+                                    description={t.annualBookingsDesc}
+                                    tooltip={t.annualBookingsTooltip}
+                                />
+                            </div>
+                        </div>
+
+                        {/* === LONG-TERM PROJECTIONS - 10 YEARS === */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                                <div className="h-1 w-6 rounded bg-emerald-500"></div>
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {language === 'sk' ? 'Dlhodobé projekcie – 10 rokov' :
+                                     language === 'pl' ? 'Projekcje długoterminowe – 10 lat' :
+                                     language === 'hu' ? 'Hosszú távú előrejelzések – 10 év' :
+                                     language === 'de' ? 'Langfristige Prognosen – 10 Jahre' :
+                                     'Long-Term Projections – 10 Years'}
+                                </h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <KPICard
+                                    title={t.roi}
+                                    value={percentFormatter(kpis.roi_10_year, 1)}
+                                    description={`${t.roiDesc}`}
+                                    tooltip={t.roiTooltip}
+                                    warning={getROIStatus(kpis.roi_10_year) === 'warning' ? t.roiWarning : null}
+                                    excellent={getROIStatus(kpis.roi_10_year) === 'excellent'}
+                                    good={getROIStatus(kpis.roi_10_year) === 'good'}
+                                />
+                                {kpis.roi_10_year_after_tax !== undefined && (
+                                    <KPICard
+                                        title={t.roiAfterTax}
+                                        value={percentFormatter(kpis.roi_10_year_after_tax, 1)}
+                                        description={t.roiAfterTaxDesc}
+                                        tooltip={t.roiAfterTaxTooltip}
+                                        status={getROIStatus(kpis.roi_10_year_after_tax)}
+                                    />
+                                )}
+                                <KPICard
+                                    title={t.irr}
+                                    value={percentFormatter(kpis.irr, 2)}
+                                    description={`${t.irrDesc}`}
+                                    tooltip={t.irrTooltip}
+                                    warning={kpis.irr < 10 ? t.irrWarning : null}
+                                    excellent={kpis.irr > 18}
+                                    good={kpis.irr > 12}
+                                />
+                                {kpis.irr_after_tax !== undefined && (
+                                    <KPICard
+                                        title={t.irrAfterTax}
+                                        value={percentFormatter(kpis.irr_after_tax, 2)}
+                                        description={t.irrAfterTaxDesc}
+                                        tooltip={t.irrAfterTaxTooltip}
+                                        warning={kpis.irr_after_tax < 10 ? t.irrWarning : null}
+                                        excellent={kpis.irr_after_tax > 18}
+                                        good={kpis.irr_after_tax > 12}
+                                    />
+                                )}
+                                <KPICard
+                                    title={t.payback}
+                                    value={kpis.payback_period === '>10' ? '>10' : `${kpis.payback_period} ${language === 'sk' ? 'r.' : language === 'de' ? 'J.' : 'yr'}`}
+                                    description={t.paybackDesc}
+                                    tooltip={t.paybackTooltip}
+                                />
+                            </div>
                         </div>
                     </TabsContent>
 
