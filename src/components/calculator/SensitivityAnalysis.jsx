@@ -171,17 +171,37 @@ export default function SensitivityAnalysis({ sensitivityData, language = 'en' }
                             </tr>
                         </thead>
                         <tbody>
-                            {sensitivityData.map((row, i) => (
-                                <tr key={i} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
-                                    <td className="px-4 py-2.5 font-medium text-foreground">{row.label}</td>
-                                    <td className="px-4 py-2.5 text-right">
-                                        <DeltaCell base={baseIrr} value={row.irr_minus10} />
-                                    </td>
-                                    <td className="px-4 py-2.5 text-right">
-                                        <DeltaCell base={baseIrr} value={row.irr_plus10} />
-                                    </td>
-                                </tr>
-                            ))}
+                            {sensitivityData.map((row, i) => {
+                                // Determine background color based on IRR changes
+                                const minus10Change = row.irr_minus10 !== null && row.irr_minus10 !== undefined ? row.irr_minus10 - (baseIrr || 0) : 0;
+                                const plus10Change = row.irr_plus10 !== null && row.irr_plus10 !== undefined ? row.irr_plus10 - (baseIrr || 0) : 0;
+                                
+                                let bgClass = 'hover:bg-muted/20';
+                                // If both are negative, use red background
+                                if (minus10Change < -0.05 && plus10Change < -0.05) {
+                                    bgClass = 'bg-red-50 hover:bg-red-100/70';
+                                }
+                                // If both are positive, use green background
+                                else if (minus10Change > 0.05 && plus10Change > 0.05) {
+                                    bgClass = 'bg-emerald-50 hover:bg-emerald-100/70';
+                                }
+                                // If mixed, use neutral
+                                else if ((minus10Change > 0.05 && plus10Change < -0.05) || (minus10Change < -0.05 && plus10Change > 0.05)) {
+                                    bgClass = 'bg-amber-50 hover:bg-amber-100/70';
+                                }
+                                
+                                return (
+                                    <tr key={i} className={`border-b border-border/50 transition-colors ${bgClass}`}>
+                                        <td className="px-4 py-2.5 font-medium text-foreground">{row.label}</td>
+                                        <td className="px-4 py-2.5 text-right">
+                                            <DeltaCell base={baseIrr} value={row.irr_minus10} />
+                                        </td>
+                                        <td className="px-4 py-2.5 text-right">
+                                            <DeltaCell base={baseIrr} value={row.irr_plus10} />
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
