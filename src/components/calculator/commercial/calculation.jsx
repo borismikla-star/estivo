@@ -144,7 +144,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
 
     // === ADVANCED METRICS ===
     const capRate = price > 0 ? (netOperatingIncome / price) * 100 : 0;
-    const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : 0;
+    const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : null;
     const cashOnCashReturn = totalEquity > 0 ? (annualCashFlow / totalEquity) * 100 : 0;
     const cashOnCashReturnAfterTax = totalEquity > 0 ? (annualCashFlowAfterTax / totalEquity) * 100 : 0;
     const opexRatio = effectiveGrossIncome > 0 ? (totalAnnualOperatingExpenses / effectiveGrossIncome) * 100 : 0;

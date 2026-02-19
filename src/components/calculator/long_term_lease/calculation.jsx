@@ -146,7 +146,7 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     const cashOnCashReturnAfterTax = totalEquity > 0 ? (annualCashFlowAfterTax / totalEquity) * 100 : 0;
     
     // 3. Debt Service Coverage Ratio (DSCR)
-    const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : 0;
+    const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : null;
     
     // 4. Gross Rental Yield
     const grossRentalYield = purchasePrice > 0 ? (annualRent / purchasePrice) * 100 : 0;

@@ -161,7 +161,7 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
     const cashOnCashReturnAfterTax = totalEquity > 0 ? (annualCashFlowAfterTax / totalEquity) * 100 : 0;
     
     // 4. DSCR
-    const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : 0;
+    const dscr = annualDebtService > 0 ? netOperatingIncome / annualDebtService : null;
     
     // 5. Gross Yield
     const grossYield = purchasePrice > 0 ? (grossAnnualRevenue / purchasePrice) * 100 : 0;
