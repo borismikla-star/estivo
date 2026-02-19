@@ -1377,6 +1377,17 @@ export default function PDFReport({ projectData, results, language, user }) {
                         </div>
                     </Section>
                 )}
+
+                {/* Market Benchmarks */}
+                <BenchmarkSection results={results} projectType={type} country={country} language={language} />
+
+                {/* Sensitivity Analysis */}
+                {sensitivity_data && sensitivity_data.length > 0 && (
+                    <SensitivitySection sensitivityData={sensitivity_data} language={language} />
+                )}
+
+                {/* Methodology & Assumptions Section */}
+                <MethodologySection language={language} type={type} kpis={kpis} />
             </main>
 
             {/* Disclaimer footer note */}
