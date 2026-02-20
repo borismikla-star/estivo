@@ -1102,6 +1102,13 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
                 results: clonedResults
             }));
             
+            // For development projects, auto-run sensitivity analysis on calculate
+            if (projectData.type === 'development') {
+                setTimeout(() => {
+                    runSensitivityAnalysis(clonedResults, preset);
+                }, 100);
+            }
+            
             setIsDirty(true);
             setSaveStatus('unsaved');
             
