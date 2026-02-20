@@ -476,23 +476,52 @@ export default function Calculator() {
         let scenarios = [];
 
         if (projectType === 'development') {
-            // Sale price ±10%
-            const saleMinus = clone(projectData);
-            if (saleMinus.revenue_data?.avg_price_per_m2) saleMinus.revenue_data.avg_price_per_m2 *= 0.9;
-            const salePlus = clone(projectData);
-            if (salePlus.revenue_data?.avg_price_per_m2) salePlus.revenue_data.avg_price_per_m2 *= 1.1;
+            // Sale price ±10% — scale all revenue_data unit prices
+            const scalePrices = (data, factor) => {
+                const priceFields = [
+                    'apartments_unit_price', 'non_residential_unit_price',
+                    'parking_indoor_unit_price', 'parking_outdoor_unit_price',
+                    'balconies_unit_price', 'gardens_unit_price', 'basements_unit_price'
+                ];
+                const newRevData = { ...data.revenue_data };
+                priceFields.forEach(field => {
+                    if (newRevData[field]) newRevData[field] = Number(newRevData[field]) * factor;
+                });
+                if (newRevData.other_revenue) newRevData.other_revenue = Number(newRevData.other_revenue) * factor;
+                return { ...data, revenue_data: newRevData };
+            };
+            const saleMinus = scalePrices(clone(projectData), 0.9);
+            const salePlus = scalePrices(clone(projectData), 1.1);
 
-            // Construction cost ±10%
-            const constrMinus = clone(projectData);
-            if (constrMinus.construction_data?.construction_cost_per_m2) constrMinus.construction_data.construction_cost_per_m2 *= 0.9;
-            const constrPlus = clone(projectData);
-            if (constrPlus.construction_data?.construction_cost_per_m2) constrPlus.construction_data.construction_cost_per_m2 *= 1.1;
+            // Construction cost ±10% — scale all cost_data unit prices (above/below ground, etc.)
+            const scaleCosts = (data, factor) => {
+                const costFields = [
+                    'above_ground_unit_price', 'below_ground_unit_price',
+                    'outdoor_areas_unit_price', 'greenery_terrain_unit_price', 'greenery_structure_unit_price'
+                ];
+                const newCostData = { ...data.cost_data };
+                costFields.forEach(field => {
+                    if (newCostData[field]) newCostData[field] = Number(newCostData[field]) * factor;
+                });
+                // Also scale manual values if manual mode is on
+                const manualFields = [
+                    'above_ground_manual_value', 'below_ground_manual_value',
+                    'outdoor_areas_manual_value', 'greenery_terrain_manual_value', 'greenery_structure_manual_value'
+                ];
+                manualFields.forEach(field => {
+                    if (newCostData[field]) newCostData[field] = Number(newCostData[field]) * factor;
+                });
+                return { ...data, cost_data: newCostData };
+            };
+            const constrMinus = scaleCosts(clone(projectData), 0.9);
+            const constrPlus = scaleCosts(clone(projectData), 1.1);
 
-            // Interest rate +1%
+            // Interest rate ±1%
             const intMinus = clone(projectData);
-            if (intMinus.financing_data?.interest_rate != null) intMinus.financing_data.interest_rate = Math.max(0, (Number(intMinus.financing_data.interest_rate) || 0) - 1);
+            const currentRate = Number(intMinus.financing_data?.bank_interest_percent) || 6;
+            intMinus.financing_data = { ...intMinus.financing_data, bank_interest_percent: Math.max(0, currentRate - 1) };
             const intPlus = clone(projectData);
-            if (intPlus.financing_data?.interest_rate != null) intPlus.financing_data.interest_rate = (Number(intPlus.financing_data.interest_rate) || 0) + 1;
+            intPlus.financing_data = { ...intPlus.financing_data, bank_interest_percent: currentRate + 1 };
 
             const [sM, sP, cM, cP, iM, iP] = await Promise.all([
                 calcIrr(saleMinus), calcIrr(salePlus), calcIrr(constrMinus), calcIrr(constrPlus), calcIrr(intMinus), calcIrr(intPlus)
