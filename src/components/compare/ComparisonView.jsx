@@ -35,6 +35,8 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
             investment: "Total Investment",
             equity: "Equity Required",
             roi: "ROI",
+            roi_label_rental: "ROI (10 yr.)",
+            roi_label_dev: "Return on Cost",
             irr: "IRR",
             cashflow: "Annual Cashflow",
             cash_on_cash: "Cash-on-Cash Return",

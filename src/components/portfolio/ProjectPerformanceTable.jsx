@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -55,6 +54,8 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           type: "Type",
           investment: "Investment",
           roi: "ROI",
+          roi_tooltip_rental: "10-year total ROI on equity",
+          roi_tooltip_dev: "Return on cost (total project)",
           cashflow: "Annual Cashflow",
           profit: "Profit", // NEW for development
           country: "Country",
