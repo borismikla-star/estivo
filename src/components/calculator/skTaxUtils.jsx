@@ -66,10 +66,11 @@ export function getLevyRate(entityType, preset) {
  * @param {number} taxableIncome
  * @param {string} entityType
  * @param {object} preset
+ * @param {number} [annualRevenue] - annual revenue for SK PO progressive rate
  * @returns {{ incomeTax: number, levies: number, totalTax: number, effectiveTaxRate: number, levyRate: number }}
  */
-export function calculateTax(taxableIncome, entityType, preset) {
-    const taxRate = getIncomeTaxRate(entityType, preset);
+export function calculateTax(taxableIncome, entityType, preset, annualRevenue = 0) {
+    const taxRate = getIncomeTaxRate(entityType, preset, annualRevenue);
     const levyRate = getLevyRate(entityType, preset);
 
     const positiveIncome = Math.max(0, taxableIncome);
