@@ -283,13 +283,12 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const landValueUpliftPercent = landAndProject > 0 ? (landValueUplift / landAndProject) * 100 : 0;
 
     // === TAX CALCULATIONS ===
-    const corporateTaxRate = num(preset?.corporate_tax_rate) || 21;
-    const incomeTaxRateFO = num(preset?.income_tax_rate_fo) || 25;
-    
-    // For development projects, tax is calculated on profit after VAT considerations
-    // Tax base is the net profit after VAT (real economic profit)
-    const effectiveTaxRate = entity_type === 'PO' ? corporateTaxRate : incomeTaxRateFO;
-    const taxOnProfit = netProfitAfterVAT * (effectiveTaxRate / 100);
+    // For development projects, tax is calculated on gross profit (economic profit)
+    const { incomeTax: incomeT, levies: leviesT, totalTax: taxOnProfit, effectiveTaxRate, levyRate } = calculateTax(
+        Math.max(0, netProfitAfterVAT),
+        entity_type,
+        preset
+    );
     const netProfitAfterTax = netProfitAfterVAT - taxOnProfit;
 
     // === COST BREAKDOWN FOR CHARTS ===
