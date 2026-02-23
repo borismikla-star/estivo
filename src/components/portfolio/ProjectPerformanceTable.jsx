@@ -281,7 +281,9 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground block text-xs">{t.roi}</span>
+                  <span className="text-muted-foreground block text-xs">
+                    {p.isDevelopment ? t.roi_tooltip_dev?.split(' (')[0] || t.roi : `${t.roi} (10r.)`}
+                  </span>
                   <span className="font-semibold text-primary">{formatPercent(p.roi)}</span>
                 </div>
                 <div>
