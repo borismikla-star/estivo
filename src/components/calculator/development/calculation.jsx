@@ -287,7 +287,8 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const { incomeTax: incomeT, levies: leviesT, totalTax: taxOnProfit, effectiveTaxRate, levyRate } = calculateTax(
         Math.max(0, netProfitAfterVAT),
         entity_type,
-        preset
+        preset,
+        totalRevenueExclVAT
     );
     const netProfitAfterTax = netProfitAfterVAT - taxOnProfit;
 
