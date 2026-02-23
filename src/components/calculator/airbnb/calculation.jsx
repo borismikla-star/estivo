@@ -228,7 +228,7 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
         
         const yearDepreciation = purchasePrice * (depreciationRate / 100);
         const yearTaxableIncome = Math.max(0, yearNOI - yearInterest - yearDepreciation);
-        const yearIncomeTax = yearTaxableIncome * (effectiveTaxRate / 100);
+        const { totalTax: yearIncomeTax } = calculateTax(yearTaxableIncome, entity_type, preset);
         const yearCashFlowAfterTax = yearCashFlow - yearIncomeTax;
         cumulativeCashFlowAfterTax += yearCashFlowAfterTax;
         
