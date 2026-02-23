@@ -136,7 +136,7 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     const taxableIncome = Math.max(0, netOperatingIncome - firstYearInterest - annualDepreciation);
     
     // Tax based on entity type (SK-aware)
-    const { incomeTax: annualIncomeTax, levies: annualLevies, totalTax: annualTotalTax, effectiveTaxRate, levyRate } = calculateTax(taxableIncome, entity_type, preset);
+    const { incomeTax: annualIncomeTax, levies: annualLevies, totalTax: annualTotalTax, effectiveTaxRate, levyRate } = calculateTax(taxableIncome, entity_type, preset, effectiveGrossIncome);
     
     // Cash flow after tax (income tax + levies)
     const annualCashFlowAfterTax = annualCashFlow - annualTotalTax;
