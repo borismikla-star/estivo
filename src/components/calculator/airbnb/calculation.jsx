@@ -1,4 +1,5 @@
 import { calculateIRR } from '../financialCalculations';
+import { resolveEntityType, calculateTax } from '../skTaxUtils';
 
 export function calculateAirbnb(projectData, preset, language = 'en') {
     const {
@@ -6,8 +7,13 @@ export function calculateAirbnb(projectData, preset, language = 'en') {
         financing_data = {},
         income_data = {},
         operating_data = {},
-        entity_type = 'FO',
     } = projectData;
+
+    const entity_type = resolveEntityType(
+        projectData.entity_type,
+        'airbnb',
+        projectData.country || 'SK'
+    );
 
     const num = (value) => {
         const parsed = Number(value);
