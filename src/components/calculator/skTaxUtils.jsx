@@ -10,14 +10,38 @@
  */
 
 /**
- * Returns the effective income tax rate for the given entity type and preset.
- * @param {string} entityType - 'FO' | 'FO_rental' | 'FO_business' | 'PO'
- * @param {object} preset - CountryPreset object
+ * Returns the Slovak PO (corporate) tax rate based on annual revenue (tržby).
+ * SK 2026 (za rok 2025):
+ *   ≤ 100 000 EUR  → 10%
+ *   ≤ 5 000 000 EUR → 21%
+ *   >  5 000 000 EUR → 24%
+ * @param {number} annualRevenue - annual revenue / tržby in EUR
  * @returns {number} tax rate in %
  */
-export function getIncomeTaxRate(entityType, preset) {
+export function getSkPoCorporateTaxRate(annualRevenue) {
+    const rev = Math.max(0, annualRevenue);
+    if (rev <= 100000) return 10;
+    if (rev <= 5000000) return 21;
+    return 24;
+}
+
+/**
+ * Returns the effective income tax rate for the given entity type and preset.
+ * For SK PO, uses progressive rate based on annualRevenue if provided.
+ * @param {string} entityType - 'FO' | 'FO_rental' | 'FO_business' | 'PO'
+ * @param {object} preset - CountryPreset object
+ * @param {number} [annualRevenue] - annual revenue (used for SK PO progressive rate)
+ * @returns {number} tax rate in %
+ */
+export function getIncomeTaxRate(entityType, preset, annualRevenue = 0) {
     const num = (v) => { const p = Number(v); return isNaN(p) ? 0 : p; };
-    if (entityType === 'PO') return num(preset?.corporate_tax_rate) || 21;
+    if (entityType === 'PO') {
+        // SK uses progressive corporate tax based on revenue
+        if (preset?.country_code === 'SK') {
+            return getSkPoCorporateTaxRate(annualRevenue);
+        }
+        return num(preset?.corporate_tax_rate) || 21;
+    }
     // FO, FO_rental, FO_business all use FO income tax rate
     return num(preset?.income_tax_rate_fo) || 25;
 }
