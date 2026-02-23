@@ -1,4 +1,5 @@
 import { calculateIRR } from '../financialCalculations';
+import { resolveEntityType, calculateTax } from '../skTaxUtils';
 
 export function calculateCommercial(projectData, preset, language = 'en') {
     const {
@@ -8,8 +9,13 @@ export function calculateCommercial(projectData, preset, language = 'en') {
         opex_data = {},
         capex_data = {},
         assumptions_data = {},
-        entity_type = 'FO',
     } = projectData;
+
+    const entity_type = resolveEntityType(
+        projectData.entity_type,
+        'commercial',
+        projectData.country || 'SK'
+    );
 
     const num = (value) => {
         const parsed = Number(value);
