@@ -135,12 +135,11 @@ export function calculateCommercial(projectData, preset, language = 'en') {
     // Taxable income = NOI - Interest - Depreciation
     const taxableIncome = Math.max(0, netOperatingIncome - firstYearInterest - annualDepreciation);
     
-    // Income tax based on entity type
-    const effectiveTaxRate = entity_type === 'PO' ? corporateTaxRate : incomeTaxRateFO;
-    const annualIncomeTax = taxableIncome * (effectiveTaxRate / 100);
+    // Tax based on entity type (SK-aware)
+    const { incomeTax: annualIncomeTax, levies: annualLevies, totalTax: annualTotalTax, effectiveTaxRate, levyRate } = calculateTax(taxableIncome, entity_type, preset);
     
-    // Cash flow after tax
-    const annualCashFlowAfterTax = annualCashFlow - annualIncomeTax;
+    // Cash flow after tax (income tax + levies)
+    const annualCashFlowAfterTax = annualCashFlow - annualTotalTax;
     const monthlyCashFlowAfterTax = annualCashFlowAfterTax / 12;
     
     // Tax benefits from deductions
