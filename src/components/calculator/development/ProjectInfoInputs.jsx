@@ -282,30 +282,38 @@ export default function ProjectInfoInputs({ data, language, onChange, country })
       <div className="space-y-4 p-4 bg-muted/20 rounded-lg border border-border">
         <div className="space-y-2">
           <Label className="text-base font-semibold">{t.entity_type}</Label>
-          <div className="flex gap-4">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="radio"
-                name="entity_type"
-                value="FO"
-                checked={safeData.entity_type === 'FO'}
-                onChange={(e) => handleChange('entity_type', e.target.value)}
-                className="w-4 h-4 text-primary"
-              />
-              <span>{t.entity_type_fo}</span>
-            </label>
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="radio"
-                name="entity_type"
-                value="PO"
-                checked={safeData.entity_type === 'PO'}
-                onChange={(e) => handleChange('entity_type', e.target.value)}
-                className="w-4 h-4 text-primary"
-              />
-              <span>{t.entity_type_po}</span>
-            </label>
-          </div>
+          {country === 'SK' ? (
+            <Select
+              value={safeData.entity_type || 'FO_business'}
+              onValueChange={(v) => handleChange('entity_type', v)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="FO_rental">{t.entity_type_fo_rental || 'FO – Rental'}</SelectItem>
+                <SelectItem value="FO_business">{t.entity_type_fo_business || 'FO – Business'}</SelectItem>
+                <SelectItem value="PO">{t.entity_type_po}</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="flex gap-4">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="entity_type" value="FO"
+                  checked={safeData.entity_type === 'FO'}
+                  onChange={(e) => handleChange('entity_type', e.target.value)}
+                  className="w-4 h-4 text-primary" />
+                <span>{t.entity_type_fo}</span>
+              </label>
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="entity_type" value="PO"
+                  checked={safeData.entity_type === 'PO'}
+                  onChange={(e) => handleChange('entity_type', e.target.value)}
+                  className="w-4 h-4 text-primary" />
+                <span>{t.entity_type_po}</span>
+              </label>
+            </div>
+          )}
         </div>
 
         {/* VAT Payer Checkbox */}
