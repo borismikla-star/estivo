@@ -340,13 +340,16 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
             annual_cash_flow: annualCashFlow,
             monthly_cash_flow: monthlyCashFlow,
             
-            // TAX ANALYSIS (NEW!)
+            // TAX ANALYSIS
             entity_type: entity_type,
             effective_tax_rate: effectiveTaxRate,
+            levy_rate: levyRate,
             annual_depreciation: annualDepreciation,
             annual_interest_deduction: firstYearInterest,
             taxable_income: taxableIncome,
             annual_income_tax: annualIncomeTax,
+            annual_levies: annualLevies,
+            annual_total_tax: annualTotalTax,
             tax_benefit_from_interest: taxBenefitFromInterest,
             tax_benefit_from_depreciation: taxBenefitFromDepreciation,
             total_tax_benefit: totalTaxBenefit,
