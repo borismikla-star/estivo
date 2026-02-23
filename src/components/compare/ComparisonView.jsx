@@ -201,6 +201,7 @@ export default function ComparisonView({ projects, language = 'en', user, onRemo
             accessor: (p) => isDev(p)
                 ? (p.results?.kpis?.return_on_cost ?? 0)
                 : (p.results?.kpis?.roi_10_year ?? p.results?.kpis?.roi ?? 0),
+            labelFn: (p) => isDev(p) ? t.roi_label_dev : t.roi_label_rental,
         },
         {
             key: 'irr',
