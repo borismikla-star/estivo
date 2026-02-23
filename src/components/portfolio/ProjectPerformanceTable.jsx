@@ -70,6 +70,8 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
           type: "Typ",
           investment: "Investícia",
           roi: "ROI",
+          roi_tooltip_rental: "10-ročný celkový ROI na vlastnom kapitáli",
+          roi_tooltip_dev: "Návratnosť na nákladoch projektu",
           cashflow: "Ročný Cashflow",
           profit: "Zisk", // NEW for development
           country: "Krajina",
