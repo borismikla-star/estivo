@@ -156,8 +156,16 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
     },
   ], [t_calc, projectData, language, onBulkUpdate, t, currentCountryPreset]);
 
+  const isSK = projectData.country === 'SK';
+
   // Get current entity type label
-  const currentEntityLabel = projectData.entity_type === 'PO' ? t_calc.entity_type_po : t_calc.entity_type_fo;
+  const currentEntityLabel = projectData.entity_type === 'PO'
+    ? t_calc.entity_type_po
+    : projectData.entity_type === 'FO_business'
+    ? (t_calc.entity_type_fo_business || 'FO – Business')
+    : projectData.entity_type === 'FO_rental'
+    ? (t_calc.entity_type_fo_rental || 'FO – Rental')
+    : t_calc.entity_type_fo;
 
   return (
     <div className="space-y-6">
@@ -172,17 +180,28 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
         <div>
           <Label className="mb-2 block">{t_calc.entity_type}</Label>
           <Select 
-            value={projectData.entity_type || 'FO'} 
+            value={projectData.entity_type || (isSK ? 'FO_business' : 'FO')} 
             onValueChange={handleEntityTypeChange}
           >
             <SelectTrigger>
               <SelectValue>{currentEntityLabel}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
-              <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+              {isSK ? (
+                <>
+                  <SelectItem value="FO_rental">{t_calc.entity_type_fo_rental || 'FO – Rental'}</SelectItem>
+                  <SelectItem value="FO_business">{t_calc.entity_type_fo_business || 'FO – Business'}</SelectItem>
+                  <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+                </>
+              ) : (
+                <>
+                  <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
+                  <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+                </>
+              )}
             </SelectContent>
           </Select>
+          <p className="text-xs text-muted-foreground mt-1">{t_calc.entity_type_tooltip}</p>
         </div>
       </div>
 
