@@ -223,10 +223,11 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
       onSelectionChange(newSelectedIds);
   };
 
-  const SortableHeader = ({ t_key, sort_key }) => (
+  const SortableHeader = ({ t_key, sort_key, tooltip }) => (
     <TableHead>
       <Button variant="ghost" onClick={() => requestSort(sort_key)} className="h-8 px-2 lg:px-3">
         <span className="text-xs lg:text-sm">{t[t_key]}</span>
+        {tooltip && <span className="ml-1 text-[10px] text-muted-foreground hidden lg:inline">({tooltip})</span>}
         <ArrowUpDown className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
       </Button>
     </TableHead>
