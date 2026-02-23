@@ -206,15 +206,25 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
           <div>
             <Label className="mb-2 block">{t_calc.entity_type}</Label>
             <Select 
-              value={projectData.entity_type || 'FO'} 
+              value={projectData.entity_type || (isSK ? 'FO_rental' : 'FO')} 
               onValueChange={handleEntityTypeChange}
             >
               <SelectTrigger>
                 <SelectValue>{currentEntityLabel}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
-                <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+                {isSK ? (
+                  <>
+                    <SelectItem value="FO_rental">{t_calc.entity_type_fo_rental || 'FO – Rental'}</SelectItem>
+                    <SelectItem value="FO_business">{t_calc.entity_type_fo_business || 'FO – Business'}</SelectItem>
+                    <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+                  </>
+                ) : (
+                  <>
+                    <SelectItem value="FO">{t_calc.entity_type_fo}</SelectItem>
+                    <SelectItem value="PO">{t_calc.entity_type_po}</SelectItem>
+                  </>
+                )}
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground mt-1">{t_calc.entity_type_tooltip}</p>
