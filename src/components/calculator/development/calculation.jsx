@@ -482,10 +482,13 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
             total_revenue_excl_vat: totalRevenueExclVAT,
             vat_rate_percent: VAT_RATE * 100,
             
-            // TAX METRICS (NEW!)
+            // TAX METRICS
             entity_type: entity_type,
             effective_tax_rate: effectiveTaxRate,
+            levy_rate: levyRate,
             tax_on_profit: taxOnProfit,
+            tax_income_portion: incomeT,
+            tax_levies_portion: leviesT,
             net_profit_after_tax: netProfitAfterTax,
         },
         cost_breakdown: costBreakdown,
