@@ -182,8 +182,16 @@ export default function LongTermLeaseCalculator({ projectData, onFieldChange, on
     countryPresets
   ]);
 
+  const isSK = projectData.country === 'SK';
+
   // Get current entity type label
-  const currentEntityLabel = projectData.entity_type === 'PO' ? t_calc.entity_type_po : t_calc.entity_type_fo;
+  const currentEntityLabel = projectData.entity_type === 'PO'
+    ? t_calc.entity_type_po
+    : projectData.entity_type === 'FO_business'
+    ? (t_calc.entity_type_fo_business || 'FO – Business')
+    : projectData.entity_type === 'FO_rental'
+    ? (t_calc.entity_type_fo_rental || 'FO – Rental')
+    : t_calc.entity_type_fo;
 
   return (
     <div className="space-y-6">
