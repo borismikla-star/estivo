@@ -7,10 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export default function ProjectInfoInputs({ data, language, onChange }) {
   const translations = {
     sk: {
-      title: "Informácie o projekte",
-      entity_type: "Typ subjektu",
-      entity_type_fo: "Fyzická osoba (FO)",
-      entity_type_po: "Právnická osoba (PO)",
+    title: "Informácie o projekte",
+    entity_type: "Typ subjektu",
+    entity_type_fo: "Fyzická osoba (FO)",
+    entity_type_fo_rental: "FO – prenájom (§6 ods.3)",
+    entity_type_fo_business: "FO – podnikanie (SZČO)",
+    entity_type_po: "Právnická osoba (PO)",
       vat_payer: "Platca DPH",
       vat_payer_tooltip: "Označte, ak ste registrovaný platca DPH. Platcovia DPH môžu odpočítať vstupnú DPH z nákladov.",
       vat_payer_yes: "Áno, som platca DPH",
