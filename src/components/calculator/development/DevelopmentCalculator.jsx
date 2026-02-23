@@ -117,6 +117,7 @@ export default function DevelopmentCalculator({ projectData, onBulkUpdate, langu
       content: <ProjectInfoInputs 
         data={project_info} 
         language={language} 
+        country={projectData.country}
         onChange={(updatedData) => onBulkUpdate("project_info_data", updatedData)} 
       /> 
     },
