@@ -56,7 +56,7 @@ export function getIncomeTaxRate(entityType, preset, annualRevenue = 0) {
 export function getLevyRate(entityType, preset) {
     const num = (v) => { const p = Number(v); return isNaN(p) ? 0 : p; };
     if (entityType === 'FO_business' && preset?.country_code === 'SK') {
-        return num(preset?.fo_business_levy_rate) || 35; // ~35% social+health for SZČO
+        return num(preset?.fo_business_levy_rate);
     }
     return 0;
 }
