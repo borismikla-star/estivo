@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import InfoTooltip from '@/components/shared/InfoTooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function ProjectInfoInputs({ data, language, onChange }) {
+export default function ProjectInfoInputs({ data, language, onChange, country }) {
   const translations = {
     sk: {
     title: "Informácie o projekte",
