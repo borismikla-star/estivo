@@ -1,4 +1,5 @@
 import { calculateIRR } from '../financialCalculations';
+import { resolveEntityType, calculateTax } from '../skTaxUtils';
 
 export function calculateLongTermLease(projectData, preset, language = 'en') {
     const {
@@ -9,7 +10,12 @@ export function calculateLongTermLease(projectData, preset, language = 'en') {
     } = projectData;
 
     // entity_type is a top-level field on projectData
-    const entity_type = projectData.entity_type || 'FO';
+    // For SK: resolve to granular sub-type (FO_rental default for long_term_lease)
+    const entity_type = resolveEntityType(
+        projectData.entity_type,
+        'long_term_lease',
+        projectData.country || 'SK'
+    );
 
     // Helper function to ensure number
     const num = (value) => {
