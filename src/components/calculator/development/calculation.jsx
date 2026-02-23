@@ -1,4 +1,5 @@
 import { calculateIRR } from '../financialCalculations';
+import { resolveEntityType, calculateTax } from '../skTaxUtils';
 
 export function calculateDevelopment(projectData, preset, language = 'en') {
     const {
@@ -8,8 +9,12 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
         financing_data = {}
     } = projectData;
     
-    // Get entity_type from project_info_data OR fallback to projectData root
-    const entity_type = project_info_data.entity_type || projectData.entity_type || 'FO';
+    // Get entity_type: resolve SK-specific sub-types
+    const entity_type = resolveEntityType(
+        project_info_data.entity_type || projectData.entity_type,
+        'development',
+        projectData.country || 'SK'
+    );
 
     const num = (value) => {
         const parsed = Number(value);
