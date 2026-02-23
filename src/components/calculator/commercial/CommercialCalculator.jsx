@@ -25,7 +25,10 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           assumptions: "Assumptions & Tax Settings",
           entity_type: "Entity Type",
           entity_type_fo: "Individual (FO)",
+          entity_type_fo_rental: "Individual – Rental (FO)",
+          entity_type_fo_business: "Individual – Business (FO)",
           entity_type_po: "Legal Entity (PO)",
+          entity_type_tooltip: "Choose entity type – affects tax and levy calculations",
       },
       sk: {
           accordion_property_details: "Detaily nehnuteľnosti",
@@ -36,7 +39,10 @@ export default function CommercialCalculator({ projectData, onBulkUpdate, langua
           assumptions: "Predpoklady a daňové nastavenia",
           entity_type: "Typ subjektu",
           entity_type_fo: "Fyzická osoba (FO)",
+          entity_type_fo_rental: "FO – prenájom (§6 ods.3)",
+          entity_type_fo_business: "FO – podnikanie (SZČO)",
           entity_type_po: "Právnická osoba (PO)",
+          entity_type_tooltip: "Typ subjektu ovplyvňuje výpočet dane a odvodov",
       },
       pl: {
           accordion_property_details: "Szczegóły nieruchomości",
