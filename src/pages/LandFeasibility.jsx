@@ -147,17 +147,31 @@ export default function LandFeasibility() {
       name: transferPending.name,
       type: 'development',
       status: 'draft',
-      project_info_data: { concept_source: transferPending.id, data_confidence: 'concept' },
-      land_data: {
-        land_size_m2: r.land_area || 0,
-      },
-      construction_data: {
-        // GFA (HPP nadzemné) → buildable_area_m2
-        buildable_area_m2: r.hpp_above || 0,
-        // NSA (ČPP nadzemné = apartments + non-residential) → netSaleableArea
-        netSaleableArea: (r.apartments_area || 0) + (r.non_residential_area || 0),
-        // Zastavaná plocha → totalBuiltUpArea
-        totalBuiltUpArea: r.built_area || 0,
+      project_info_data: {
+        concept_source: transferPending.id,
+        data_confidence: 'concept',
+        // Land
+        total_land_area: r.land_area || 0,
+        building_area: r.built_area || 0,
+        // GFA
+        gfa_above: r.hpp_above || 0,
+        gfa_below: r.hpp_below || 0,
+        // NFA
+        nfa_above: r.npp_above || 0,
+        nfa_below: r.npp_below || 0,
+        // Sales areas
+        sales_area_apartments: r.apartments_area || 0,
+        sales_area_non_residential: r.non_residential_area || 0,
+        sales_area_balconies: r.balconies_area || 0,
+        sales_area_gardens: r.front_gardens_area || 0,
+        // Parking
+        parking_indoor_count: r.parking_covered || 0,
+        parking_outdoor_count: r.parking_outdoor || 0,
+        // Other areas
+        paved_areas: r.paved_area || 0,
+        green_areas_terrain: r.green_terrain || 0,
+        green_areas_structure: r.green_on_structure_area || 0,
+        basement_area: r.cellars_area || 0,
       },
     };
 
