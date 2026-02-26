@@ -176,7 +176,7 @@ export default function LandFeasibility() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div>
 
       {/* ── Sticky Header ── */}
       <div className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
