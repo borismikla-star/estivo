@@ -319,7 +319,7 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
                   <ArrowUpDown className="ml-1 h-3 w-3 lg:h-4 lg:w-4" />
                 </Button>
               </TableHead>
-              <SortableHeader t_key="roi" sort_key="roi" tooltip={t.roi_tooltip_rental} />
+              <SortableHeader t_key="roi" sort_key="roi" />
               <TableHead>{t.country}</TableHead>
             </TableRow>
           </TableHeader>
