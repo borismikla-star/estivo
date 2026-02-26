@@ -140,7 +140,9 @@ export default function LandFeasibility() {
 
   const confirmTransfer = async () => {
     if (!transferPending) return;
-    const r = transferPending.results || {};
+    // Recalculate from inputs to ensure fresh results (not stale saved results)
+    const freshResults = calculateFeasibility({ ...DEFAULT_INPUTS, ...(transferPending.inputs || {}) });
+    const r = freshResults;
     const projectData = {
       name: transferPending.name,
       type: 'development',
