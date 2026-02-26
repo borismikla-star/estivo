@@ -462,6 +462,7 @@ export default function Layout({ children, currentPageName }) {
     { name: t.dashboard, href: "Dashboard", icon: LayoutDashboard },
     { name: t.portfolio, href: "Portfolio", icon: Briefcase },
     { name: t.compare, href: "Compare", icon: GitCompareArrows },
+    { name: t.land_feasibility, href: "LandFeasibility", icon: Layers },
   ];
 
   console.log('🔷 LAYOUT: Rendering sidebar and footer');
