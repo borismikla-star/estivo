@@ -151,27 +151,27 @@ export default function LandFeasibility() {
         concept_source: transferPending.id,
         data_confidence: 'concept',
         // Land
-        total_land_area: r.land_area || 0,
-        building_area: r.built_area || 0,
+        total_land_area: Math.round(r.land_area || 0),
+        building_area: Math.round(r.built_area || 0),
         // GFA
-        gfa_above: r.hpp_above || 0,
-        gfa_below: r.hpp_below || 0,
+        gfa_above: Math.round(r.hpp_above || 0),
+        gfa_below: Math.round(r.hpp_below || 0),
         // NFA
-        nfa_above: r.npp_above || 0,
-        nfa_below: r.npp_below || 0,
+        nfa_above: Math.round(r.npp_above || 0),
+        nfa_below: Math.round(r.npp_below || 0),
         // Sales areas
-        sales_area_apartments: r.apartments_area || 0,
-        sales_area_non_residential: r.non_residential_area || 0,
-        sales_area_balconies: r.balconies_area || 0,
-        sales_area_gardens: r.front_gardens_area || 0,
+        sales_area_apartments: Math.round(r.apartments_area || 0),
+        sales_area_non_residential: Math.round(r.non_residential_area || 0),
+        sales_area_balconies: Math.round(r.balconies_area || 0),
+        sales_area_gardens: Math.round(r.front_gardens_area || 0),
         // Parking
-        parking_indoor_count: r.parking_covered || 0,
-        parking_outdoor_count: r.parking_outdoor || 0,
+        parking_indoor_count: Math.round(r.parking_covered || 0),
+        parking_outdoor_count: Math.round(r.parking_outdoor || 0),
         // Other areas
-        paved_areas: r.paved_area || 0,
-        green_areas_terrain: r.green_terrain || 0,
-        green_areas_structure: r.green_on_structure_area || 0,
-        basement_area: r.cellars_area || 0,
+        paved_areas: Math.round(r.paved_area || 0),
+        green_areas_terrain: Math.round(r.green_terrain || 0),
+        green_areas_structure: Math.round(r.green_on_structure_area || 0),
+        basement_area: Math.round(r.cellars_area || 0),
       },
     };
 
