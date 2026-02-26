@@ -67,6 +67,7 @@ import LegalDocument from './pages/LegalDocument';
 import Portfolio from './pages/Portfolio';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
+import LandFeasibility from './pages/LandFeasibility';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +92,7 @@ export const PAGES = {
     "Portfolio": Portfolio,
     "Pricing": Pricing,
     "Settings": Settings,
+    "LandFeasibility": LandFeasibility,
 }
 
 export const pagesConfig = {
