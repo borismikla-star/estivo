@@ -178,42 +178,48 @@ export default function LandFeasibility() {
   return (
     <div>
 
-      {/* ── Page Header ── */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary/10 shrink-0">
-            <Layers className="h-5 w-5 text-primary" />
+      {/* ── Page Header — same style as CalculatorHeader ── */}
+      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-sm border-b border-border shadow-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {view === 'editor' ? (
+              <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setView('list')}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            ) : (
+              <Link to={createPageUrl('Dashboard')}>
+                <Button variant="ghost" size="icon" className="shrink-0">
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl font-bold truncate">{view === 'editor' ? (conceptName || t.new_concept_placeholder) : t.title}</p>
+              {view !== 'editor' && <p className="text-xs text-muted-foreground hidden sm:block">{t.subtitle}</p>}
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-foreground leading-tight">{t.title}</h1>
-            <p className="text-sm text-muted-foreground">{t.subtitle}</p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          {view === 'editor' ? (
-            <>
-              {isDirty && (
-                <Badge variant="outline" className="text-xs text-amber-600 border-amber-300 hidden sm:flex">
-                  {t.unsaved}
-                </Badge>
-              )}
-              <Button variant="outline" size="sm" onClick={() => setView('list')} className="gap-1.5">
-                <List className="h-4 w-4" />
-                <span className="hidden sm:inline">{t.back_to_list}</span>
+          <div className="flex items-center gap-2">
+            {view === 'editor' ? (
+              <>
+                {isDirty && (
+                  <Badge variant="outline" className="text-xs text-amber-600 border-amber-300 hidden sm:flex">
+                    {t.unsaved}
+                  </Badge>
+                )}
+                <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending} className="bg-primary hover:bg-primary/90 gap-1.5">
+                  {saveMutation.isPending
+                    ? <><Loader2 className="h-4 w-4 animate-spin" />{t.saving}</>
+                    : <><Save className="h-4 w-4" />{t.save}</>}
+                </Button>
+              </>
+            ) : (
+              <Button size="sm" onClick={handleNew} className="bg-primary hover:bg-primary/90 gap-1.5">
+                <Plus className="h-4 w-4" />
+                {t.new_concept}
               </Button>
-              <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending} className="bg-primary hover:bg-primary/90 gap-1.5">
-                {saveMutation.isPending
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /><span className="hidden sm:inline">{t.saving}</span></>
-                  : <><Save className="h-4 w-4" /><span className="hidden sm:inline">{t.save}</span></>}
-              </Button>
-            </>
-          ) : (
-            <Button size="sm" onClick={handleNew} className="bg-primary hover:bg-primary/90 gap-1.5">
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">{t.new_concept}</span>
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
