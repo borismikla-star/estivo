@@ -178,65 +178,47 @@ export default function LandFeasibility() {
   return (
     <div>
 
-      {/* ── Sticky Header ── */}
-      <div className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Left: icon + title */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary/10 shrink-0">
-              <Layers className="h-5 w-5 text-primary" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-base font-bold text-foreground leading-tight truncate">{t.title}</h1>
-              <p className="text-xs text-muted-foreground hidden sm:block truncate">{t.subtitle}</p>
-            </div>
+      {/* ── Page Header ── */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary/10 shrink-0">
+            <Layers className="h-5 w-5 text-primary" />
           </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground leading-tight">{t.title}</h1>
+            <p className="text-sm text-muted-foreground">{t.subtitle}</p>
+          </div>
+        </div>
 
-          {/* Right: actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            {view === 'editor' ? (
-              <>
-                {isDirty && (
-                  <Badge variant="outline" className="text-xs text-amber-600 border-amber-300 hidden sm:flex">
-                    {t.unsaved}
-                  </Badge>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setView('list')}
-                  className="gap-1.5"
-                >
-                  <List className="h-4 w-4" />
-                  <span className="hidden sm:inline">{t.back_to_list}</span>
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSave}
-                  disabled={saveMutation.isPending}
-                  className="bg-primary hover:bg-primary/90 gap-1.5"
-                >
-                  {saveMutation.isPending
-                    ? <><Loader2 className="h-4 w-4 animate-spin" /><span className="hidden sm:inline">{t.saving}</span></>
-                    : <><Save className="h-4 w-4" /><span className="hidden sm:inline">{t.save}</span></>}
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="sm"
-                onClick={handleNew}
-                className="bg-primary hover:bg-primary/90 gap-1.5"
-              >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">{t.new_concept}</span>
+        <div className="flex items-center gap-2">
+          {view === 'editor' ? (
+            <>
+              {isDirty && (
+                <Badge variant="outline" className="text-xs text-amber-600 border-amber-300 hidden sm:flex">
+                  {t.unsaved}
+                </Badge>
+              )}
+              <Button variant="outline" size="sm" onClick={() => setView('list')} className="gap-1.5">
+                <List className="h-4 w-4" />
+                <span className="hidden sm:inline">{t.back_to_list}</span>
               </Button>
-            )}
-          </div>
+              <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending} className="bg-primary hover:bg-primary/90 gap-1.5">
+                {saveMutation.isPending
+                  ? <><Loader2 className="h-4 w-4 animate-spin" /><span className="hidden sm:inline">{t.saving}</span></>
+                  : <><Save className="h-4 w-4" /><span className="hidden sm:inline">{t.save}</span></>}
+              </Button>
+            </>
+          ) : (
+            <Button size="sm" onClick={handleNew} className="bg-primary hover:bg-primary/90 gap-1.5">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">{t.new_concept}</span>
+            </Button>
+          )}
         </div>
       </div>
 
       {/* ── Main Content ── */}
-      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+      <div>
 
         {view === 'list' ? (
           /* LIST VIEW */
