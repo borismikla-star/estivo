@@ -373,7 +373,7 @@ export default function Layout({ children, currentPageName }) {
           dashboard: "Vezérlőpult",
           portfolio: "Portfólió",
           compare: "Összehasonlítás",
-          land_feasibility: "Feasibility Eszköz",
+          land_feasibility: "Telekalkalmassági elemzés",
           settings: "Beállítások",
           logout: "Kijelentkezés",
           admin_users: "Felhasználókezelés",
