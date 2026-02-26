@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowUpDown, Home, Package, Building, LineChart, Lock } from 'lucide-react';
+import { ArrowUpDown, Home, Package, Building, LineChart, Lock, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
