@@ -148,7 +148,8 @@ export default function Layout({ children, currentPageName }) {
   const actualPath = window.location.pathname.toLowerCase();
   const isDashboardArea = actualPath.includes('/dashboard') || actualPath.includes('/portfolio') || 
                          actualPath.includes('/settings') || actualPath.includes('/compare') ||
-                         actualPath.includes('/calculator') || actualPath.includes('/admin');
+                         actualPath.includes('/calculator') || actualPath.includes('/admin') ||
+                         actualPath.includes('/landfeasibility');
 
   const isPublicPage = publicPages.includes(currentPageName) && !isDashboardArea;
 
