@@ -343,7 +343,7 @@ export default function Layout({ children, currentPageName }) {
           dashboard: "Prehľad",
           portfolio: "Portfólio",
           compare: "Porovnať",
-          land_feasibility: "Land Feasibility",
+          land_feasibility: "Feasibility Nástroj",
           settings: "Nastavenia",
           logout: "Odhlásiť sa",
           admin_users: "Správa používateľov",
