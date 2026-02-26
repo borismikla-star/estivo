@@ -28,7 +28,7 @@ const DEFAULT_INPUTS = {
 
 const translations = {
   en: {
-    title: "Feasibility Tool",
+    title: "Land Feasibility Analysis",
     subtitle: "Concept Generator — pre-investment land potential analysis",
     new_concept: "New Concept",
     my_concepts: "My Concepts",
