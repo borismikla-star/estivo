@@ -163,7 +163,6 @@ export default function LandFeasibility() {
 
     const newProject = await base44.entities.Project.create(projectData);
     await base44.entities.LandConcept.update(transferPending.id, {
-      status: 'transferred',
       linked_project_id: newProject.id,
     });
     queryClient.invalidateQueries({ queryKey: ['landConcepts'] });
