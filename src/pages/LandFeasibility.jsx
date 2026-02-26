@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Save, ArrowRight, Loader2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Save, ArrowRight, Loader2, Layers, ChevronLeft, List } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import FeasibilityInputs from '../components/landFeasibility/FeasibilityInputs';
@@ -34,14 +34,16 @@ const translations = {
     my_concepts: "My Concepts",
     editor: "Editor",
     concept_name: "Concept Name",
-    save: "Save Concept",
+    save: "Save",
     saving: "Saving…",
+    back_to_list: "Back to list",
     transfer_title: "Transfer to Development Calculator",
     transfer_confirm: "This will create a new Development Calculator project with data from this concept. Continue?",
     transfer_ok: "Transfer",
     cancel: "Cancel",
     transferred_ok: "Transferred! Redirecting to calculator…",
     unsaved: "Unsaved",
+    new_concept_placeholder: "e.g. Plot Bratislava – Ružinov",
   },
   sk: {
     title: "Land Feasibility Tool",
@@ -50,14 +52,16 @@ const translations = {
     my_concepts: "Moje koncepty",
     editor: "Editor",
     concept_name: "Názov konceptu",
-    save: "Uložiť koncept",
+    save: "Uložiť",
     saving: "Ukladám…",
+    back_to_list: "Späť na zoznam",
     transfer_title: "Preniesť do Development Kalkulačky",
     transfer_confirm: "Vytvorí sa nový projekt v Development Kalkulačke s údajmi z tohto konceptu. Pokračovať?",
     transfer_ok: "Preniesť",
     cancel: "Zrušiť",
     transferred_ok: "Prenesené! Presmerovávam do kalkulačky…",
     unsaved: "Neuložené",
+    new_concept_placeholder: "napr. Pozemok Bratislava – Ružinov",
   },
 };
 
@@ -69,14 +73,20 @@ export default function LandFeasibility() {
   const language = user?.preferred_language || 'sk';
   const t = translations[language] || translations.sk;
 
-  const [activeTab, setActiveTab] = useState('list');
+  const [view, setView] = useState('list'); // 'list' | 'editor'
   const [inputs, setInputs] = useState(DEFAULT_INPUTS);
   const [conceptName, setConceptName] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
   const [transferPending, setTransferPending] = useState(null);
   const [transferSuccess, setTransferSuccess] = useState(false);
 
   const results = useMemo(() => calculateFeasibility(inputs), [inputs]);
+
+  const handleInputsChange = (newInputs) => {
+    setInputs(newInputs);
+    setIsDirty(true);
+  };
 
   const { data: concepts = [], isLoading } = useQuery({
     queryKey: ['landConcepts'],
@@ -89,7 +99,7 @@ export default function LandFeasibility() {
       : base44.entities.LandConcept.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['landConcepts'] });
-      setActiveTab('list');
+      setIsDirty(false);
     },
   });
 
@@ -112,14 +122,16 @@ export default function LandFeasibility() {
     setEditingId(concept.id);
     setConceptName(concept.name);
     setInputs({ ...DEFAULT_INPUTS, ...(concept.inputs || {}) });
-    setActiveTab('editor');
+    setIsDirty(false);
+    setView('editor');
   };
 
   const handleNew = () => {
     setEditingId(null);
     setConceptName('');
     setInputs(DEFAULT_INPUTS);
-    setActiveTab('editor');
+    setIsDirty(false);
+    setView('editor');
   };
 
   const handleTransfer = (concept) => {
@@ -133,14 +145,8 @@ export default function LandFeasibility() {
       name: transferPending.name,
       type: 'development',
       status: 'draft',
-      // Map feasibility outputs to development calculator inputs
-      project_info_data: {
-        concept_source: transferPending.id,
-        data_confidence: 'concept',
-      },
-      land_data: {
-        land_area: r.land_area || 0,
-      },
+      project_info_data: { concept_source: transferPending.id, data_confidence: 'concept' },
+      land_data: { land_area: r.land_area || 0 },
       construction_data: {
         built_area: r.built_area || 0,
         hpp_above: r.hpp_above || 0,
@@ -165,33 +171,79 @@ export default function LandFeasibility() {
     setTransferPending(null);
     setTransferSuccess(true);
     setTimeout(() => {
-      navigate(createPageUrl(`Calculator?projectId=${newProject.id}`));
+      navigate(createPageUrl(`Calculator?id=${newProject.id}`));
     }, 1500);
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">{t.title}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t.subtitle}</p>
+    <div className="min-h-screen bg-background">
+
+      {/* ── Sticky Header ── */}
+      <div className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          {/* Left: icon + title */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary/10 shrink-0">
+              <Layers className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-base font-bold text-foreground leading-tight truncate">{t.title}</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block truncate">{t.subtitle}</p>
+            </div>
+          </div>
+
+          {/* Right: actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            {view === 'editor' ? (
+              <>
+                {isDirty && (
+                  <Badge variant="outline" className="text-xs text-amber-600 border-amber-300 hidden sm:flex">
+                    {t.unsaved}
+                  </Badge>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setView('list')}
+                  className="gap-1.5"
+                >
+                  <List className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t.back_to_list}</span>
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending}
+                  className="bg-primary hover:bg-primary/90 gap-1.5"
+                >
+                  {saveMutation.isPending
+                    ? <><Loader2 className="h-4 w-4 animate-spin" /><span className="hidden sm:inline">{t.saving}</span></>
+                    : <><Save className="h-4 w-4" /><span className="hidden sm:inline">{t.save}</span></>}
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                onClick={handleNew}
+                className="bg-primary hover:bg-primary/90 gap-1.5"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">{t.new_concept}</span>
+              </Button>
+            )}
+          </div>
         </div>
-        <Button onClick={handleNew} className="bg-primary hover:bg-primary/90">
-          <Plus className="h-4 w-4 mr-2" /> {t.new_concept}
-        </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="list">{t.my_concepts}</TabsTrigger>
-          <TabsTrigger value="editor">{t.editor}</TabsTrigger>
-        </TabsList>
+      {/* ── Main Content ── */}
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
-        {/* LIST TAB */}
-        <TabsContent value="list" className="mt-4">
-          {isLoading ? (
-            <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+        {view === 'list' ? (
+          /* LIST VIEW */
+          isLoading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
           ) : (
             <ConceptList
               concepts={concepts}
@@ -199,40 +251,38 @@ export default function LandFeasibility() {
               onDelete={(id) => deleteMutation.mutate(id)}
               onTransfer={handleTransfer}
               language={language}
+              onNew={handleNew}
             />
-          )}
-        </TabsContent>
-
-        {/* EDITOR TAB */}
-        <TabsContent value="editor" className="mt-4">
+          )
+        ) : (
+          /* EDITOR VIEW — two-column like Calculator */
           <div className="space-y-4">
-            {/* Name */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1 space-y-1">
-                <Label>{t.concept_name}</Label>
-                <Input
-                  placeholder={`Concept ${new Date().toLocaleDateString('sk-SK')}`}
-                  value={conceptName}
-                  onChange={e => setConceptName(e.target.value)}
-                />
-              </div>
-              <Button
-                onClick={handleSave}
-                disabled={saveMutation.isPending}
-                className="mt-6 bg-primary hover:bg-primary/90"
-              >
-                {saveMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />{t.saving}</> : <><Save className="h-4 w-4 mr-2" />{t.save}</>}
-              </Button>
+            {/* Concept name row */}
+            <div className="bg-card border border-border rounded-xl px-4 py-3 flex items-center gap-3">
+              <Label className="text-sm font-medium text-muted-foreground shrink-0">{t.concept_name}:</Label>
+              <Input
+                className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 text-base font-semibold p-0 h-auto"
+                placeholder={t.new_concept_placeholder}
+                value={conceptName}
+                onChange={e => { setConceptName(e.target.value); setIsDirty(true); }}
+              />
             </div>
 
-            {/* Two-column layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <FeasibilityInputs inputs={inputs} onChange={setInputs} language={language} />
-              <FeasibilityResults results={results} language={language} />
+            {/* Two-column grid — same as Calculator */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 items-start">
+              {/* Inputs */}
+              <div className="bg-card p-4 sm:p-6 rounded-xl lg:rounded-2xl border border-border shadow-premium">
+                <FeasibilityInputs inputs={inputs} onChange={handleInputsChange} language={language} />
+              </div>
+
+              {/* Results — sticky on large screens */}
+              <div className="xl:sticky xl:top-24">
+                <FeasibilityResults results={results} language={language} />
+              </div>
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
 
       {/* Transfer confirm dialog */}
       {transferPending && (
@@ -250,9 +300,9 @@ export default function LandFeasibility() {
         </div>
       )}
 
-      {/* Transfer success */}
+      {/* Transfer success toast */}
       {transferSuccess && (
-        <div className="fixed bottom-6 right-6 bg-green-600 text-white rounded-xl px-5 py-3 shadow-lg text-sm font-medium">
+        <div className="fixed bottom-6 right-6 bg-green-600 text-white rounded-xl px-5 py-3 shadow-lg text-sm font-medium z-50">
           {t.transferred_ok}
         </div>
       )}

@@ -62,12 +62,12 @@ import Compare from './pages/Compare';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
+import LandFeasibility from './pages/LandFeasibility';
 import Landing from './pages/Landing';
 import LegalDocument from './pages/LegalDocument';
 import Portfolio from './pages/Portfolio';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
-import LandFeasibility from './pages/LandFeasibility';
 import __Layout from './Layout.jsx';
 
 
@@ -87,12 +87,12 @@ export const PAGES = {
     "Contact": Contact,
     "Dashboard": Dashboard,
     "Home": Home,
+    "LandFeasibility": LandFeasibility,
     "Landing": Landing,
     "LegalDocument": LegalDocument,
     "Portfolio": Portfolio,
     "Pricing": Pricing,
     "Settings": Settings,
-    "LandFeasibility": LandFeasibility,
 }
 
 export const pagesConfig = {
