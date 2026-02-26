@@ -46,7 +46,7 @@ const translations = {
     new_concept_placeholder: "e.g. Plot Bratislava – Ružinov",
   },
   sk: {
-    title: "Land Feasibility Tool",
+    title: "Feasibility Nástroj",
     subtitle: "Concept Generator — predkúpová analýza potenciálu pozemku",
     new_concept: "Nový koncept",
     my_concepts: "Moje koncepty",
