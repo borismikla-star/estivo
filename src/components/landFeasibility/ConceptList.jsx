@@ -68,11 +68,9 @@ export default function ConceptList({ concepts, onOpen, onDelete, onTransfer, la
                 <Button variant="outline" size="sm" onClick={() => onOpen(c)}>
                   {t.open} <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
-                {c.status !== 'transferred' && (
-                  <Button variant="outline" size="sm" className="text-green-700 border-green-300 hover:bg-green-50" onClick={() => onTransfer(c)}>
-                    <Check className="h-3 w-3 mr-1" /> {t.transfer}
-                  </Button>
-                )}
+                <Button variant="outline" size="sm" className="text-green-700 border-green-300 hover:bg-green-50" onClick={() => onTransfer(c)}>
+                  <Check className="h-3 w-3 mr-1" /> {t.transfer}
+                </Button>
                 <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(c.id)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
