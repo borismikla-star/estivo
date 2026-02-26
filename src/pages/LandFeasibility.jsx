@@ -146,19 +146,16 @@ export default function LandFeasibility() {
       type: 'development',
       status: 'draft',
       project_info_data: { concept_source: transferPending.id, data_confidence: 'concept' },
-      land_data: { land_area: r.land_area || 0 },
+      land_data: {
+        land_size_m2: r.land_area || 0,
+      },
       construction_data: {
-        built_area: r.built_area || 0,
-        hpp_above: r.hpp_above || 0,
-        hpp_below: r.hpp_below || 0,
-        npp_above: r.npp_above || 0,
-        npp_below: r.npp_below || 0,
-        apartments_area: r.apartments_area || 0,
-        apartment_count: r.apartment_count || 0,
-        non_residential_area: r.non_residential_area || 0,
-        balconies_area: r.balconies_area || 0,
-        parking_covered: r.parking_covered || 0,
-        parking_outdoor: r.parking_outdoor || 0,
+        // GFA (HPP nadzemné) → buildable_area_m2
+        buildable_area_m2: r.hpp_above || 0,
+        // NSA (ČPP nadzemné = apartments + non-residential) → netSaleableArea
+        netSaleableArea: (r.apartments_area || 0) + (r.non_residential_area || 0),
+        // Zastavaná plocha → totalBuiltUpArea
+        totalBuiltUpArea: r.built_area || 0,
       },
     };
 
