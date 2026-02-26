@@ -360,7 +360,21 @@ export default function ProjectPerformanceTable({ projects, selectedIds, onSelec
                 <TableCell>
                   {p.isDevelopment ? formatCurrency(p.monthlyCashFlow) : formatCurrency(p.monthlyCashFlow * 12)}
                 </TableCell>
-                <TableCell className="font-semibold">{formatPercent(p.roi)}</TableCell>
+                <TableCell className="font-semibold">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="flex items-center gap-1 cursor-default">
+                          {formatPercent(p.roi)}
+                          <Info className="h-3 w-3 text-muted-foreground" />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{p.isDevelopment ? t.roi_tooltip_dev : t.roi_tooltip_rental}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </TableCell>
                 <TableCell>{p.country}</TableCell>
               </TableRow>
             )})}
