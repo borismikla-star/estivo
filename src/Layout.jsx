@@ -357,6 +357,7 @@ export default function Layout({ children, currentPageName }) {
           dashboard: "Panel",
           portfolio: "Portfolio",
           compare: "Porównaj",
+          land_feasibility: "Land Feasibility",
           settings: "Ustawienia",
           logout: "Wyloguj się",
           admin_users: "Zarządzanie użytkownikami",
