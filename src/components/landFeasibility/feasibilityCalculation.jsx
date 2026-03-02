@@ -96,6 +96,11 @@ const EFFICIENCY = {
 };
 
 export function calculateFeasibility(inputs) {
+  // Route to subdivision model
+  if (inputs.project_type === 'subdivision') {
+    return calculateSubdivision(inputs);
+  }
+
   const {
     land_area = 0,
     iz = 0,                    // index zastavanosti (0–1)
