@@ -258,6 +258,8 @@ export const getLandingPageTranslations = (language) => {
             feature2_desc: "Fejlett kalkulátorok irodákhoz, kiskereskedelemhez és teljes fejlesztési projektekhez.",
             feature3_title: "Több ország támogatása",
             feature3_desc: "Előre konfigurált adók, értékcsökkenés és jogi keretek Szlovákiához, Csehországhoz, Lengyelországhoz és Magyarországhoz.",
+            feature4_title: "Telekalkalmassági elemzés",
+            feature4_desc: "Vásárlás előtti telekpotenciál-elemzés — becsülje meg az építhető területet, az egységek számát és a projekt megvalósíthatóságát.",
             
             // Why
             why_title: "Miért Estivo?",
