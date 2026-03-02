@@ -112,6 +112,8 @@ export const getLandingPageTranslations = (language) => {
             feature2_desc: "Pokročilé kalkulačky pre kancelárie, obchody a komplexné stavebné projekty.",
             feature3_title: "Podpora viacerých krajín",
             feature3_desc: "Predkonfigurované dane, odpisy a právne rámce pre Slovensko, Českú republiku, Poľsko a Maďarsko.",
+            feature4_title: "Analýza uskutočniteľnosti pozemku",
+            feature4_desc: "Predkúpová analýza potenciálu pozemku — odhadnite zastavanosť, počet bytov a uskutočniteľnosť projektu skôr, ako kúpite.",
             
             // Why
             why_title: "Prečo Estivo?",
