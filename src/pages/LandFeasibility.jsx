@@ -24,6 +24,15 @@ const DEFAULT_INPUTS = {
   avg_apartment_size: 60,
   mode: 'realistic',
   green_on_structure: false,
+  // Subdivision defaults
+  roads_pct: 0.20,
+  green_pct: 0.10,
+  min_parcel_size: 600,
+  max_plot_coverage: 0.30,
+  floors_per_house: 2,
+  typology: 'detached',
+  risk_buffer_pct: 0.10,
+  parking_per_house: 2,
 };
 
 const translations = {
