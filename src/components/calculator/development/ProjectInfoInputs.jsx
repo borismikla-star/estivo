@@ -266,7 +266,27 @@ export default function ProjectInfoInputs({ data, language, onChange, country })
 
   const handleChange = (field, value) => {
     console.log('[ProjectInfoInputs] handleChange called:', { field, value });
-    onChange({ ...safeData, [field]: value });
+    const updated = { ...safeData, [field]: value };
+
+    // Auto-derive sales_area_apartments from nfa_above when nfa_above changes and sales_area_apartments is not manually set
+    if (field === 'nfa_above' && value) {
+      const nfa = parseFloat(value) || 0;
+      const nonRes = parseFloat(updated.sales_area_non_residential) || 0;
+      // apartments ≈ nfa_above minus non-residential (minus ~10% communal buffer)
+      const derived = Math.max(0, Math.round(nfa * 0.80 - nonRes));
+      // Only auto-fill if sales_area_apartments was empty or matches previous auto-derived value
+      if (!safeData.sales_area_apartments || safeData._sales_apt_auto) {
+        updated.sales_area_apartments = derived;
+        updated._sales_apt_auto = true;
+      }
+    }
+
+    // When user manually edits sales_area_apartments, mark as manual
+    if (field === 'sales_area_apartments') {
+      updated._sales_apt_auto = false;
+    }
+
+    onChange(updated);
   };
 
   const handleNumberChange = (field, value) => {
