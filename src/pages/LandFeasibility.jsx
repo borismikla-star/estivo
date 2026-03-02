@@ -149,34 +149,46 @@ export default function LandFeasibility() {
 
   const confirmTransfer = async () => {
     if (!transferPending) return;
-    // Recalculate from inputs to ensure fresh results (not stale saved results)
     const freshResults = calculateFeasibility({ ...DEFAULT_INPUTS, ...(transferPending.inputs || {}) });
     const r = freshResults;
+    const isSubdivision = r.mode === 'subdivision';
+
     const projectData = {
       name: transferPending.name,
       type: 'development',
       status: 'draft',
-      project_info_data: {
+      project_info_data: isSubdivision ? {
+        concept_source: transferPending.id,
+        data_confidence: 'concept_subdivision',
+        total_land_area: Math.round(r.land_area || 0),
+        // Subdivision-specific
+        development_area: Math.round(r.development_area || 0),
+        building_area: Math.round(r.total_built_footprint || 0),
+        gfa_above: Math.round(r.effective_total_hpp || 0),
+        gfa_below: 0,
+        nfa_above: Math.round(r.effective_total_hpp || 0),
+        nfa_below: 0,
+        // Units = parcels
+        number_of_units: Math.round(r.number_of_parcels || 0),
+        parking_outdoor_count: Math.round(r.total_parking || 0),
+        parking_indoor_count: 0,
+        green_areas_terrain: Math.round(r.green_area || 0),
+        paved_areas: Math.round(r.roads_area || 0),
+      } : {
         concept_source: transferPending.id,
         data_confidence: 'concept',
-        // Land
         total_land_area: Math.round(r.land_area || 0),
         building_area: Math.round(r.built_area || 0),
-        // GFA
         gfa_above: Math.round(r.hpp_above || 0),
         gfa_below: Math.round(r.hpp_below || 0),
-        // NFA
         nfa_above: Math.round(r.npp_above || 0),
         nfa_below: Math.round(r.npp_below || 0),
-        // Sales areas
         sales_area_apartments: Math.round(r.apartments_area || 0),
         sales_area_non_residential: Math.round(r.non_residential_area || 0),
         sales_area_balconies: Math.round(r.balconies_area || 0),
         sales_area_gardens: Math.round(r.front_gardens_area || 0),
-        // Parking
         parking_indoor_count: Math.round(r.parking_covered || 0),
         parking_outdoor_count: Math.round(r.parking_outdoor || 0),
-        // Other areas
         paved_areas: Math.round(r.paved_area || 0),
         green_areas_terrain: Math.round(r.green_terrain || 0),
         green_areas_structure: Math.round(r.green_on_structure_area || 0),
