@@ -57,11 +57,19 @@ export default function ConceptList({ concepts, onOpen, onDelete, onTransfer, la
               <div className="flex items-center gap-3 min-w-0">
                 <FileText className="h-5 w-5 text-primary shrink-0" />
                 <div className="min-w-0">
-                  <p className="font-semibold truncate">{c.name}</p>
+                  <p className="font-semibold truncate flex items-center gap-2">
+                    {c.name}
+                    {r.mode === 'subdivision' && (
+                      <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">{t.subdivision_label}</span>
+                    )}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {c.created_date ? format(new Date(c.created_date), 'dd.MM.yyyy') : '—'}
-                    {r.apartment_count ? ` · ${r.apartment_count} ${t.apts}` : ''}
-                    {r.npp_above ? ` · ${Math.round(r.npp_above).toLocaleString('sk-SK')} m² ${t.npp}` : ''}
+                    {r.mode === 'subdivision'
+                      ? (r.number_of_parcels ? ` · ${r.number_of_parcels} ${t.parcels}` : '')
+                      : (r.apartment_count ? ` · ${r.apartment_count} ${t.apts}` : '')}
+                    {r.mode !== 'subdivision' && r.npp_above ? ` · ${Math.round(r.npp_above).toLocaleString('sk-SK')} m² ${t.npp}` : ''}
+                    {r.mode === 'subdivision' && r.development_area ? ` · ${Math.round(r.development_area).toLocaleString('sk-SK')} m²` : ''}
                   </p>
                 </div>
               </div>
