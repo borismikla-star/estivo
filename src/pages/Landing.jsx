@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { BarChart3, Gem, CheckCircle, Star, Users, ArrowRight } from 'lucide-react';
+import { BarChart3, Gem, CheckCircle, Star, Users, ArrowRight, Layers } from 'lucide-react';
 import QuickRoiCalculator from '@/components/landing/QuickRoiCalculator';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
