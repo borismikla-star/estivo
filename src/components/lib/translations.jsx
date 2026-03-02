@@ -39,6 +39,8 @@ export const getLandingPageTranslations = (language) => {
             feature2_desc: "Advanced calculators for office, retail, and full development projects.",
             feature3_title: "Multi-Country Support",
             feature3_desc: "Pre-configured tax, depreciation, and legal frameworks for Slovakia, Czech Republic, Poland, and Hungary.",
+            feature4_title: "Land Feasibility Analysis",
+            feature4_desc: "Pre-investment land potential analysis — estimate buildable area, units, and development feasibility before you buy.",
             
             // Why
             why_title: "Why Estivo?",
