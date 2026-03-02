@@ -185,6 +185,8 @@ export const getLandingPageTranslations = (language) => {
             feature2_desc: "Zaawansowane kalkulatory dla biur, sklepów i kompleksowych projektów budowlanych.",
             feature3_title: "Wsparcie wielu krajów",
             feature3_desc: "Wstępnie skonfigurowane podatki, amortyzacja i ramy prawne dla Słowacji, Czech, Polski i Węgier.",
+            feature4_title: "Analiza wykonalności gruntu",
+            feature4_desc: "Przedkupna analiza potencjału gruntu — oszacuj zabudowaną powierzchnię, liczbę jednostek i wykonalność inwestycji przed zakupem.",
             
             // Why
             why_title: "Dlaczego Estivo?",
