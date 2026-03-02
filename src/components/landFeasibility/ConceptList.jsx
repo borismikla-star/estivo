@@ -16,6 +16,8 @@ const translations = {
     transfer: "Transfer to Calculator",
     apts: "apts",
     npp: "NFA",
+    parcels: "parcels",
+    subdivision_label: "Subdivision",
   },
   sk: {
     no_concepts: "Zatiaľ žiadne uložené koncepty.",
@@ -27,6 +29,8 @@ const translations = {
     transfer: "Preniesť do kalkulačky",
     apts: "bytov",
     npp: "ČPP",
+    parcels: "parciel",
+    subdivision_label: "Parcelácia",
   },
 };
 
