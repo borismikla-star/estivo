@@ -164,10 +164,15 @@ export default function LandFeasibility() {
         // Subdivision-specific
         development_area: Math.round(r.development_area || 0),
         building_area: Math.round(r.total_built_footprint || 0),
-        gfa_above: Math.round(r.effective_total_hpp || 0),
+        // GFA = total HPP (hrubá plocha pred risk bufferom)
+        gfa_above: Math.round(r.total_hpp || 0),
         gfa_below: 0,
+        // NFA = effective HPP (po risk bufferi = čistá plocha)
         nfa_above: Math.round(r.effective_total_hpp || 0),
         nfa_below: 0,
+        // Sales area apartments = NFA (pri RD = celá plocha, žiadne spoločné priestory)
+        sales_area_apartments: Math.round(r.effective_total_hpp || 0),
+        _sales_apt_auto: false,
         // Units = parcels
         number_of_units: Math.round(r.number_of_parcels || 0),
         parking_outdoor_count: Math.round(r.total_parking || 0),
