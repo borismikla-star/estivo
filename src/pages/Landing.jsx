@@ -412,26 +412,32 @@ export default function LandingPage() {
                              <h2 className="text-3xl sm:text-4xl font-bold text-center text-foreground">{t.features_title}</h2>
                              <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground">{t.features_subtitle}</p>
                         </div>
-                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-                            <FeatureCard 
-                                icon={BarChart3} 
-                                title={t.feature1_title} 
-                                description={t.feature1_desc}
-                                delay={0.1}
-                            />
-                            <FeatureCard 
-                                icon={Gem} 
-                                title={t.feature2_title}
-                                description={t.feature2_desc}
-                                delay={0.2}
-                            />
-                            <FeatureCard 
-                                icon={Users} 
-                                title={t.feature3_title}
-                                description={t.feature3_desc}
-                                delay={0.3}
-                            />
-                        </div>
+                        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+                             <FeatureCard 
+                                 icon={BarChart3} 
+                                 title={t.feature1_title} 
+                                 description={t.feature1_desc}
+                                 delay={0.1}
+                             />
+                             <FeatureCard 
+                                 icon={Gem} 
+                                 title={t.feature2_title}
+                                 description={t.feature2_desc}
+                                 delay={0.2}
+                             />
+                             <FeatureCard 
+                                 icon={Layers} 
+                                 title={t.feature4_title}
+                                 description={t.feature4_desc}
+                                 delay={0.3}
+                             />
+                             <FeatureCard 
+                                 icon={Users} 
+                                 title={t.feature3_title}
+                                 description={t.feature3_desc}
+                                 delay={0.4}
+                             />
+                         </div>
                     </div>
                 </section>
 
