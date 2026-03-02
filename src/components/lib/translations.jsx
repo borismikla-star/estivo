@@ -331,6 +331,8 @@ export const getLandingPageTranslations = (language) => {
             feature2_desc: "Erweiterte Rechner für Büros, Einzelhandel und komplette Entwicklungsprojekte.",
             feature3_title: "Unterstützung mehrerer Länder",
             feature3_desc: "Vorkonfigurierte Steuern, Abschreibungen und rechtliche Rahmenbedingungen für Slowakei, Tschechien, Polen und Ungarn.",
+            feature4_title: "Grundstücks-Machbarkeitsanalyse",
+            feature4_desc: "Analyse des Grundstückspotenzials vor dem Kauf — schätzen Sie bebaubare Fläche, Einheitenanzahl und Projektmachbarkeit.",
             
             // Why
             why_title: "Warum Estivo?",
