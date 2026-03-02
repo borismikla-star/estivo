@@ -1,7 +1,93 @@
 /**
  * Land Feasibility Calculation Engine
  * Concept-level estimation – no architectural study
+ * Supports: block / mixed (apartment model) + subdivision (parcel model)
  */
+
+// ─────────────────────────────────────────────
+// SUBDIVISION CALCULATION
+// ─────────────────────────────────────────────
+export function calculateSubdivision(inputs) {
+  const {
+    land_area = 0,
+    roads_pct = 0.20,          // % internal roads (0–1)
+    green_pct = 0.10,          // % public green (0–1)
+    min_parcel_size = 600,     // m²
+    max_plot_coverage = 0.30,  // % (0–1)
+    floors_per_house = 2,
+    typology = 'detached',     // detached | semi | row
+    risk_buffer_pct = 0.10,    // regulatory risk buffer (0–1)
+    parking_per_house = 2,
+  } = inputs;
+
+  // Validations
+  const validations = [];
+  if (roads_pct + green_pct >= 0.60) {
+    validations.push({ type: 'error', key: 'roads_green_too_high' });
+  }
+  if (max_plot_coverage > 0.50) {
+    validations.push({ type: 'warning', key: 'coverage_too_high' });
+  }
+  if (min_parcel_size < 250) {
+    validations.push({ type: 'warning', key: 'parcel_too_small' });
+  }
+
+  // 4.1 Development Area
+  const roads_area = land_area * roads_pct;
+  const green_area = land_area * green_pct;
+  const development_area = land_area * (1 - roads_pct - green_pct);
+
+  // 4.2 Number of parcels
+  const number_of_parcels = Math.max(0, Math.floor(development_area / min_parcel_size));
+
+  if (number_of_parcels < 1 && land_area > 0) {
+    validations.push({ type: 'warning', key: 'no_parcels' });
+  }
+
+  // 4.3 Average parcel size
+  const avg_parcel_size = number_of_parcels > 0 ? development_area / number_of_parcels : 0;
+
+  // 4.4 Max footprint per house
+  const footprint_per_house = avg_parcel_size * max_plot_coverage;
+
+  // 4.5 HPP per house
+  const hpp_per_house = footprint_per_house * floors_per_house;
+
+  // 4.6 Total HPP
+  const total_hpp = hpp_per_house * number_of_parcels;
+
+  // 4.7 Total built footprint
+  const total_built_footprint = footprint_per_house * number_of_parcels;
+
+  // 4.8 Effective HPP with risk buffer
+  const effective_total_hpp = total_hpp * (1 - risk_buffer_pct);
+
+  // Parking
+  const total_parking = number_of_parcels * parking_per_house;
+
+  return {
+    // inputs echo
+    land_area,
+    // areas
+    development_area,
+    roads_area,
+    green_area,
+    number_of_parcels,
+    avg_parcel_size,
+    footprint_per_house,
+    hpp_per_house,
+    total_hpp,
+    effective_total_hpp,
+    total_built_footprint,
+    total_parking,
+    typology,
+    risk_buffer_applied: risk_buffer_pct > 0,
+    // meta
+    validations,
+    data_confidence: 'concept_subdivision',
+    mode: 'subdivision',
+  };
+}
 
 const EFFICIENCY = {
   conservative: 0.72,
