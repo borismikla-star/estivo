@@ -199,6 +199,12 @@ export default function LandFeasibility() {
         green_areas_terrain: Math.round(r.green_terrain || 0),
         green_areas_structure: Math.round(r.green_on_structure_area || 0),
         basement_area: Math.round(r.cellars_area || 0),
+        // Advanced params for traceability
+        parking_ratio: r.parking_ratio,
+        outdoor_ratio: r.outdoor_ratio,
+        paved_pct: r.paved_pct,
+        risk_buffer_applied: r.risk_buffer_applied,
+        urban_risk_buffer: r.urban_risk_buffer,
       },
     };
 
