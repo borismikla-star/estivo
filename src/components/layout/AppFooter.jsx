@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import FeedbackButton from '@/components/shared/FeedbackButton';
 
 export default function AppFooter({ language = 'en' }) {
     const translations = {
