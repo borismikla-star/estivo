@@ -584,7 +584,9 @@ export default function Layout({ children, currentPageName }) {
               <div className="hidden lg:flex justify-end mb-4">
                   <LanguageSwitcher onLanguageChange={updateLanguageMutation.mutate} currentLang={user?.preferred_language} />
               </div>
-              {children}
+              <AppErrorBoundary>
+                {children}
+              </AppErrorBoundary>
           </main>
 
           <AppFooter language={language} />
