@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import FeedbackButton from '@/components/shared/FeedbackButton';
 
-export default function AppFooter({ language = 'en' }) {
+export default function AppFooter({ language = 'en', user }) {
     const translations = {
         en: {
             privacy: "Privacy Policy",
