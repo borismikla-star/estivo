@@ -42,6 +42,7 @@ const translations = {
     // units
     m2: "m²",
     pcs: "pcs",
+    effective_hpp_above: "Effective GFA Above (after risk buffer)",
     warnings: {
       cpp_exceeds_hpp: "NFA exceeds GFA – check KPP/floors input.",
       green_below_minimum: "Green on ground is below minimum requirement.",
@@ -50,6 +51,8 @@ const translations = {
       coverage_too_high: "Max plot coverage exceeds 50% – check local regulations.",
       parcel_too_small: "Min. parcel size is below 250 m².",
       no_parcels: "Parcel size or land area too small – no buildable parcels.",
+      kpp_floors_mismatch: "KPP vs Floors mismatch >25% – check regulatory inputs.",
+      apartments_area_clamped: "Apartments area became negative – clamped to 0. Check inputs.",
     }
   },
   sk: {
@@ -90,6 +93,7 @@ const translations = {
     // units
     m2: "m²",
     pcs: "ks",
+    effective_hpp_above: "Efektívne HPP nadzemné (po risk bufferi)",
     warnings: {
       cpp_exceeds_hpp: "ČPP presahuje HPP – skontrolujte KPP alebo počet podlaží.",
       green_below_minimum: "Zeleň na teréne je nižšia ako regulatívne minimum.",
@@ -98,6 +102,8 @@ const translations = {
       coverage_too_high: "Max. zastavanosť parcely presahuje 50 % – skontrolujte reguláciu.",
       parcel_too_small: "Min. výmera parcely je pod 250 m².",
       no_parcels: "Výmera parcely alebo pozemku príliš malá – žiadne stavebné parcely.",
+      kpp_floors_mismatch: "Nesúlad KPP vs. podlažnosť >25 % – skontrolujte regulatívne vstupy.",
+      apartments_area_clamped: "Plocha bytov vyšla záporná – zaokrúhlená na 0. Skontrolujte vstupy.",
     }
   },
 };
