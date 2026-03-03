@@ -53,6 +53,9 @@ const translations = {
       no_parcels: "Parcel size or land area too small – no buildable parcels.",
       kpp_floors_mismatch: "KPP vs Floors mismatch >25% – check regulatory inputs.",
       apartments_area_clamped: "Apartments area became negative – clamped to 0. Check inputs.",
+      coverage_capped_to_max: "Plot coverage was capped to 50% maximum – typology adjustment exceeded limit.",
+      effective_parcel_too_small: "Effective parcel size (after typology adjustment) is below 250 m².",
+      green_negative_clamped: "Green area on ground is negative given current IZ and paved % – clamped to 0. Reduce paved area or IZ.",
     }
   },
   sk: {
