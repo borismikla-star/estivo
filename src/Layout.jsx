@@ -589,7 +589,7 @@ export default function Layout({ children, currentPageName }) {
               </AppErrorBoundary>
           </main>
 
-          <AppFooter language={language} />
+          <AppFooter language={language} user={user} />
         </div>
       </div>
       <CookieConsentBanner language={language} />
