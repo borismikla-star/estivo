@@ -122,7 +122,6 @@ function BlockResults({ results, t }) {
     { key: 'land_area', unit: t.m2 },
     { key: 'built_area', unit: t.m2, highlight: true },
     { key: 'hpp_above', unit: t.m2 },
-    { key: 'effective_hpp_above', unit: t.m2, highlight: true },
     { key: 'hpp_below', unit: t.m2 },
     { key: 'npp_above', unit: t.m2, highlight: true },
     { key: 'npp_below', unit: t.m2 },
