@@ -29,9 +29,10 @@ import {
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
-import CookieConsentBanner from "./components/cookies/CookieConsentBanner"; // Updated import path
-import AppFooter from './components/layout/AppFooter'; // Updated import path
+import CookieConsentBanner from "./components/cookies/CookieConsentBanner";
+import AppFooter from './components/layout/AppFooter';
 import EstivoLogo from './components/shared/EstivoLogo';
+import AppErrorBoundary from './components/shared/AppErrorBoundary';
 
 const pageSpecificStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700&display=swap');
