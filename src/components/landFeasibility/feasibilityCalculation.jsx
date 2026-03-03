@@ -20,6 +20,17 @@ export function calculateSubdivision(inputs) {
     parking_per_house = 2,
   } = inputs;
 
+  // Typology heuristics: adjust parcel size and coverage
+  let effective_min_parcel = min_parcel_size;
+  let effective_coverage = max_plot_coverage;
+  if (typology === 'semi') {
+    effective_min_parcel = min_parcel_size * 0.85;
+    effective_coverage = Math.min(0.50, max_plot_coverage * 1.10);
+  } else if (typology === 'row') {
+    effective_min_parcel = min_parcel_size * 0.70;
+    effective_coverage = Math.min(0.50, max_plot_coverage * 1.20);
+  }
+
   // Validations
   const validations = [];
   if (roads_pct + green_pct >= 0.60) {
@@ -37,8 +48,8 @@ export function calculateSubdivision(inputs) {
   const green_area = land_area * green_pct;
   const development_area = land_area * (1 - roads_pct - green_pct);
 
-  // 4.2 Number of parcels
-  const number_of_parcels = Math.max(0, Math.floor(development_area / min_parcel_size));
+  // 4.2 Number of parcels (using typology-adjusted parcel size)
+  const number_of_parcels = Math.max(0, Math.floor(development_area / effective_min_parcel));
 
   if (number_of_parcels < 1 && land_area > 0) {
     validations.push({ type: 'warning', key: 'no_parcels' });
@@ -47,8 +58,8 @@ export function calculateSubdivision(inputs) {
   // 4.3 Average parcel size
   const avg_parcel_size = number_of_parcels > 0 ? development_area / number_of_parcels : 0;
 
-  // 4.4 Max footprint per house
-  const footprint_per_house = avg_parcel_size * max_plot_coverage;
+  // 4.4 Max footprint per house (using typology-adjusted coverage)
+  const footprint_per_house = avg_parcel_size * effective_coverage;
 
   // 4.5 HPP per house
   const hpp_per_house = footprint_per_house * floors_per_house;
@@ -68,6 +79,7 @@ export function calculateSubdivision(inputs) {
   return {
     // inputs echo
     land_area,
+    typology,
     // areas
     development_area,
     roads_area,
@@ -80,8 +92,8 @@ export function calculateSubdivision(inputs) {
     effective_total_hpp,
     total_built_footprint,
     total_parking,
-    typology,
     risk_buffer_applied: risk_buffer_pct > 0,
+    risk_buffer_pct,
     // meta
     validations,
     data_confidence: 'concept_subdivision',
@@ -103,32 +115,63 @@ export function calculateFeasibility(inputs) {
 
   const {
     land_area = 0,
-    iz = 0,                    // index zastavanosti (0–1)
-    kpp = null,                // koeficient podlažných plôch
-    floors = null,             // počet nadzemných podlaží
+    iz = 0,                     // index zastavanosti (0–1)
+    kpp = null,                  // koeficient podlažných plôch
+    floors = null,               // počet nadzemných podlaží
     project_type = 'residential',
-    non_residential_pct = 0,   // % nebytových (0–1)
-    min_green_pct = 0.20,      // minimálne % zelene (0–1)
-    avg_apartment_size = 60,   // priemerná výmera bytu m²
-    mode = 'realistic',        // conservative | realistic | efficient
+    non_residential_pct = 0,    // % nebytových (0–1)
+    min_green_pct = 0.20,       // minimálne % zelene (0–1)
+    avg_apartment_size = 60,    // priemerná výmera bytu m²
+    mode = 'realistic',         // conservative | realistic | efficient
     green_on_structure = false,
+    // New parametrized inputs
+    parking_ratio = 1.2,        // covered parking per apartment
+    outdoor_ratio = 0.1,        // outdoor parking per apartment
+    paved_pct = 0.15,           // spevnené plochy % pozemku
+    urban_risk_buffer = 0.10,   // urban design / regulatory risk (0–1)
   } = inputs;
 
   // 5.1 Zastavaná plocha
-  const built_area = land_area * iz;
-
-  // 5.2 HPP nadzemné
-  let hpp_above;
-  if (kpp !== null && kpp > 0) {
-    hpp_above = land_area * kpp;
-  } else if (floors !== null && floors > 0) {
-    hpp_above = built_area * floors;
+  // Fallback: if iz = 0, estimate built area so min_green and paved fit
+  let built_area;
+  if (iz > 0) {
+    built_area = land_area * iz;
   } else {
-    hpp_above = 0;
+    // Fallback: paved takes paved_pct, green takes min_green_pct → rest is built
+    const paved_fallback = land_area * paved_pct;
+    built_area = Math.max(0, land_area * (1 - min_green_pct) - paved_fallback);
+  }
+
+  // 5.2 HPP nadzemné (calculated)
+  let hpp_above_raw;
+  if (kpp !== null && kpp > 0) {
+    hpp_above_raw = land_area * kpp;
+  } else if (floors !== null && floors > 0) {
+    hpp_above_raw = built_area * floors;
+  } else {
+    hpp_above_raw = 0;
   }
 
   // 5.3 HPP podzemné
   const hpp_below = built_area * 1.0;
+
+  // 5.4 Urban Risk Buffer → effective HPP above
+  const risk_buffer_applied = urban_risk_buffer > 0 && hpp_above_raw > 0;
+  const effective_hpp_above = hpp_above_raw * (1 - urban_risk_buffer);
+
+  // Sanity check: KPP vs floors mismatch warning
+  const validations = [];
+  if (kpp > 0 && floors > 0 && built_area > 0) {
+    const hpp_from_kpp = land_area * kpp;
+    const hpp_from_floors = built_area * floors;
+    const ratio = hpp_from_kpp > 0 ? Math.abs(hpp_from_floors - hpp_from_kpp) / hpp_from_kpp : 0;
+    if (ratio > 0.25) {
+      validations.push({ type: 'warning', key: 'kpp_floors_mismatch' });
+    }
+  }
+
+  // Use effective_hpp_above as the base for all downstream calculations
+  const hpp_above = effective_hpp_above;
 
   // 5.4 ČPP nadzemné
   const efficiency = EFFICIENCY[mode] || EFFICIENCY.realistic;
@@ -139,7 +182,13 @@ export function calculateFeasibility(inputs) {
 
   // 5.6 Byty
   const non_res = Math.min(non_residential_pct, 0.9);
-  const apartments_area = npp_above * (1 - non_res - 0.10);
+  let apartments_area = npp_above * (1 - non_res - 0.10);
+
+  // Guard: clamp negative apartments area
+  if (apartments_area < 0) {
+    validations.push({ type: 'warning', key: 'apartments_area_clamped' });
+    apartments_area = 0;
+  }
 
   // 5.7 Nebytové priestory
   const non_residential_area = npp_above * non_res;
@@ -152,15 +201,15 @@ export function calculateFeasibility(inputs) {
     ? Math.floor(apartments_area / avg_apartment_size)
     : 0;
 
-  // 5.10 Parkovanie
-  const parking_covered = Math.ceil(apartment_count * 1.2);
-  const parking_outdoor = Math.ceil(apartment_count * 0.1);
+  // 5.10 Parkovanie (parametrized)
+  const parking_covered = Math.ceil(apartment_count * parking_ratio);
+  const parking_outdoor = Math.ceil(apartment_count * outdoor_ratio);
 
   // 5.11 Pivnice
   const cellars_area = apartment_count * 3;
 
-  // 5.12 Spevnené plochy
-  const paved_area = land_area * 0.15;
+  // 5.12 Spevnené plochy (parametrized)
+  const paved_area = land_area * paved_pct;
 
   // 5.13 Zeleň na teréne
   const green_terrain = land_area - built_area - paved_area;
@@ -174,8 +223,7 @@ export function calculateFeasibility(inputs) {
   const front_gardens_area = apartments_area * 0.05;
 
   // Validácie
-  const validations = [];
-  if (npp_above > hpp_above) {
+  if (npp_above > hpp_above_raw) {
     validations.push({ type: 'error', key: 'cpp_exceeds_hpp' });
   }
   if (green_warning) {
@@ -190,7 +238,8 @@ export function calculateFeasibility(inputs) {
     land_area,
     // Outputs
     built_area,
-    hpp_above,
+    hpp_above: hpp_above_raw,      // theoretical (before risk buffer)
+    effective_hpp_above,           // after risk buffer
     hpp_below,
     npp_above,
     npp_below,
@@ -206,8 +255,15 @@ export function calculateFeasibility(inputs) {
     green_on_structure_area,
     cellars_area,
     apartment_count,
+    // Risk buffer meta
+    risk_buffer_applied,
+    urban_risk_buffer,
+    paved_pct,
+    parking_ratio,
+    outdoor_ratio,
     // Meta
     validations,
     data_confidence: 'concept',
+    mode,
   };
 }
