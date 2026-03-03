@@ -42,6 +42,14 @@ export function calculateSubdivision(inputs) {
   if (min_parcel_size < 250) {
     validations.push({ type: 'warning', key: 'parcel_too_small' });
   }
+  // Effective parcel size check (after typology adjustment)
+  if (effective_min_parcel < 250) {
+    validations.push({ type: 'warning', key: 'effective_parcel_too_small' });
+  }
+  // Coverage was capped to 0.50 by typology
+  if (typology !== 'detached' && max_plot_coverage * (typology === 'row' ? 1.20 : 1.10) > 0.50) {
+    validations.push({ type: 'warning', key: 'coverage_capped_to_max' });
+  }
 
   // 4.1 Development Area
   const roads_area = land_area * roads_pct;
