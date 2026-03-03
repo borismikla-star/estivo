@@ -44,8 +44,9 @@ export default function AppFooter({ language = 'en', user }) {
         <footer className="bg-card border-t border-border mt-auto">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div className="text-sm text-muted-foreground">
-                        © {currentYear} Estivo. {t.rights}
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span>© {currentYear} Estivo. {t.rights}</span>
+                        <FeedbackButton user={user} />
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
                         <Link 
