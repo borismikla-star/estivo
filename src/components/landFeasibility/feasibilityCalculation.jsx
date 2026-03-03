@@ -235,9 +235,6 @@ export function calculateFeasibility(inputs) {
   const front_gardens_area = apartments_area * 0.05;
 
   // Validácie
-  if (npp_above > hpp_above_raw) {
-    validations.push({ type: 'error', key: 'cpp_exceeds_hpp' });
-  }
   if (green_warning) {
     validations.push({ type: 'warning', key: 'green_below_minimum', min_pct: min_green_pct, actual_pct: green_terrain_pct });
   }
