@@ -220,7 +220,11 @@ export function calculateFeasibility(inputs) {
   const paved_area = land_area * paved_pct;
 
   // 5.13 Zeleň na teréne
-  const green_terrain = land_area - built_area - paved_area;
+  let green_terrain = land_area - built_area - paved_area;
+  if (green_terrain < 0) {
+    validations.push({ type: 'warning', key: 'green_negative_clamped' });
+    green_terrain = 0;
+  }
   const green_terrain_pct = land_area > 0 ? green_terrain / land_area : 0;
   const green_warning = green_terrain_pct < min_green_pct;
 
