@@ -107,6 +107,9 @@ const translations = {
       no_parcels: "Výmera parcely alebo pozemku príliš malá – žiadne stavebné parcely.",
       kpp_floors_mismatch: "Nesúlad KPP vs. podlažnosť >25 % – skontrolujte regulatívne vstupy.",
       apartments_area_clamped: "Plocha bytov vyšla záporná – zaokrúhlená na 0. Skontrolujte vstupy.",
+      coverage_capped_to_max: "Zastavanosť parcely bola zastropovaná na max. 50 % – typológia prekročila limit.",
+      effective_parcel_too_small: "Efektívna výmera parcely (po úprave typológiou) je pod 250 m².",
+      green_negative_clamped: "Zeleň na teréne vyšla záporná (IZ + spevnené plochy > 100 %) – zaokrúhlená na 0. Znížte IZ alebo % spevnených plôch.",
     }
   },
 };
