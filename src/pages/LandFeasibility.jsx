@@ -185,6 +185,7 @@ export default function LandFeasibility() {
         total_land_area: Math.round(r.land_area || 0),
         building_area: Math.round(r.built_area || 0),
         gfa_above: Math.round(r.hpp_above || 0),
+        effective_hpp_above: Math.round(r.effective_hpp_above || 0),
         gfa_below: Math.round(r.hpp_below || 0),
         nfa_above: Math.round(r.npp_above || 0),
         nfa_below: Math.round(r.npp_below || 0),
