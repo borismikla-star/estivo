@@ -180,7 +180,7 @@ export default function LandFeasibility() {
         parking_outdoor_count: Math.round(r.total_parking || 0),
         parking_indoor_count: 0,
         green_areas_terrain: Math.round(r.green_area || 0),
-        paved_areas: Math.round(r.roads_area || 0),
+        paved_areas: Math.round((r.roads_area || 0) + (r.total_paved_area || 0)),
       } : {
         concept_source: transferPending.id,
         data_confidence: 'concept',
