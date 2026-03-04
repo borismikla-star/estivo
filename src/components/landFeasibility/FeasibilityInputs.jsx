@@ -28,8 +28,9 @@ const translations = {
     green_on_structure: "Include Green on Structure",
     // Subdivision
     sub_title: "Subdivision Parameters",
-    roads_pct: "Internal Roads (%)",
+    public_roads_pct: "Public Roads / Infrastructure (%)",
     green_pct: "Min. Green Area on Site (%)",
+    paved_pct_house: "Paved Area per Parcel (%)",
     min_parcel_size: "Min. Parcel Size (m²)",
     max_plot_coverage: "Max Plot Coverage per House (%)",
     floors_per_house: "Floors per House",
