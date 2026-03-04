@@ -88,6 +88,9 @@ export function calculateSubdivision(inputs) {
   // Parking
   const total_parking = number_of_parcels * parking_per_house;
 
+  // Informative: total paved area across all parcels
+  const total_paved_area = avg_parcel_size * paved_pct_house * number_of_parcels;
+
   return {
     // inputs echo
     land_area,
@@ -104,6 +107,7 @@ export function calculateSubdivision(inputs) {
     effective_total_hpp,
     total_built_footprint,
     total_parking,
+    total_paved_area,
     risk_buffer_applied: risk_buffer_pct > 0,
     risk_buffer_pct,
     // meta
