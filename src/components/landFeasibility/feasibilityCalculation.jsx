@@ -70,8 +70,10 @@ export function calculateSubdivision(inputs) {
   // 4.4 Max footprint per house (using typology-adjusted coverage)
   const footprint_per_house = avg_parcel_size * effective_coverage;
 
-  // 4.5 HPP per house
-  const hpp_per_house = footprint_per_house * floors_per_house;
+  // 4.5 HPP per house — KPP takes priority over floors
+  const hpp_per_house = (kpp_house !== null && kpp_house > 0)
+    ? avg_parcel_size * kpp_house
+    : footprint_per_house * floors_per_house;
 
   // 4.6 Total HPP
   const total_hpp = hpp_per_house * number_of_parcels;
