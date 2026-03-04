@@ -71,8 +71,9 @@ const translations = {
     green_on_structure: "Zeleň na konštrukcii",
     // Subdivision
     sub_title: "Parametre parcelácie",
-    roads_pct: "Interné komunikácie (%)",
+    public_roads_pct: "Verejné komunikácie / infraštruktúra (%)",
     green_pct: "Min. výmera zelene na pozemku (%)",
+    paved_pct_house: "Spevnené plochy / parcela (%)",
     min_parcel_size: "Min. výmera parcely (m²)",
     max_plot_coverage: "Max. zastavanosť parcely (%)",
     floors_per_house: "Počet podlaží (dom)",
