@@ -91,8 +91,8 @@ const translations = {
     avg_parcel_size: "Priemerná výmera parcely",
     footprint_per_house: "Max. zastavaná plocha / dom",
     hpp_per_house: "HPP / dom",
-    total_hpp: "Celkové HPP",
-    effective_total_hpp: "Efektívne HPP (po rezerve)",
+    total_hpp: "Celkové HPP (hrubé)",
+    effective_total_hpp: "Efektívne HPP (po risk bufferi)",
     total_built_footprint: "Celková zastavaná plocha",
     total_parking: "Celkové parkovacie miesta",
     // units
