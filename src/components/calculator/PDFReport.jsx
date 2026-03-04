@@ -353,7 +353,8 @@ export default function PDFReport({ projectData, results, language, user }) {
         NL: { sk: 'Holandsko', en: 'Netherlands', pl: 'Holandia', hu: 'Hollandia', de: 'Niederlande' },
         SI: { sk: 'Slovinsko', en: 'Slovenia', pl: 'Słowenia', hu: 'Szlovénia', de: 'Slowenien' },
     };
-    const countryName = countryNames[country]?.[language] || country || 'N/A';
+    const resolvedCountry = country || property_data?.country;
+    const countryName = countryNames[resolvedCountry]?.[language] || resolvedCountry || 'N/A';
 
     const t = {
         en: {
