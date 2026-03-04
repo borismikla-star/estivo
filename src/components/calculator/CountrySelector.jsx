@@ -14,10 +14,8 @@ export default function CountrySelector({ projectData, onBulkUpdate, countryPres
   const uniqueCountries = uniqBy(activePresets, 'country_code');
 
   const handleCountryChange = (countryCode) => {
-    onBulkUpdate('property_data', {
-      ...projectData.property_data,
-      country: countryCode
-    });
+    // Update both top-level country AND property_data.country so all calculations pick it up
+    onBulkUpdate('country', countryCode);
   };
 
   const translations = {
