@@ -54,9 +54,9 @@ export function calculateSubdivision(inputs) {
   }
 
   // 4.1 Development Area
-  const roads_area = land_area * roads_pct;
+  const roads_area = land_area * public_roads_pct;
   const green_area = land_area * green_pct;
-  const development_area = land_area * (1 - roads_pct - green_pct);
+  const development_area = land_area * (1 - public_roads_pct - green_pct);
 
   // 4.2 Number of parcels (using typology-adjusted parcel size)
   const number_of_parcels = Math.max(0, Math.floor(development_area / effective_min_parcel));
