@@ -85,7 +85,7 @@ const translations = {
     // Subdivision mode
     development_area: "Rozvojová plocha",
     roads_area: "Verejné komunikácie",
-    green_area: "Verejná zeleň",
+    green_area: "Zelené plochy",
     total_paved_area: "Spevnené plochy celkom (všetky parcely)",
     number_of_parcels: "Počet parciel",
     avg_parcel_size: "Priemerná výmera parcely",
