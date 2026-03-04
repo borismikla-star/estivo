@@ -29,10 +29,12 @@ const translations = {
     // Subdivision
     sub_title: "Subdivision Parameters",
     roads_pct: "Internal Roads (%)",
-    green_pct: "Public Green (%)",
+    green_pct: "Min. Green Area on Site (%)",
     min_parcel_size: "Min. Parcel Size (m²)",
     max_plot_coverage: "Max Plot Coverage per House (%)",
     floors_per_house: "Floors per House",
+    kpp_house: "Floor Area Ratio per House (KPP) — or leave empty",
+    kpp_house_hint: "If KPP is set, floors are ignored.",
     typology: "House Typology",
     detached: "Detached",
     semi: "Semi-detached",
