@@ -77,7 +77,7 @@ const translations = {
     front_gardens_area: "Predzáhradky",
     parking_covered: "Kryté parkovacie miesta",
     parking_outdoor: "Vonkajšie parkovacie miesta",
-    paved_area: "Spevnené plochy",
+    paved_area: "Spevnené plochy (vr. vonkajšie parkovanie)",
     green_terrain: "Zeleň na teréne",
     green_on_structure: "Zeleň na konštrukcii",
     cellars_area: "Pivnice",
