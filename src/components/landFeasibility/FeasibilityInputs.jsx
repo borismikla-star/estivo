@@ -199,6 +199,11 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
                 <Input type="number" min="1" max="50" value={Math.round((inputs.max_plot_coverage ?? 0.30) * 100)} onChange={e => set('max_plot_coverage', (parseFloat(e.target.value) || 30) / 100)} />
               </div>
               <div className="space-y-1">
+                <Label>{t.kpp_house}</Label>
+                <Input type="number" step="0.1" placeholder="—" value={inputs.kpp_house ?? ''} onChange={e => set('kpp_house', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                <p className="text-xs text-muted-foreground">{t.kpp_house_hint}</p>
+              </div>
+              <div className="space-y-1">
                 <Label>{t.floors_per_house}</Label>
                 <Input type="number" min="1" max="4" value={inputs.floors_per_house ?? 2} onChange={e => set('floors_per_house', parseInt(e.target.value) || 2)} />
               </div>
