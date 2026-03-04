@@ -29,8 +29,9 @@ const translations = {
     apartment_count: "Est. Apartment Count",
     // Subdivision mode
     development_area: "Development Area",
-    roads_area: "Internal Roads Area",
+    roads_area: "Public Roads Area",
     green_area: "Public Green Area",
+    total_paved_area: "Total Paved Area (all parcels)",
     number_of_parcels: "Number of Parcels",
     avg_parcel_size: "Average Parcel Size",
     footprint_per_house: "Max Footprint per House",
