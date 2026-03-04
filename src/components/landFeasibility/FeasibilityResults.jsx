@@ -22,7 +22,7 @@ const translations = {
     front_gardens_area: "Front Gardens",
     parking_covered: "Covered Parking",
     parking_outdoor: "Outdoor Parking",
-    paved_area: "Paved Areas",
+    paved_area: "Paved Areas (incl. outdoor parking)",
     green_terrain: "Green on Ground",
     green_on_structure: "Green on Structure",
     cellars_area: "Cellars",
