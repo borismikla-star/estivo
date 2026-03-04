@@ -84,8 +84,9 @@ const translations = {
     apartment_count: "Odhad počtu bytov",
     // Subdivision mode
     development_area: "Rozvojová plocha",
-    roads_area: "Interné komunikácie",
+    roads_area: "Verejné komunikácie",
     green_area: "Verejná zeleň",
+    total_paved_area: "Spevnené plochy celkom (všetky parcely)",
     number_of_parcels: "Počet parciel",
     avg_parcel_size: "Priemerná výmera parcely",
     footprint_per_house: "Max. zastavaná plocha / dom",
