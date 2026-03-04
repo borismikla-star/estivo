@@ -225,6 +225,10 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
                 <Input type="number" min="0" max="10" value={inputs.parking_per_house ?? 2} onChange={e => set('parking_per_house', parseInt(e.target.value) || 2)} />
               </div>
               <div className="space-y-1">
+                <Label>{t.paved_pct_house}</Label>
+                <Input type="number" min="0" max="50" value={Math.round((inputs.paved_pct_house ?? 0.10) * 100)} onChange={e => set('paved_pct_house', (parseFloat(e.target.value) || 0) / 100)} />
+              </div>
+              <div className="space-y-1">
                 <Label>{t.risk_buffer_pct}</Label>
                 <Input type="number" min="0" max="30" value={Math.round((inputs.risk_buffer_pct ?? 0.10) * 100)} onChange={e => set('risk_buffer_pct', (parseFloat(e.target.value) || 0) / 100)} />
               </div>
