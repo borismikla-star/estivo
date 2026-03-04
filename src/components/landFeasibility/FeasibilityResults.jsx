@@ -36,7 +36,7 @@ const translations = {
     avg_parcel_size: "Average Parcel Size",
     footprint_per_house: "Max Footprint per House",
     hpp_per_house: "HPP per House",
-    total_hpp: "Total HPP",
+    total_hpp: "Total HPP (gross)",
     effective_total_hpp: "Effective HPP (after risk buffer)",
     total_built_footprint: "Total Built Footprint",
     total_parking: "Total Parking Spaces",
