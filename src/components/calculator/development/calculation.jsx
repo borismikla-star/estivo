@@ -193,7 +193,7 @@ export function calculateDevelopment(projectData, preset, language = 'en') {
     const ownResources = totalCostsExclVAT * (ownResourcesPercent / 100);
     const bankResources = totalCostsExclVAT * ((100 - ownResourcesPercent) / 100);
 
-    const ownResourcesInterest = ownResources * 0.05; // 5% interest on own resources
+    const ownResourcesInterest = ownResourcesPercent < 100 ? ownResources * 0.05 : 0; // 5% opportunity cost only if not 100% equity
     const bankFees = bankResources * 0.002; // 0.2% bank fees
     const bankInterest = bankResources * (bankInterestPercent / 100);
 
