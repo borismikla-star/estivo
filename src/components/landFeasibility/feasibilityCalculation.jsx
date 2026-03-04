@@ -35,7 +35,7 @@ export function calculateSubdivision(inputs) {
 
   // Validations
   const validations = [];
-  if (roads_pct + green_pct >= 0.60) {
+  if (public_roads_pct + green_pct >= 0.60) {
     validations.push({ type: 'error', key: 'roads_green_too_high' });
   }
   if (max_plot_coverage > 0.50) {
