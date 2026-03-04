@@ -10,8 +10,9 @@
 export function calculateSubdivision(inputs) {
   const {
     land_area = 0,
-    roads_pct = 0.20,          // % internal roads (0–1)
+    public_roads_pct = 0.20,   // % public roads/infrastructure (0–1)
     green_pct = 0.10,          // % min green on site (0–1)
+    paved_pct_house = 0.10,    // % paved area per parcel (informative, 0–1)
     min_parcel_size = 600,     // m²
     max_plot_coverage = 0.30,  // % (0–1)
     floors_per_house = 2,
