@@ -71,10 +71,12 @@ const translations = {
     // Subdivision
     sub_title: "Parametre parcelácie",
     roads_pct: "Interné komunikácie (%)",
-    green_pct: "Verejná zeleň (%)",
+    green_pct: "Min. výmera zelene na pozemku (%)",
     min_parcel_size: "Min. výmera parcely (m²)",
     max_plot_coverage: "Max. zastavanosť parcely (%)",
     floors_per_house: "Počet podlaží (dom)",
+    kpp_house: "Index podlažných plôch (KPP) / parcelu — alebo nechajte prázdne",
+    kpp_house_hint: "Ak je zadaný KPP, počet podlaží sa ignoruje.",
     typology: "Typológia domu",
     detached: "Samostatne stojaci",
     semi: "Dvojdom",
