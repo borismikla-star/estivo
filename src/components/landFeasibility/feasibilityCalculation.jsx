@@ -224,10 +224,12 @@ export function calculateFeasibility(inputs) {
   // 5.11 Pivnice
   const cellars_area = apartment_count * 3;
 
-  // 5.12 Spevnené plochy (parametrized)
-  const paved_area = land_area * paved_pct;
+  // 5.12 Spevnené plochy = paved_pct plocha + outdoor parkovanie (12 m²/miesto)
+  const outdoor_parking_area = parking_outdoor * 12;
+  const paved_area = land_area * paved_pct + outdoor_parking_area;
 
-  // 5.13 Zeleň na teréne
+  // 5.13 Zeleň na teréne = zvyšok pozemku (bilancia musí dávať land_area)
+  // built_area + paved_area + green_terrain = land_area
   let green_terrain = land_area - built_area - paved_area;
   if (green_terrain < 0) {
     validations.push({ type: 'warning', key: 'green_negative_clamped' });
