@@ -181,7 +181,6 @@ function SubdivisionResults({ results, t }) {
     { key: 'footprint_per_house', unit: t.m2 },
     { key: 'hpp_per_house', unit: t.m2 },
     { key: 'total_hpp', unit: t.m2, highlight: true },
-    { key: 'effective_total_hpp', unit: t.m2, highlight: true },
     { key: 'total_built_footprint', unit: t.m2 },
     { key: 'total_parking', unit: t.pcs },
   ];
