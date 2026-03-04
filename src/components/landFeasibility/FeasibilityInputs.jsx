@@ -185,8 +185,8 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>{t.roads_pct}</Label>
-                <Input type="number" min="0" max="59" value={Math.round((inputs.roads_pct ?? 0.20) * 100)} onChange={e => set('roads_pct', (parseFloat(e.target.value) || 0) / 100)} />
+                <Label>{t.public_roads_pct}</Label>
+                <Input type="number" min="0" max="59" value={Math.round((inputs.public_roads_pct ?? 0.20) * 100)} onChange={e => set('public_roads_pct', (parseFloat(e.target.value) || 0) / 100)} />
               </div>
               <div className="space-y-1">
                 <Label>{t.green_pct}</Label>
