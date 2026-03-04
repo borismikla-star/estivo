@@ -37,7 +37,8 @@ export function getIncomeTaxRate(entityType, preset, annualRevenue = 0) {
     const num = (v) => { const p = Number(v); return isNaN(p) ? 0 : p; };
     if (entityType === 'PO') {
         // SK uses progressive corporate tax based on revenue
-        if (preset?.country_code === 'SK') {
+        if (preset?.country_code === 'SK' || !preset?.country_code) {
+            // Also apply SK progressive rate when no country is set (default behaviour)
             return getSkPoCorporateTaxRate(annualRevenue);
         }
         return num(preset?.corporate_tax_rate) || 21;
