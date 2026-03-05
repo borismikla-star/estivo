@@ -12,17 +12,22 @@
 const BALANCE_TOLERANCE = 0.01; // 1%
 
 function checkLandBalance(land_area, building_footprint, roads_area, paved_area, green_area, validations) {
-  const land_used = building_footprint + roads_area + paved_area + green_area;
+  // Primary check: green_area < 0 means footprint+roads+paved > land_area
+  if (green_area < 0) {
+    const excess_m2 = Math.abs(Math.round(green_area));
+    const excess_pct = land_area > 0 ? Math.round((excess_m2 / land_area) * 100) : 0;
+    validations.push({ type: 'error', key: 'land_balance_exceeded', excess_m2, excess_pct });
+  }
+
+  const land_used = building_footprint + roads_area + paved_area + (green_area < 0 ? 0 : green_area);
   const diff = land_used - land_area;
   const pct = land_area > 0 ? Math.abs(diff) / land_area : 0;
 
-  if (pct > BALANCE_TOLERANCE) {
-    if (land_used > land_area) {
-      validations.push({ type: 'error', key: 'land_balance_exceeded', diff: Math.round(diff) });
-    } else {
-      validations.push({ type: 'warning', key: 'land_unallocated', diff: Math.round(Math.abs(diff)) });
-    }
+  // Secondary: unallocated warning (green is positive but doesn't fill land)
+  if (green_area >= 0 && pct > BALANCE_TOLERANCE && diff < 0) {
+    validations.push({ type: 'warning', key: 'land_unallocated', diff: Math.round(Math.abs(diff)) });
   }
+
   return land_used;
 }
 
