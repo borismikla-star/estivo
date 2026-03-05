@@ -68,7 +68,7 @@ const translations = {
       coverage_capped_to_max: "Plot coverage was capped to 50% maximum – typology adjustment exceeded limit.",
       effective_parcel_too_small: "Effective parcel size (after typology adjustment) is below 250 m².",
       green_negative_clamped: "Green area on ground is negative given current IZ and paved % – clamped to 0. Reduce paved area or IZ.",
-      land_balance_exceeded: "Land balance EXCEEDED – sum of footprint + roads + paved exceeds land area.",
+      land_balance_exceeded: (v) => `Land balance exceeded by ${v?.excess_m2 ?? '?'} m² (${v?.excess_pct ?? '?'}%). Reduce paved/roads or building footprint.`,
       land_unallocated: "Unallocated land area detected – total allocation is less than land area.",
     }
   },
