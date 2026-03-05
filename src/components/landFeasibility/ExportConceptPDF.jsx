@@ -236,8 +236,8 @@ function createReportHTML(conceptName, results, language, t, wt) {
     ">
       <!-- Header: logo + title + date -->
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;text-align:center;">
-        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;">
-          ${ESTIVO_LOGO_SVG}
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:10px;">
+          ${LOGO_HTML}
           <div>
             <div style="font-size:18px;font-weight:700;color:#1f2937;margin-bottom:2px;">${conceptName || '—'}</div>
             <div style="font-size:11px;color:#6b7280;">${isSubdivision ? t.mode_sub : t.mode_block} &nbsp;|&nbsp; ${t.disclaimer}</div>
