@@ -3,15 +3,11 @@ import html2canvas from 'html2canvas';
 
 const fmt = (n) => n == null ? '—' : Math.round(n).toLocaleString('sk-SK');
 
-// Logo as a pure HTML/CSS wordmark (renders perfectly in html2canvas)
-// Uses a blue circle dot accent to match Estivo brand identity
+// Logo as a pure text wordmark – renders perfectly in html2canvas
 const LOGO_HTML = `
-  <div style="display:flex;align-items:center;gap:6px;">
-    <div style="width:28px;height:28px;border-radius:50%;background:#0066FF;display:flex;align-items:center;justify-content:center;">
-      <div style="width:12px;height:12px;border-radius:50%;background:#ffffff;"></div>
-    </div>
-    <span style="font-size:22px;font-weight:800;color:#003E7E;letter-spacing:-0.5px;font-family:'Segoe UI',Arial,sans-serif;">estivo</span>
-    <span style="font-size:10px;font-weight:600;color:#00A3E0;letter-spacing:0.05em;margin-top:6px;font-family:'Segoe UI',Arial,sans-serif;">PRO</span>
+  <div style="display:inline-flex;align-items:baseline;gap:0;font-family:'Segoe UI',Arial,sans-serif;line-height:1;">
+    <span style="font-size:26px;font-weight:800;color:#003E7E;letter-spacing:-1px;">E</span><span style="font-size:26px;font-weight:800;color:#0066FF;letter-spacing:-1px;">S</span><span style="font-size:26px;font-weight:800;color:#003E7E;letter-spacing:-1px;">TIVO</span>
+    <span style="font-size:9px;font-weight:700;color:#00A3E0;letter-spacing:0.1em;margin-left:5px;margin-bottom:2px;align-self:flex-end;">LAND FEASIBILITY</span>
   </div>
 `;
 
