@@ -3,13 +3,8 @@ import html2canvas from 'html2canvas';
 
 const fmt = (n) => n == null ? '—' : Math.round(n).toLocaleString('sk-SK');
 
-// Logo as a pure text wordmark – renders perfectly in html2canvas
-const LOGO_HTML = `
-  <div style="display:inline-flex;align-items:baseline;gap:0;font-family:'Segoe UI',Arial,sans-serif;line-height:1;">
-    <span style="font-size:26px;font-weight:800;color:#003E7E;letter-spacing:-1px;">E</span><span style="font-size:26px;font-weight:800;color:#0066FF;letter-spacing:-1px;">S</span><span style="font-size:26px;font-weight:800;color:#003E7E;letter-spacing:-1px;">TIVO</span>
-    <span style="font-size:9px;font-weight:700;color:#00A3E0;letter-spacing:0.1em;margin-left:5px;margin-bottom:2px;align-self:flex-end;">LAND FEASIBILITY</span>
-  </div>
-`;
+// Estivo logo via hosted image URL
+const LOGO_HTML = `<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d666dadfd2546479ace4c8/f7fb54908_logo.png" style="height:40px;display:block;" crossorigin="anonymous" />`;
 
 const LABELS = {
   en: {
