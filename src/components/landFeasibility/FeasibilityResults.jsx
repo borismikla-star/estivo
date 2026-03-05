@@ -5,6 +5,16 @@ import { AlertTriangle, AlertCircle, Info } from 'lucide-react';
 
 const translations = {
   en: {
+    land_balance_title: "Land Balance",
+    lb_land_area: "Land Area",
+    lb_building_footprint: "Building Footprint",
+    lb_roads: "Roads / Infrastructure",
+    lb_paved: "Paved Areas",
+    lb_green: "Green on Ground",
+    lb_total: "Total",
+    lb_ok: "Balance OK",
+    lb_exceeded: "Balance EXCEEDED",
+    lb_unallocated: "Unallocated land",
     title: "Feasibility Output",
     sub_title: "Subdivision Output",
     disclaimer: "Concept-level estimation – no architectural study",
