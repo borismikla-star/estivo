@@ -70,6 +70,16 @@ const translations = {
     }
   },
   sk: {
+    land_balance_title: "Bilancia pozemku",
+    lb_land_area: "Výmera pozemku",
+    lb_building_footprint: "Zastavaná plocha",
+    lb_roads: "Komunikácie / infraštruktúra",
+    lb_paved: "Spevnené plochy",
+    lb_green: "Zeleň na teréne",
+    lb_total: "Celkom",
+    lb_ok: "Bilancia OK",
+    lb_exceeded: "Bilancia PREKROČENÁ",
+    lb_unallocated: "Nealokovaná plocha",
     title: "Výstupy konceptu",
     sub_title: "Výstupy parcelácie",
     disclaimer: "Concept-level estimation – no architectural study",
