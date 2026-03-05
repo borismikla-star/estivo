@@ -40,6 +40,7 @@ const DEFAULT_INPUTS = {
 
 const translations = {
   en: {
+    export_pdf: "Export PDF",
     title: "Land Feasibility Analysis",
     subtitle: "Concept Generator — pre-investment land potential analysis",
     new_concept: "New Concept",
