@@ -253,12 +253,16 @@ export default function FeasibilityResults({ results, language = 'sk' }) {
     <div className="space-y-4">
       {results.validations?.length > 0 && (
         <div className="space-y-2">
-          {results.validations.map((v, i) => (
-            <div key={i} className={`flex items-start gap-2 p-3 rounded-lg text-sm ${v.type === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-amber-50 text-amber-800'}`}>
-              {v.type === 'error' ? <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" /> : <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />}
-              {t.warnings[v.key] || v.key}
-            </div>
-          ))}
+          {results.validations.map((v, i) => {
+            const msg = t.warnings[v.key];
+            const text = typeof msg === 'function' ? msg(v) : (msg || v.key);
+            return (
+              <div key={i} className={`flex items-start gap-2 p-3 rounded-lg text-sm ${v.type === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-amber-50 text-amber-800'}`}>
+                {v.type === 'error' ? <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" /> : <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />}
+                {text}
+              </div>
+            );
+          })}
         </div>
       )}
 
