@@ -266,6 +266,10 @@ export default function FeasibilityResults({ results, language = 'sk' }) {
         ? <SubdivisionResults results={results} t={t} />
         : <BlockResults results={results} t={t} />
       }
+
+      {results.land_balance && (
+        <LandBalanceBlock balance={results.land_balance} t={t} />
+      )}
     </div>
   );
 }
