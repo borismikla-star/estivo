@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const fmt = (n) => n == null ? '—' : Math.round(n).toLocaleString('sk-SK');
 
@@ -18,13 +19,12 @@ const LABELS = {
     apartments_area: "Apartments Area",
     non_residential_area: "Non-Residential Area",
     balconies_area: "Balconies",
-    parking_covered: "Covered Parking (spaces)",
-    parking_outdoor: "Outdoor Parking (spaces)",
+    parking_covered: "Covered Parking",
+    parking_outdoor: "Outdoor Parking",
     paved_area: "Paved Areas",
     green_terrain: "Green on Ground",
     cellars_area: "Cellars",
     apartment_count: "Est. Apartment Count",
-    // Subdivision
     roads_area: "Public Roads Area",
     green_area: "Green Areas",
     development_area: "Development Area",
@@ -37,14 +37,12 @@ const LABELS = {
     total_built_footprint: "Total Built Footprint",
     total_paved_area: "Total Paved Area",
     total_parking: "Total Parking Spaces",
-    // Land Balance
     land_balance: "Land Balance",
     lb_building_footprint: "Building Footprint",
     lb_roads: "Roads / Infrastructure",
     lb_paved: "Paved Areas",
     lb_green: "Green on Ground",
     lb_total: "Total",
-    // Warnings
     warnings_title: "Validations",
     m2: "m²",
     pcs: "pcs",
@@ -70,7 +68,6 @@ const LABELS = {
     green_terrain: "Zeleň na teréne",
     cellars_area: "Pivnice",
     apartment_count: "Odhadovaný počet bytov",
-    // Subdivision
     roads_area: "Verejné komunikácie",
     green_area: "Zelené plochy",
     development_area: "Rozvojová plocha",
@@ -83,14 +80,12 @@ const LABELS = {
     total_built_footprint: "Celková zastavaná plocha",
     total_paved_area: "Spevnené plochy celkom",
     total_parking: "Celkové parkovacie miesta",
-    // Land Balance
     land_balance: "Bilancia pozemku",
     lb_building_footprint: "Zastavaná plocha",
     lb_roads: "Komunikácie / infraštruktúra",
     lb_paved: "Spevnené plochy",
     lb_green: "Zeleň na teréne",
     lb_total: "Celkom",
-    // Warnings
     warnings_title: "Upozornenia / Chyby",
     m2: "m²",
     pcs: "ks",
@@ -130,164 +125,184 @@ const WARNING_TEXTS = {
   },
 };
 
-export function exportConceptToPDF(conceptName, results, language = 'sk') {
+function buildRows(results, t, isSubdivision) {
+  if (isSubdivision) {
+    return [
+      { label: t.land_area, value: fmt(results.land_area), unit: t.m2, highlight: true },
+      { label: t.roads_area, value: fmt(results.roads_area), unit: t.m2 },
+      { label: t.green_area, value: fmt(results.green_area), unit: t.m2 },
+      { label: t.development_area, value: fmt(results.development_area), unit: t.m2, highlight: true },
+      { label: t.number_of_parcels, value: fmt(results.number_of_parcels), unit: t.pcs, highlight: true },
+      { label: t.avg_parcel_size, value: fmt(results.avg_parcel_size), unit: t.m2 },
+      { label: t.footprint_per_house, value: fmt(results.footprint_per_house), unit: t.m2 },
+      { label: t.hpp_per_house, value: fmt(results.hpp_per_house), unit: t.m2 },
+      { label: t.total_hpp, value: fmt(results.total_hpp), unit: t.m2 },
+      { label: t.effective_total_hpp, value: fmt(results.effective_total_hpp), unit: t.m2, highlight: true },
+      { label: t.total_built_footprint, value: fmt(results.total_built_footprint), unit: t.m2 },
+      { label: t.total_paved_area, value: fmt(results.total_paved_area), unit: t.m2 },
+      { label: t.total_parking, value: fmt(results.total_parking), unit: t.pcs },
+    ];
+  }
+  return [
+    { label: t.land_area, value: fmt(results.land_area), unit: t.m2, highlight: true },
+    { label: t.built_area, value: fmt(results.built_area), unit: t.m2, highlight: true },
+    { label: t.hpp_above, value: fmt(results.hpp_above), unit: t.m2 },
+    { label: t.hpp_below, value: fmt(results.hpp_below), unit: t.m2 },
+    { label: t.npp_above, value: fmt(results.npp_above), unit: t.m2, highlight: true },
+    { label: t.npp_below, value: fmt(results.npp_below), unit: t.m2 },
+    { label: t.apartments_area, value: fmt(results.apartments_area), unit: t.m2, highlight: true },
+    { label: t.non_residential_area, value: fmt(results.non_residential_area), unit: t.m2 },
+    { label: t.balconies_area, value: fmt(results.balconies_area), unit: t.m2 },
+    { label: t.parking_covered, value: fmt(results.parking_covered), unit: t.pcs, highlight: true },
+    { label: t.parking_outdoor, value: fmt(results.parking_outdoor), unit: t.pcs },
+    { label: t.paved_area, value: fmt(results.paved_area), unit: t.m2 },
+    { label: t.green_terrain, value: fmt(results.green_terrain), unit: t.m2, highlight: true },
+    { label: t.cellars_area, value: fmt(results.cellars_area), unit: t.m2 },
+    { label: t.apartment_count, value: fmt(results.apartment_count), unit: t.pcs, highlight: true },
+  ];
+}
+
+function buildBalanceRows(b, t) {
+  return [
+    { label: t.land_area, value: fmt(b.land_area), unit: t.m2, highlight: true },
+    { label: t.lb_building_footprint, value: fmt(b.building_footprint), unit: t.m2 },
+    { label: t.lb_roads, value: fmt(b.roads_area), unit: t.m2 },
+    { label: t.lb_paved, value: fmt(b.paved_area), unit: t.m2 },
+    { label: t.lb_green, value: fmt(b.green_area), unit: t.m2 },
+    { label: t.lb_total, value: fmt(b.total), unit: t.m2, highlight: true, bold: true },
+  ];
+}
+
+function createReportHTML(conceptName, results, language, t, wt) {
+  const isSubdivision = results?.mode === 'subdivision';
+  const rows = buildRows(results, t, isSubdivision);
+  const balanceRows = results.land_balance ? buildBalanceRows(results.land_balance, t) : [];
+  const validations = results.validations || [];
+
+  const rowsHTML = rows.map(r => `
+    <tr style="background:${r.highlight ? '#EFF4FB' : '#fff'};">
+      <td style="padding:7px 10px; font-size:11px; color:#2E3B4E; font-weight:${r.highlight ? '600' : '400'};">${r.label}</td>
+      <td style="padding:7px 10px; font-size:11px; color:#2E3B4E; font-weight:600; text-align:right; white-space:nowrap;">${r.value} <span style="color:#6C7A89; font-weight:400; font-size:10px;">${r.unit}</span></td>
+    </tr>
+  `).join('');
+
+  const balanceHTML = balanceRows.map(r => `
+    <tr style="background:${r.highlight ? '#EFF4FB' : '#fff'};">
+      <td style="padding:7px 10px; font-size:11px; color:#2E3B4E; font-weight:${r.bold ? '700' : r.highlight ? '600' : '400'};">${r.label}</td>
+      <td style="padding:7px 10px; font-size:11px; color:#2E3B4E; font-weight:600; text-align:right; white-space:nowrap;">${r.value} <span style="color:#6C7A89; font-weight:400; font-size:10px;">${r.unit}</span></td>
+    </tr>
+  `).join('');
+
+  const validationHTML = validations.length > 0 ? `
+    <div style="margin-top:20px;">
+      <div style="background:#003E7E; color:#fff; padding:7px 10px; font-size:10px; font-weight:700; letter-spacing:0.08em; border-radius:4px 4px 0 0; text-transform:uppercase;">${wt._title || t.warnings_title}</div>
+      ${validations.map(v => {
+        const msg = wt[v.key];
+        const text = typeof msg === 'function' ? msg(v) : (msg || v.key);
+        const isError = v.type === 'error';
+        return `<div style="padding:8px 10px; font-size:10px; background:${isError ? '#FEF2F2' : '#FFFBEB'}; color:${isError ? '#B91C1C' : '#92400E'}; border-left:3px solid ${isError ? '#EF4444' : '#F59E0B'}; margin-top:4px; border-radius:0 2px 2px 0;">
+          ${isError ? '⚠ ERROR: ' : '⚠ '}${text}
+        </div>`;
+      }).join('')}
+    </div>
+  ` : '';
+
+  const dateStr = new Date().toLocaleDateString('sk-SK');
+
+  return `
+    <div style="
+      font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+      width: 794px;
+      background: #F7F9FB;
+      padding: 0;
+      box-sizing: border-box;
+      color: #2E3B4E;
+    ">
+      <!-- Header -->
+      <div style="background: linear-gradient(90deg, #003E7E 0%, #00A3E0 100%); padding: 22px 28px 18px; display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <div style="color:#fff; font-size:22px; font-weight:700; letter-spacing:-0.5px; margin-bottom:4px;">ESTIVO</div>
+          <div style="color:rgba(255,255,255,0.82); font-size:10px; font-weight:400; letter-spacing:0.05em;">${t.concept.toUpperCase()}</div>
+        </div>
+        <div style="color:rgba(255,255,255,0.75); font-size:10px; text-align:right;">${t.generated}: ${dateStr}</div>
+      </div>
+
+      <!-- Concept name block -->
+      <div style="background:#fff; padding:18px 28px 14px; border-bottom:1px solid #E2E6EA;">
+        <div style="font-size:18px; font-weight:700; color:#2E3B4E; margin-bottom:4px;">${conceptName || '—'}</div>
+        <div style="font-size:10px; color:#6C7A89;">${isSubdivision ? t.mode_sub : t.mode_block} &nbsp;|&nbsp; ${t.disclaimer}</div>
+      </div>
+
+      <div style="padding:20px 28px;">
+
+        <!-- Main results table -->
+        <div style="margin-bottom:20px;">
+          <div style="background:#003E7E; color:#fff; padding:7px 10px; font-size:10px; font-weight:700; letter-spacing:0.08em; border-radius:4px 4px 0 0; text-transform:uppercase;">${(isSubdivision ? t.mode_sub : t.mode_block).toUpperCase()}</div>
+          <table style="width:100%; border-collapse:collapse; background:#fff; border-radius:0 0 4px 4px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+            <tbody>${rowsHTML}</tbody>
+          </table>
+        </div>
+
+        <!-- Land balance table -->
+        ${balanceRows.length > 0 ? `
+        <div style="margin-bottom:20px;">
+          <div style="background:#003E7E; color:#fff; padding:7px 10px; font-size:10px; font-weight:700; letter-spacing:0.08em; border-radius:4px 4px 0 0; text-transform:uppercase;">${t.land_balance.toUpperCase()}</div>
+          <table style="width:100%; border-collapse:collapse; background:#fff; border-radius:0 0 4px 4px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+            <tbody>${balanceHTML}</tbody>
+          </table>
+        </div>
+        ` : ''}
+
+        ${validationHTML}
+
+        <!-- Footer -->
+        <div style="margin-top:24px; padding-top:12px; border-top:1px solid #E2E6EA; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:9px; color:#6C7A89;">estivo.app &nbsp;|&nbsp; Land Feasibility Concept</div>
+          <div style="font-size:9px; color:#6C7A89;">© ${new Date().getFullYear()} Estivo</div>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+export async function exportConceptToPDF(conceptName, results, language = 'sk') {
   const t = LABELS[language] || LABELS.sk;
   const wt = WARNING_TEXTS[language] || WARNING_TEXTS.sk;
-  const isSubdivision = results?.mode === 'subdivision';
 
-  const doc = new jsPDF({ format: 'a4', unit: 'mm' });
-  const pageW = 210;
-  const marginL = 16;
-  const marginR = 16;
-  const contentW = pageW - marginL - marginR;
+  // Build HTML string and inject into a hidden DOM node
+  const html = createReportHTML(conceptName, results, language, t, wt);
 
-  let y = 18;
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed; left:-9999px; top:0; z-index:-1;';
+  container.innerHTML = html;
+  document.body.appendChild(container);
 
-  // ── Header bar ──────────────────────────────────────────────────────────
-  doc.setFillColor(0, 62, 126); // --estivo-blue
-  doc.rect(0, 0, pageW, 28, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(14);
-  doc.setTextColor(255, 255, 255);
-  doc.text('ESTIVO', marginL, 12);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(t.concept, marginL, 20);
-  doc.setFontSize(9);
-  doc.text(
-    `${t.generated}: ${new Date().toLocaleDateString('sk-SK')}`,
-    pageW - marginR,
-    20,
-    { align: 'right' }
-  );
+  // Load Manrope font first
+  await document.fonts.load('700 14px Manrope');
 
-  y = 36;
+  const canvas = await html2canvas(container.firstElementChild, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#F7F9FB',
+    logging: false,
+  });
 
-  // ── Concept name ────────────────────────────────────────────────────────
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.setTextColor(46, 59, 78);
-  doc.text(conceptName || '—', marginL, y);
-  y += 5;
+  document.body.removeChild(container);
 
-  doc.setFont('helvetica', 'italic');
-  doc.setFontSize(8);
-  doc.setTextColor(108, 122, 137);
-  doc.text(`${isSubdivision ? t.mode_sub : t.mode_block} | ${t.disclaimer}`, marginL, y);
-  y += 8;
+  const imgData = canvas.toDataURL('image/png');
 
-  // ── Section helper ──────────────────────────────────────────────────────
-  const drawSectionHeader = (title) => {
-    doc.setFillColor(0, 62, 126);
-    doc.rect(marginL, y, contentW, 6, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(255, 255, 255);
-    doc.text(title.toUpperCase(), marginL + 2, y + 4);
-    y += 9;
-  };
+  // A4 = 210 x 297 mm at 72dpi → width=794px, height scales proportionally
+  const pdfW = 210;
+  const pdfH = (canvas.height / canvas.width) * pdfW;
 
-  const drawRow = (label, value, unit, highlight = false) => {
-    if (y > 275) {
-      doc.addPage();
-      y = 16;
-    }
-    if (highlight) {
-      doc.setFillColor(240, 245, 255);
-      doc.rect(marginL, y - 3.5, contentW, 6.5, 'F');
-    }
-    doc.setFont('helvetica', highlight ? 'bold' : 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(46, 59, 78);
-    doc.text(label, marginL + 2, y);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`${value} ${unit}`, pageW - marginR - 2, y, { align: 'right' });
-    doc.setDrawColor(226, 230, 234);
-    doc.line(marginL, y + 1.5, pageW - marginR, y + 1.5);
-    y += 7;
-  };
+  const doc = new jsPDF({
+    format: [pdfW, pdfH],
+    unit: 'mm',
+    orientation: 'portrait',
+  });
 
-  // ── Results ──────────────────────────────────────────────────────────────
-  drawSectionHeader(isSubdivision ? t.mode_sub : t.mode_block);
-
-  if (isSubdivision) {
-    drawRow(t.land_area, fmt(results.land_area), t.m2, true);
-    drawRow(t.roads_area, fmt(results.roads_area), t.m2);
-    drawRow(t.green_area, fmt(results.green_area), t.m2);
-    drawRow(t.development_area, fmt(results.development_area), t.m2, true);
-    drawRow(t.number_of_parcels, fmt(results.number_of_parcels), t.pcs, true);
-    drawRow(t.avg_parcel_size, fmt(results.avg_parcel_size), t.m2);
-    drawRow(t.footprint_per_house, fmt(results.footprint_per_house), t.m2);
-    drawRow(t.hpp_per_house, fmt(results.hpp_per_house), t.m2);
-    drawRow(t.total_hpp, fmt(results.total_hpp), t.m2);
-    drawRow(t.effective_total_hpp, fmt(results.effective_total_hpp), t.m2, true);
-    drawRow(t.total_built_footprint, fmt(results.total_built_footprint), t.m2);
-    drawRow(t.total_paved_area, fmt(results.total_paved_area), t.m2);
-    drawRow(t.total_parking, fmt(results.total_parking), t.pcs);
-  } else {
-    drawRow(t.land_area, fmt(results.land_area), t.m2, true);
-    drawRow(t.built_area, fmt(results.built_area), t.m2, true);
-    drawRow(t.hpp_above, fmt(results.hpp_above), t.m2);
-    drawRow(t.hpp_below, fmt(results.hpp_below), t.m2);
-    drawRow(t.npp_above, fmt(results.npp_above), t.m2, true);
-    drawRow(t.npp_below, fmt(results.npp_below), t.m2);
-    drawRow(t.apartments_area, fmt(results.apartments_area), t.m2, true);
-    drawRow(t.non_residential_area, fmt(results.non_residential_area), t.m2);
-    drawRow(t.balconies_area, fmt(results.balconies_area), t.m2);
-    drawRow(t.parking_covered, fmt(results.parking_covered), t.pcs, true);
-    drawRow(t.parking_outdoor, fmt(results.parking_outdoor), t.pcs);
-    drawRow(t.paved_area, fmt(results.paved_area), t.m2);
-    drawRow(t.green_terrain, fmt(results.green_terrain), t.m2, true);
-    drawRow(t.cellars_area, fmt(results.cellars_area), t.m2);
-    drawRow(t.apartment_count, fmt(results.apartment_count), t.pcs, true);
-  }
-
-  y += 2;
-
-  // ── Land Balance ─────────────────────────────────────────────────────────
-  if (results.land_balance) {
-    drawSectionHeader(t.land_balance);
-    const b = results.land_balance;
-    drawRow(t.land_area, fmt(b.land_area), t.m2, true);
-    drawRow(t.lb_building_footprint, fmt(b.building_footprint), t.m2);
-    drawRow(t.lb_roads, fmt(b.roads_area), t.m2);
-    drawRow(t.lb_paved, fmt(b.paved_area), t.m2);
-    drawRow(t.lb_green, fmt(b.green_area), t.m2);
-    drawRow(t.lb_total, fmt(b.total), t.m2, true);
-    y += 2;
-  }
-
-  // ── Validations ──────────────────────────────────────────────────────────
-  if (results.validations?.length > 0) {
-    drawSectionHeader(t.warnings_title);
-    results.validations.forEach((v) => {
-      if (y > 275) { doc.addPage(); y = 16; }
-      const msg = wt[v.key];
-      const text = typeof msg === 'function' ? msg(v) : (msg || v.key);
-      const isError = v.type === 'error';
-      doc.setFillColor(isError ? 254 : 255, isError ? 226 : 251, isError ? 226 : 235);
-      doc.roundedRect(marginL, y - 3, contentW, 7, 1, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor(isError ? 185 : 146, isError ? 28 : 64, isError ? 28 : 14);
-      doc.text(isError ? '✖' : '⚠', marginL + 2, y + 1);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(46, 59, 78);
-      const lines = doc.splitTextToSize(text, contentW - 10);
-      doc.text(lines, marginL + 7, y + 1);
-      y += lines.length * 5 + 3;
-    });
-  }
-
-  // ── Footer ───────────────────────────────────────────────────────────────
-  const pageCount = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(7);
-    doc.setTextColor(180, 180, 180);
-    doc.text('estivo.app | Land Feasibility Concept', marginL, 291);
-    doc.text(`${i} / ${pageCount}`, pageW - marginR, 291, { align: 'right' });
-  }
+  doc.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
 
   const safeName = (conceptName || 'concept').replace(/[^a-z0-9_\-]/gi, '_').substring(0, 40);
   doc.save(`${safeName}_feasibility.pdf`);
