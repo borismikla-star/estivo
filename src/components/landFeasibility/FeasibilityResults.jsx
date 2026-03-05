@@ -135,7 +135,7 @@ const translations = {
       coverage_capped_to_max: "Zastavanosť parcely bola zastropovaná na max. 50 % – typológia prekročila limit.",
       effective_parcel_too_small: "Efektívna výmera parcely (po úprave typológiou) je pod 250 m².",
       green_negative_clamped: "Zeleň na teréne vyšla záporná (IZ + spevnené plochy > 100 %) – zaokrúhlená na 0. Znížte IZ alebo % spevnených plôch.",
-      land_balance_exceeded: "Bilancia pozemku PREKROČENÁ – súčet zastavanej plochy + komunikácie + spevnené plochy > výmera pozemku.",
+      land_balance_exceeded: (v) => `Bilancia pozemku je prekročená o ${v?.excess_m2 ?? '?'} m² (${v?.excess_pct ?? '?'}%). Znížte spevnené plochy / komunikácie alebo zastavanú plochu.`,
       land_unallocated: "Nealokovaná plocha – celková alokácia je menšia ako výmera pozemku.",
     }
   },
