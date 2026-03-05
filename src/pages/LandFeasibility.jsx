@@ -58,6 +58,7 @@ const translations = {
     new_concept_placeholder: "e.g. Plot Bratislava – Ružinov",
   },
   sk: {
+    export_pdf: "Export PDF",
     title: "Analýza uskutočniteľnosti na pozemku",
     subtitle: "Concept Generator — predkúpová analýza potenciálu pozemku",
     new_concept: "Nový koncept",
