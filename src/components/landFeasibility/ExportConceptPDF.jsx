@@ -324,6 +324,9 @@ function createReportHTML(conceptName, results, language, t, wt) {
         ${renderRows(rows)}
       </div>
 
+      <!-- Parcel breakdown section (subdivision only) -->
+      ${isSubdivision && results.parcel_breakdown ? buildParcelBreakdownHTML(results.parcel_breakdown, t) : ''}
+
       <!-- Land balance section -->
       ${balanceRows.length > 0 ? `
       <div style="margin-bottom:24px;">
