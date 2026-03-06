@@ -315,19 +315,19 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label>{t.parking_ratio}</Label>
+                  <LabelWithTooltip label={t.parking_ratio} tooltip={t.tt_parking_ratio} />
                   <Input type="number" step="0.1" min="0" max="5" value={inputs.parking_ratio ?? 1.2} onChange={e => set('parking_ratio', parseFloat(e.target.value) || 1.2)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.outdoor_ratio}</Label>
+                  <LabelWithTooltip label={t.outdoor_ratio} tooltip={t.tt_outdoor_ratio} />
                   <Input type="number" step="0.1" min="0" max="5" value={inputs.outdoor_ratio ?? 0.1} onChange={e => set('outdoor_ratio', parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.paved_pct}</Label>
+                  <LabelWithTooltip label={t.paved_pct} tooltip={t.tt_paved_pct} />
                   <Input type="number" min="0" max="50" value={Math.round((inputs.paved_pct ?? 0.15) * 100)} onChange={e => set('paved_pct', (parseFloat(e.target.value) || 0) / 100)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.urban_risk_buffer}</Label>
+                  <LabelWithTooltip label={t.urban_risk_buffer} tooltip={t.tt_urban_risk_buffer} />
                   <Input type="number" min="0" max="30" value={Math.round((inputs.urban_risk_buffer ?? 0.10) * 100)} onChange={e => set('urban_risk_buffer', (parseFloat(e.target.value) || 0) / 100)} />
                   <p className="text-xs text-muted-foreground">{t.advanced_hint}</p>
                 </div>
