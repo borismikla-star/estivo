@@ -161,7 +161,7 @@ function buildRows(results, t, isSubdivision) {
     return [
       { label: t.land_area, value: fmt(results.land_area), unit: t.m2, bold: true },
       { label: t.roads_area, value: fmt(results.roads_area), unit: t.m2 },
-      { label: t.green_area, value: fmt(results.green_area), unit: t.m2 },
+      { label: t.public_green_area, value: fmt(results.public_green_area), unit: t.m2 },
       { label: t.development_area, value: fmt(results.development_area), unit: t.m2, bold: true },
       { label: t.number_of_parcels, value: fmt(results.number_of_parcels), unit: t.pcs, bold: true },
       { label: t.avg_parcel_size, value: fmt(results.avg_parcel_size), unit: t.m2 },
@@ -171,6 +171,7 @@ function buildRows(results, t, isSubdivision) {
       { label: t.effective_total_hpp, value: fmt(results.effective_total_hpp), unit: t.m2, bold: true },
       { label: t.total_built_footprint, value: fmt(results.total_built_footprint), unit: t.m2 },
       { label: t.total_paved_area, value: fmt(results.total_paved_area), unit: t.m2 },
+      { label: t.green_area, value: fmt(results.green_area), unit: t.m2 },
       { label: t.total_parking, value: fmt(results.total_parking), unit: t.pcs },
     ];
   }
