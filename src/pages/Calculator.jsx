@@ -121,13 +121,6 @@ export default function Calculator() {
     const countryChanged = watchedCountry !== projectData.country;
     
     if ((entityChanged || countryChanged) && results && !isRecalculating.current) {
-      console.log('[Calculator] DETECTED CHANGE - Auto-recalculating', {
-        entityChanged,
-        countryChanged,
-        from: { entity: watchedEntityType, country: watchedCountry },
-        to: { entity: projectData.entity_type, country: projectData.country }
-      });
-      
       isRecalculating.current = true;
       
       const recalculate = async () => {
@@ -153,14 +146,7 @@ export default function Calculator() {
           }
           
           if (newResults) {
-            // Deep clone to ensure React detects the change
             const clonedResults = JSON.parse(JSON.stringify(newResults));
-            console.log('[Calculator] Auto-recalc complete, updating results', {
-              effectiveTaxRate: clonedResults.kpis?.effective_tax_rate,
-              taxableIncome: clonedResults.kpis?.taxable_income,
-              annualIncomeTax: clonedResults.kpis?.annual_income_tax,
-              annualDepreciation: clonedResults.kpis?.annual_depreciation
-            });
             
             setResults(clonedResults);
             setProjectData(prev => ({
@@ -193,7 +179,6 @@ export default function Calculator() {
   
   React.useEffect(() => {
     if (previousLanguage.current !== null && previousLanguage.current !== language) {
-      console.log("Language changed, recalculating results.");
 
       setAiSummary(null);
       setSensitivityData(null);
@@ -271,7 +256,6 @@ export default function Calculator() {
         if (!prev) return prev;
         
         if (section === 'country' || section === 'entity_type') {
-            console.log(`[Calculator] handleBulkUpdate ${section}:`, data);
             const newData = {
                 ...prev,
                 [section]: data
@@ -976,7 +960,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
 
     if (projectIdFromUrl) {
       base44.entities.Project.get(projectIdFromUrl).then(fetchedProject => {
-        console.log('[Calculator] Loaded project, entity_type:', fetchedProject.entity_type);
         
         const initialData = getInitialData(fetchedProject.type, user);
         const data = {
@@ -1100,7 +1083,6 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
         if (!projectData || !countryPresets) return;
         
         setIsCalculating(true);
-        console.log('[Calculator] Manual calculation started');
         
         try {
             const preset = countryPresets.find(p => p.country_code === projectData.country);
