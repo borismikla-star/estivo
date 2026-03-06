@@ -347,7 +347,7 @@ function SubdivisionResults({ results, t }) {
     { key: 'footprint_per_house', unit: t.m2 },
     { key: 'hpp_per_house', unit: t.m2 },
     { key: 'total_hpp', unit: t.m2 },
-    { key: 'effective_total_hpp', unit: t.m2, highlight: true },
+    { key: 'effective_total_hpp', unit: t.m2, highlight: true, labelOverride: results.risk_buffer_pct > 0 ? `${t.effective_total_hpp} (-${Math.round(results.risk_buffer_pct * 100)}%)` : t.effective_total_hpp },
     { key: 'total_built_footprint', unit: t.m2 },
     { key: 'total_paved_area', unit: t.m2 },
     { key: 'green_area', unit: t.m2 },
