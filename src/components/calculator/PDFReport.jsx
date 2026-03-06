@@ -390,6 +390,7 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
         en: {
             title: "Calculator Input Data",
             project_info: "Project Information",
+            country: "Country",
             entity_type: "Entity Type",
             vat_payer: "VAT Payer",
             yes: "Yes", no: "No",
