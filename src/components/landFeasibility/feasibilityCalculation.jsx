@@ -76,70 +76,83 @@ export function calculateSubdivision(inputs) {
   }
 
   // ── LAND BALANCE ──────────────────────────────────────────────────────────
-  // Roads are carved out first. Green requirement applies to the WHOLE land_area
-  // but is satisfied by: (green on parcels) + (public green on common areas).
-  // Parcels get the full remaining area after roads only — green comes from within parcels.
+  // Global invariant: land_area = roads_area + total_built_footprint + total_paved_area + green_area
+  // Public green is carved out of land alongside roads.
+  // development_area = land_area - roads_area - public_green_area
+  // Parcel values are strictly derived from global totals divided by number_of_parcels.
 
   const roads_area = land_area * public_roads_pct;
 
   // Required green (total, whole site)
   const required_green_total = land_area * green_pct;
 
-  // 4.2 Development area = land minus roads (green is NOT carved out upfront)
-  const parcels_area = land_area - roads_area;
-  const number_of_parcels = Math.max(0, Math.floor(parcels_area / effective_min_parcel));
+  // Public green (non-parcel, common areas) = site-wide requirement minus what parcels provide
+  // We first estimate parcels area without public green to derive parcel green, then reconcile.
+  // Step 1: estimate raw parcels area (without public green carved out yet)
+  const parcels_area_raw = land_area - roads_area;
+
+  // Step 2: estimate number of parcels from raw area
+  const number_of_parcels_est = Math.max(0, Math.floor(parcels_area_raw / effective_min_parcel));
+
+  // Step 3: estimate parcel green per parcel (residual within raw avg parcel)
+  const avg_parcel_size_raw = number_of_parcels_est > 0 ? parcels_area_raw / number_of_parcels_est : 0;
+  const footprint_est = avg_parcel_size_raw * effective_coverage;
+  const paved_est = avg_parcel_size_raw * paved_pct_house;
+  const parcel_green_est = Math.max(0, avg_parcel_size_raw - footprint_est - paved_est);
+  const total_parcel_green_est = parcel_green_est * number_of_parcels_est;
+
+  // Step 4: public green = site-wide required minus parcel green
+  const public_green_area = Math.max(0, required_green_total - total_parcel_green_est);
+
+  // Step 5: development_area = land - roads - public_green  (spec §3)
+  const development_area = land_area - roads_area - public_green_area;
+  const number_of_parcels = Math.max(0, Math.floor(development_area / effective_min_parcel));
 
   if (number_of_parcels < 1 && land_area > 0) {
     validations.push({ type: 'warning', key: 'no_parcels' });
   }
 
-  // 4.3 Average parcel size
-  const avg_parcel_size = number_of_parcels > 0 ? parcels_area / number_of_parcels : 0;
+  // Step 6: final average parcel size (spec §4)
+  const avg_parcel_size = number_of_parcels > 0 ? development_area / number_of_parcels : 0;
 
-  // 4.4 Max footprint per house
+  // Step 7: parcel-level components derived from global totals (spec §6)
   const footprint_per_house = avg_parcel_size * effective_coverage;
+  const total_built_footprint = footprint_per_house * number_of_parcels;
 
-  // 4.5 HPP per house
+  const parcel_paved = avg_parcel_size * paved_pct_house;
+  const total_paved_area = parcel_paved * number_of_parcels;
+
+  // Parcel green = residual (spec §6c): parcel_area - footprint - paved
+  const parcel_green_area = Math.max(0, avg_parcel_size - footprint_per_house - parcel_paved);
+  const total_parcel_green = parcel_green_area * number_of_parcels;
+
+  // Total green = public green + parcel green
+  const green_area = public_green_area + total_parcel_green;
+
+  // HPP
   const hpp_per_house = (kpp_house !== null && kpp_house > 0)
     ? avg_parcel_size * kpp_house
     : footprint_per_house * floors_per_house;
-
-  // 4.6 Total HPP
   const total_hpp = hpp_per_house * number_of_parcels;
   const effective_total_hpp = total_hpp * (1 - risk_buffer_pct);
 
-  // 4.7 Total built footprint
-  const total_built_footprint = footprint_per_house * number_of_parcels;
-
-  // 4.8 Paved area on parcels (driveways, walkways)
-  const total_paved_area = avg_parcel_size * paved_pct_house * number_of_parcels;
-
-  // Parking (informative — on-parcel, included in paved_area above)
+  // Parking
   const total_parking = number_of_parcels * parking_per_house;
 
-  // ── GREEN BALANCE ──────────────────────────────────────────────────────────
-  // Green on parcels = avg_parcel_size - footprint - paved (residual per parcel)
-  const parcel_green_area = Math.max(0, avg_parcel_size - footprint_per_house - (avg_parcel_size * paved_pct_house));
-  const total_parcel_green = parcel_green_area * number_of_parcels;
-
-  // Public green = whatever is needed on top of parcel green to meet the site-wide minimum
-  const public_green_area = Math.max(0, required_green_total - total_parcel_green);
-
-  // Total green (site-wide): parcel green + public green
-  const green_area = total_parcel_green + public_green_area;
-
-  // Validation: check if green requirement is satisfied
+  // Validation: green requirement
   const actual_green_pct = land_area > 0 ? green_area / land_area : 0;
   if (actual_green_pct < green_pct - 0.001) {
     validations.push({ type: 'warning', key: 'green_below_minimum' });
   }
 
-  // development_area for UI display
-  const development_area = parcels_area;
+  // Parcel balance mismatch check (spec §7)
+  const parcel_sum = footprint_per_house + parcel_paved + parcel_green_area;
+  const parcelBalanceDiff = avg_parcel_size > 0 ? Math.abs(parcel_sum - avg_parcel_size) / avg_parcel_size : 0;
+  if (parcelBalanceDiff > 0.01) {
+    validations.push({ type: 'warning', key: 'parcel_balance_mismatch' });
+  }
 
-  // Land balance validation
-  // Note: land_area = roads + parcels_area; green is WITHIN parcels_area
-  // For the balance block we report: footprint + roads + paved + green = land_area
+  // Land balance check: land_area = roads + built + paved + green
   const land_used = checkLandBalance(
     land_area,
     total_built_footprint,
@@ -149,20 +162,16 @@ export function calculateSubdivision(inputs) {
     validations
   );
 
-  // ── PARCEL BREAKDOWN (derived, informative) ─────────────────────────────
-  const parcel_building_footprint = footprint_per_house;
-  const parcel_paved = avg_parcel_size * paved_pct_house;
-  const parcel_total = parcel_building_footprint + parcel_paved + parcel_green_area;
-
+  // ── PARCEL BREAKDOWN (derived, spec §5–6) ───────────────────────────────
   const parcel_breakdown = {
     development_area,
     number_of_parcels,
     avg_parcel_size,
-    parcel_building_footprint,
+    parcel_building_footprint: footprint_per_house,
     parcel_paved_area: parcel_paved,
     parcel_green_area,
     parcel_total: avg_parcel_size,
-    // Green compliance summary
+    // Green compliance
     required_green_total,
     total_parcel_green,
     public_green_area,
