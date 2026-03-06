@@ -252,20 +252,7 @@ export default function ProjectInfoInputs({ data, language, onChange, country })
   const t = translations[language] || translations.en;
   const safeData = data || {};
 
-  // DEBUG LOGGING
-  React.useEffect(() => {
-    console.log('[ProjectInfoInputs] Rendered with data:', {
-      has_data: !!data,
-      data_keys: data ? Object.keys(data) : [],
-      entity_type: safeData.entity_type,
-      vat_payer: safeData.vat_payer,
-      total_land_area: safeData.total_land_area,
-      sales_area_apartments: safeData.sales_area_apartments
-    });
-  }, [data]);
-
   const handleChange = (field, value) => {
-    console.log('[ProjectInfoInputs] handleChange called:', { field, value });
     const updated = { ...safeData, [field]: value };
 
     // Auto-derive sales_area_apartments from nfa_above when nfa_above changes and not manually overridden
