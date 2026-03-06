@@ -196,105 +196,25 @@ export default function Layout({ children, currentPageName }) {
       staleTime: 0,
   });
 
-  const updateUserMutation = useMutation({
-      mutationFn: (data) => {
-          console.log('[Layout] Calling updateMe with:', data);
-          return base44.auth.updateMe(data);
-      },
-      onSuccess: (result) => {
-          console.log('[Layout] User update successful:', result);
-          queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      },
-      onError: (error) => {
-          console.error('[Layout] User update FAILED:', error);
-      }
-  });
+  const hasRunInit = useRef(false);
 
   useEffect(() => {
-    // Wait for both user and settings to load
-    if (!user || isUserLoading || isSettingsLoading || !appSettings) {
-      console.log('[Layout] Waiting for data...', {
-        hasUser: !!user,
-        isUserLoading,
-        isSettingsLoading,
-        hasSettings: !!appSettings
-      });
-      return;
-    }
+    if (!user || isUserLoading || hasRunInit.current) return;
+    hasRunInit.current = true;
 
-    const now = new Date();
-    
-    console.log('[Layout] Checking user plan upgrade...', {
-      beta_mode: appSettings.beta_mode,
-      current_plan: user.plan,
-      is_beta_tester: user.is_beta_tester,
-      trial_end_date: user.trial_end_date,
-      user_id: user.id
+    // All plan/trial/beta logic runs server-side
+    initializeUser({}).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    }).catch((err) => {
+        console.error('[Layout] initializeUser failed:', err);
     });
 
-    // BETA MODE: Give all new users Pro plan for free
-    if (appSettings.beta_mode === true) {
-      if (!user.plan || user.plan === 'free') {
-        console.log(`[Layout] BETA MODE ACTIVE - Upgrading user ${user.id} to Pro`);
-        updateUserMutation.mutate({
-          plan: 'pro',
-          trial_end_date: null,
-          is_beta_tester: true, // Mark as beta tester
-        });
-        return;
-      } else {
-        console.log(`[Layout] User ${user.id} already has plan: ${user.plan} (Beta mode active, no upgrade needed)`);
-      }
+    // Initialize preferred_language from localStorage if missing (client-only)
+    if (!user.preferred_language) {
+        const lang = localStorage.getItem('estivo_lang') || 'en';
+        base44.auth.updateMe({ preferred_language: lang }).catch(() => {});
     }
-
-    // BETA MODE OFF: Handle different scenarios
-    if (appSettings.beta_mode === false) {
-      // Scenario 1: Beta tester should be downgraded to free
-      if (user.is_beta_tester === true && user.plan === 'pro') {
-        console.log(`[Layout] BETA ENDED - Downgrading beta tester ${user.id} to Free`);
-        updateUserMutation.mutate({ 
-          plan: 'free',
-          is_beta_tester: false, // Remove beta tester flag
-          trial_end_date: null, // Clear trial end date
-        });
-        return;
-      }
-
-      // Scenario 2: User is on a trial that has expired
-      if (user.plan === 'pro' && user.trial_end_date && new Date(user.trial_end_date) < now) {
-        console.log(`[Layout] Downgrading user ${user.id} to Free (trial expired)`);
-        updateUserMutation.mutate({ plan: 'free' });
-        return;
-      }
-
-      // Scenario 3: New user should get a trial (only if trial enabled)
-      if (appSettings.trial_enabled && (!user.plan || user.plan === 'free') && !user.trial_end_date) {
-        const trialEndDate = new Date();
-        trialEndDate.setDate(trialEndDate.getDate() + appSettings.trial_duration_days);
-        
-        console.log(`[Layout] Starting trial for new user ${user.id}`);
-        updateUserMutation.mutate({
-          plan: 'pro',
-          trial_end_date: trialEndDate.toISOString(),
-        });
-        return;
-      }
-    }
-    
-    // Scenario 4: Initialize new user with defaults if missing
-    const needsInitialization = !user.country_code || !user.entity_type || !user.preferred_language;
-    if (needsInitialization) {
-      const updates = {};
-      if (!user.country_code) updates.country_code = 'SK';
-      if (!user.entity_type) updates.entity_type = 'FO';
-      if (!user.preferred_language) updates.preferred_language = localStorage.getItem('estivo_lang') || 'en';
-      
-      if (Object.keys(updates).length > 0) {
-        console.log(`[Layout] Initializing new user ${user.id} defaults`, updates);
-        updateUserMutation.mutate(updates);
-      }
-    }
-  }, [user, appSettings, isUserLoading, isSettingsLoading, updateUserMutation]);
+  }, [user, isUserLoading]);
 
   // Listen for appSettings changes
   useEffect(() => {
