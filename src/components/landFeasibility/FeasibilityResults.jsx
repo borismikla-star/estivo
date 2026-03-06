@@ -86,6 +86,7 @@ const translations = {
     lb_ok: "Bilancia OK",
     lb_exceeded: "Bilancia PREKROČENÁ",
     lb_unallocated: "Nealokovaná plocha",
+    lb_infra_note: "Dopravná a technická infraštruktúra nie je predmetom detailného posúdenia v module Land Feasibility. Modul slúži najmä na posúdenie kapacity a plošnej bilancie pozemku. Náklady na komunikácie, technické siete a ďalšie infraštruktúrne prvky sa zohľadňujú v module Development Calculator. Skutočný rozsah komunikácií a infraštruktúry môže ovplyvniť výslednú kapacitu projektu.",
     title: "Výstupy konceptu",
     sub_title: "Výstupy parcelácie",
     disclaimer: "Concept-level estimation – no architectural study",
