@@ -169,6 +169,11 @@ translations.en.pb_building_footprint = "Building Footprint";
 translations.en.pb_paved_area = "Paved Area";
 translations.en.pb_green_area = "Green Area";
 translations.en.pb_total = "Total";
+translations.en.pb_green_compliance_title = "Green Requirement Compliance";
+translations.en.pb_required_green_total = "Required green (whole site)";
+translations.en.pb_total_parcel_green = "Green on parcels";
+translations.en.pb_public_green = "Public / common green";
+translations.en.pb_total_green = "Total green";
 translations.en.warnings.parcel_balance_mismatch = "Parcel balance mismatch – parcel components do not sum to average parcel size.";
 
 const ResultRow = ({ label, value, unit, highlight }) => (
