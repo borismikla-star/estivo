@@ -1387,6 +1387,11 @@ export default function PDFReport({ projectData, results, language, user }) {
                     <SensitivitySection sensitivityData={sensitivity_data} language={language} />
                 )}
 
+                {/* Development Inputs Section */}
+                {isDevelopment && (
+                    <DevInputsSection projectData={projectData} language={language} currentT={currentT} />
+                )}
+
                 {/* Methodology & Assumptions Section */}
                 <MethodologySection language={language} type={type} kpis={kpis} />
             </main>
