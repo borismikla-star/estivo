@@ -39,9 +39,10 @@ const translations = {
     cellars_area: "Cellars",
     apartment_count: "Est. Apartment Count",
     // Subdivision mode
-    development_area: "Development Area",
+    development_area: "Development Area (parcels)",
     roads_area: "Public Roads Area",
-    green_area: "Green Areas",
+    public_green_area: "Public / Common Green",
+    green_area: "Total Green (site-wide)",
     total_paved_area: "Total Paved Area (all parcels)",
     number_of_parcels: "Number of Parcels",
     avg_parcel_size: "Average Parcel Size",
