@@ -230,6 +230,10 @@ function BlockResults({ results, t }) {
 function ParcelBreakdown({ pb, t }) {
   if (!pb || pb.number_of_parcels < 1) return null;
 
+  const greenOk = pb.green_pct_achieved >= pb.green_pct_required - 0.001;
+  const greenPctAchieved = Math.round((pb.green_pct_achieved ?? 0) * 100);
+  const greenPctRequired = Math.round((pb.green_pct_required ?? 0) * 100);
+
   const summaryRows = [
     { label: t.pb_development_area, value: fmt(pb.development_area), unit: t.m2 },
     { label: t.pb_number_of_parcels, value: fmt(pb.number_of_parcels), unit: t.pcs },
