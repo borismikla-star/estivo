@@ -349,7 +349,8 @@ function LabelWithTooltip({ label, tooltip }) {
 }
 
 export default function FeasibilityInputs({ inputs, onChange, language = 'sk' }) {
-  const t = translations[language] || translations.sk;
+  const extraTranslations = { pl: translations_pl, hu: translations_hu, de: translations_de };
+  const t = translations[language] || extraTranslations[language] || translations.sk;
   const set = (key, value) => onChange({ ...inputs, [key]: value });
   const isSubdivision = inputs.project_type === 'subdivision';
   // Normalize: treat 'residential'/'mixed' (legacy) as 'building'
