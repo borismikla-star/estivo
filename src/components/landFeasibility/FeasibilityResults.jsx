@@ -372,7 +372,7 @@ function SubdivisionResults({ results, t }) {
         {rows.map(row => (
           <ResultRow
             key={row.key}
-            label={t[row.key]}
+            label={row.labelOverride || t[row.key]}
             value={fmt(results[row.key] ?? 0)}
             unit={row.unit}
             highlight={row.highlight}
