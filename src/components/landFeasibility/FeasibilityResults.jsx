@@ -338,7 +338,6 @@ function SubdivisionResults({ results, t }) {
   const rows = [
     { key: 'land_area', unit: t.m2 },
     { key: 'roads_area', unit: t.m2 },
-    { key: 'green_area', unit: t.m2 },
     { key: 'development_area', unit: t.m2, highlight: true },
     { key: 'number_of_parcels', unit: t.pcs, highlight: true },
     { key: 'avg_parcel_size', unit: t.m2 },
