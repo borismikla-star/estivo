@@ -227,6 +227,74 @@ function BlockResults({ results, t }) {
   );
 }
 
+function ParcelBreakdown({ pb, t }) {
+  if (!pb || pb.number_of_parcels < 1) return null;
+
+  const summaryRows = [
+    { label: t.pb_development_area, value: fmt(pb.development_area), unit: t.m2 },
+    { label: t.pb_number_of_parcels, value: fmt(pb.number_of_parcels), unit: t.pcs },
+    { label: t.pb_avg_parcel_size, value: fmt(pb.avg_parcel_size), unit: t.m2 },
+  ];
+
+  const parcelRows = [
+    { label: t.pb_parcel_area, value: fmt(pb.avg_parcel_size), unit: t.m2, highlight: true },
+    { label: t.pb_building_footprint, value: fmt(pb.parcel_building_footprint), unit: t.m2 },
+    { label: t.pb_paved_area, value: fmt(pb.parcel_paved_area), unit: t.m2 },
+    { label: t.pb_green_area, value: fmt(pb.parcel_green_area), unit: t.m2 },
+    { label: t.pb_total, value: fmt(pb.parcel_total), unit: t.m2, highlight: true },
+  ];
+
+  return (
+    <Card className="border-green-200">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <CardTitle className="flex items-center gap-2">
+            {t.parcel_breakdown_title}
+          </CardTitle>
+          <Badge variant="outline" className="text-xs text-green-700 border-green-300">
+            derived
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Summary */}
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t.parcel_summary_title}</p>
+          {summaryRows.map((r, i) => (
+            <ResultRow key={i} label={r.label} value={r.value} unit={r.unit} highlight={r.highlight} />
+          ))}
+        </div>
+        {/* Typical parcel */}
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t.typical_parcel_title}</p>
+          <div className="rounded-lg border border-green-100 bg-green-50/40 overflow-hidden">
+            {parcelRows.map((r, i) => (
+              <div key={i} className={`flex justify-between items-center px-3 py-2 border-b border-green-100 last:border-b-0 ${r.highlight ? 'bg-green-100/60 font-semibold' : ''}`}>
+                <span className="text-sm text-muted-foreground">{r.label}</span>
+                <span className="font-semibold text-foreground text-sm">{r.value} <span className="text-xs text-muted-foreground">{r.unit}</span></span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Visual bar */}
+        <div>
+          <p className="text-xs text-muted-foreground mb-1">{t.pb_parcel_area}: {fmt(pb.avg_parcel_size)} m²</p>
+          <div className="flex h-5 rounded overflow-hidden w-full text-xs">
+            <div style={{ width: `${(pb.parcel_building_footprint / pb.avg_parcel_size) * 100}%` }} className="bg-slate-500 flex items-center justify-center text-white overflow-hidden whitespace-nowrap px-1" title={t.pb_building_footprint}>🏠</div>
+            <div style={{ width: `${(pb.parcel_paved_area / pb.avg_parcel_size) * 100}%` }} className="bg-gray-300 flex items-center justify-center text-gray-700 overflow-hidden whitespace-nowrap px-1" title={t.pb_paved_area}>⬛</div>
+            <div style={{ width: `${(pb.parcel_green_area / pb.avg_parcel_size) * 100}%` }} className="bg-green-400 flex items-center justify-center text-white overflow-hidden whitespace-nowrap px-1" title={t.pb_green_area}>🌿</div>
+          </div>
+          <div className="flex gap-3 mt-1 flex-wrap">
+            <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="inline-block w-3 h-3 rounded-sm bg-slate-500"></span>{t.pb_building_footprint} ({Math.round((pb.parcel_building_footprint / pb.avg_parcel_size) * 100)}%)</span>
+            <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="inline-block w-3 h-3 rounded-sm bg-gray-300"></span>{t.pb_paved_area} ({Math.round((pb.parcel_paved_area / pb.avg_parcel_size) * 100)}%)</span>
+            <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="inline-block w-3 h-3 rounded-sm bg-green-400"></span>{t.pb_green_area} ({Math.round((pb.parcel_green_area / pb.avg_parcel_size) * 100)}%)</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function SubdivisionResults({ results, t }) {
   const rows = [
     { key: 'land_area', unit: t.m2 },
