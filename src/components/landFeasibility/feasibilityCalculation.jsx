@@ -130,6 +130,32 @@ export function calculateSubdivision(inputs) {
     validations
   );
 
+  // ── PARCEL BREAKDOWN (derived, informative) ─────────────────────────────
+  // public_green is the portion of green_area that is NOT on parcels
+  // For simplicity: public_green = land_area * green_pct (the fixed input)
+  const public_green_area = land_area * green_pct;
+  // development_area already excludes roads + public green
+  const parcel_building_footprint = number_of_parcels > 0 ? total_built_footprint / number_of_parcels : 0;
+  const parcel_paved_area = number_of_parcels > 0 ? total_paved_area / number_of_parcels : 0;
+  const parcel_green_area = avg_parcel_size - parcel_building_footprint - parcel_paved_area;
+  const parcel_total = parcel_building_footprint + parcel_paved_area + (parcel_green_area > 0 ? parcel_green_area : 0);
+  const parcel_balance_ok = number_of_parcels > 0 && Math.abs(parcel_total - avg_parcel_size) < 1;
+
+  if (number_of_parcels > 0 && !parcel_balance_ok) {
+    validations.push({ type: 'warning', key: 'parcel_balance_mismatch' });
+  }
+
+  const parcel_breakdown = {
+    development_area,
+    number_of_parcels,
+    avg_parcel_size,
+    parcel_building_footprint,
+    parcel_paved_area,
+    parcel_green_area: Math.max(0, parcel_green_area),
+    parcel_total: avg_parcel_size,
+    public_green_area,
+  };
+
   return {
     land_area,
     typology,
@@ -147,6 +173,7 @@ export function calculateSubdivision(inputs) {
     total_paved_area,
     risk_buffer_applied: risk_buffer_pct > 0,
     risk_buffer_pct,
+    parcel_breakdown,
     // Land balance
     land_balance: {
       land_area,
