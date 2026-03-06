@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, AlertCircle, Info } from 'lucide-react';
 
 const fmt = (n) => Math.round(n ?? 0).toLocaleString('sk-SK');
 
