@@ -171,12 +171,12 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Always shown */}
             <div className="space-y-1">
-              <Label>{t.land_area}</Label>
+              <LabelWithTooltip label={t.land_area} tooltip={t.tt_land_area} />
               <Input type="number" value={inputs.land_area ?? ''} onChange={e => set('land_area', parseFloat(e.target.value) || 0)} />
             </div>
 
             <div className="space-y-1">
-              <Label>{t.project_type}</Label>
+              <LabelWithTooltip label={t.project_type} tooltip={t.tt_project_type} />
               <Select value={inputs.project_type ?? 'residential'} onValueChange={v => set('project_type', v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -191,32 +191,32 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
             {!isSubdivision && (
               <>
                 <div className="space-y-1">
-                  <Label>{t.iz}</Label>
+                  <LabelWithTooltip label={t.iz} tooltip={t.tt_iz} />
                   <Input type="number" step="0.01" value={inputs.iz ?? ''} onChange={e => set('iz', parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.kpp}</Label>
+                  <LabelWithTooltip label={t.kpp} tooltip={t.tt_kpp} />
                   <Input type="number" step="0.1" placeholder="—" value={inputs.kpp ?? ''} onChange={e => set('kpp', e.target.value === '' ? null : parseFloat(e.target.value))} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.floors}</Label>
+                  <LabelWithTooltip label={t.floors} tooltip={t.tt_floors} />
                   <Input type="number" placeholder="—" value={inputs.floors ?? ''} onChange={e => set('floors', e.target.value === '' ? null : parseInt(e.target.value))} />
                   <p className="text-xs text-muted-foreground">{t.kpp_hint}</p>
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.non_res_pct}</Label>
+                  <LabelWithTooltip label={t.non_res_pct} tooltip={t.tt_non_res_pct} />
                   <Input type="number" min="0" max="100" value={(inputs.non_residential_pct ?? 0) * 100} onChange={e => set('non_residential_pct', (parseFloat(e.target.value) || 0) / 100)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.min_green_pct}</Label>
+                  <LabelWithTooltip label={t.min_green_pct} tooltip={t.tt_min_green_pct} />
                   <Input type="number" min="0" max="100" value={(inputs.min_green_pct ?? 20) * 100} onChange={e => set('min_green_pct', (parseFloat(e.target.value) || 0) / 100)} />
                 </div>
                 <div className="space-y-1">
-                  <Label>{t.avg_apt}</Label>
+                  <LabelWithTooltip label={t.avg_apt} tooltip={t.tt_avg_apt} />
                   <Input type="number" value={inputs.avg_apartment_size ?? 60} onChange={e => set('avg_apartment_size', parseFloat(e.target.value) || 60)} />
                 </div>
                 <div className="space-y-1 sm:col-span-2">
-                  <Label>{t.mode}</Label>
+                  <LabelWithTooltip label={t.mode} tooltip={t.tt_mode} />
                   <Select value={inputs.mode ?? 'realistic'} onValueChange={v => set('mode', v)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -228,7 +228,7 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
                 </div>
                 <div className="flex items-center gap-3 sm:col-span-2">
                   <Switch checked={!!inputs.green_on_structure} onCheckedChange={v => set('green_on_structure', v)} />
-                  <Label>{t.green_on_structure}</Label>
+                  <LabelWithTooltip label={t.green_on_structure} tooltip={t.tt_green_on_structure} />
                 </div>
               </>
             )}
