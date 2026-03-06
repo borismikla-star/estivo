@@ -68,6 +68,13 @@ export default function LandBalanceBlock({ balance, t }) {
             <span>{fmt(total)} m²</span>
           </div>
         </div>
+        {/* Infrastructure note */}
+        {roads_area === 0 && (
+          <div className="mt-3 flex items-start gap-2 rounded-lg bg-blue-50 border border-blue-200 p-3 text-xs text-blue-800">
+            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" />
+            <p>{t.lb_infra_note}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
