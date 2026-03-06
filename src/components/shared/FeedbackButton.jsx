@@ -23,7 +23,7 @@ export default function FeedbackButton({ user }) {
       message,
     ].join('\n');
     await base44.integrations.Core.SendEmail({
-      to: 'feedback@estivo.io',
+      to: 'boris.mikla@gmail.com',
       subject: `[Feedback] ${user?.email || 'anonymous'}`,
       body,
     });
