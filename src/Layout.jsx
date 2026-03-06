@@ -136,7 +136,6 @@ const NavLink = ({ to, icon: Icon, children, isMobile = false, currentPath }) =>
 };
 
 export default function Layout({ children, currentPageName }) {
-  console.log('🔵 LAYOUT RENDERING - Page:', currentPageName);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -173,22 +172,14 @@ export default function Layout({ children, currentPageName }) {
   const { data: appSettings, isLoading: isSettingsLoading } = useQuery({
       queryKey: ['appSettings'],
       queryFn: async () => {
-          // Changed to order by '-updated_date' to get the newest record, and limit to 1
           const settingsList = await base44.entities.AppSettings.list('-updated_date', 1);
-          console.log('[Layout] AppSettings loaded:', settingsList);
-          
-          // If no settings exist, create default settings
           if (!settingsList || settingsList.length === 0) {
-              console.log('[Layout] No AppSettings found, creating default...');
-              const defaultSettings = await base44.entities.AppSettings.create({
-                  beta_mode: true, // Default to beta mode
+              return await base44.entities.AppSettings.create({
+                  beta_mode: true,
                   trial_enabled: false,
                   trial_duration_days: 30
               });
-              console.log('[Layout] Created default AppSettings:', defaultSettings);
-              return defaultSettings;
           }
-          
           return settingsList[0];
       },
       enabled: !!user,
@@ -219,7 +210,6 @@ export default function Layout({ children, currentPageName }) {
   // Listen for appSettings changes
   useEffect(() => {
     const handleSettingsChange = () => {
-      console.log('[Layout] Settings changed, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['appSettings'] });
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     };
@@ -347,13 +337,11 @@ export default function Layout({ children, currentPageName }) {
 
   // 2. Handle public pages that don't require authentication (and user loading is done)
   if (isPublicPage) {
-      console.log('🟣 PUBLIC PAGE RENDERED:', currentPageName);
       return (
           <>
             {layoutStyles}
             {children}
             <CookieConsentBanner language={language} />
-            {console.log('🟢 PUBLIC FOOTER AREA')}
           </>
       );
   }
@@ -378,9 +366,6 @@ export default function Layout({ children, currentPageName }) {
   //    - isUserLoading is false (auth check complete)
   //    - user is not null (user is authenticated)
   //    - The page is not a public page (it's a protected page)
-  // So, render the full authenticated layout.
-  console.log('🟢 AUTHENTICATED LAYOUT RENDERING for:', currentPageName);
-
   const navItems = [
     { name: t.dashboard, href: "Dashboard", icon: LayoutDashboard },
     { name: t.portfolio, href: "Portfolio", icon: Briefcase },
@@ -388,8 +373,6 @@ export default function Layout({ children, currentPageName }) {
     { name: t.land_feasibility, href: "LandFeasibility", icon: Layers },
   ];
 
-  console.log('🔷 LAYOUT: Rendering sidebar and footer');
-  
   return (
     <>
       {layoutStyles}
@@ -514,7 +497,6 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
       <CookieConsentBanner language={language} />
-      {console.log('🟢 FOOTER RENDERED')}
     </>
   );
 }
