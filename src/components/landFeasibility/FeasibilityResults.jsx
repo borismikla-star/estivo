@@ -108,9 +108,10 @@ const translations = {
     cellars_area: "Pivnice",
     apartment_count: "Odhad počtu bytov",
     // Subdivision mode
-    development_area: "Rozvojová plocha",
+    development_area: "Rozvojová plocha (parcely)",
     roads_area: "Verejné komunikácie",
-    green_area: "Zelené plochy",
+    public_green_area: "Verejná / spoločná zeleň",
+    green_area: "Zeleň celkom (celý pozemok)",
     total_paved_area: "Spevnené plochy celkom (všetky parcely)",
     number_of_parcels: "Počet parciel",
     avg_parcel_size: "Priemerná výmera parcely",
