@@ -175,11 +175,10 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
 
             <div className="space-y-1">
               <LabelWithTooltip label={t.project_type} tooltip={t.tt_project_type} />
-              <Select value={inputs.project_type ?? 'residential'} onValueChange={v => set('project_type', v)}>
+              <Select value={inputs.project_type === 'subdivision' ? 'subdivision' : 'building'} onValueChange={v => set('project_type', v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="residential">{t.residential}</SelectItem>
-                  <SelectItem value="mixed">{t.mixed}</SelectItem>
+                  <SelectItem value="building">{t.building}</SelectItem>
                   <SelectItem value="subdivision">{t.subdivision}</SelectItem>
                 </SelectContent>
               </Select>

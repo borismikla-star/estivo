@@ -19,7 +19,7 @@ const DEFAULT_INPUTS = {
   iz: 0.40,
   kpp: null,
   floors: 5,
-  project_type: 'residential',
+  project_type: 'building',
   non_residential_pct: 0,
   min_green_pct: 0.20,
   avg_apartment_size: 60,

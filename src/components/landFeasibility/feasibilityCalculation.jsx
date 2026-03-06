@@ -228,6 +228,7 @@ export function calculateFeasibility(inputs) {
   if (inputs.project_type === 'subdivision') {
     return calculateSubdivision(inputs);
   }
+  // 'building' covers both former 'residential' and 'mixed' types
 
   const {
     land_area = 0,
