@@ -245,32 +245,32 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label>{t.public_roads_pct}</Label>
+                <LabelWithTooltip label={t.public_roads_pct} tooltip={t.tt_public_roads_pct} />
                 <Input type="number" min="0" max="59" value={Math.round((inputs.public_roads_pct ?? 0.20) * 100)} onChange={e => set('public_roads_pct', (parseFloat(e.target.value) || 0) / 100)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.green_pct}</Label>
+                <LabelWithTooltip label={t.green_pct} tooltip={t.tt_green_pct} />
                 <Input type="number" min="0" max="59" value={Math.round((inputs.green_pct ?? 0.10) * 100)} onChange={e => set('green_pct', (parseFloat(e.target.value) || 0) / 100)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.min_parcel_size}</Label>
+                <LabelWithTooltip label={t.min_parcel_size} tooltip={t.tt_min_parcel_size} />
                 <Input type="number" min="250" value={inputs.min_parcel_size ?? 600} onChange={e => set('min_parcel_size', parseFloat(e.target.value) || 600)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.max_plot_coverage}</Label>
+                <LabelWithTooltip label={t.max_plot_coverage} tooltip={t.tt_max_plot_coverage} />
                 <Input type="number" min="1" max="50" value={Math.round((inputs.max_plot_coverage ?? 0.30) * 100)} onChange={e => set('max_plot_coverage', (parseFloat(e.target.value) || 30) / 100)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.kpp_house}</Label>
+                <LabelWithTooltip label={t.kpp_house} tooltip={t.tt_kpp_house} />
                 <Input type="number" step="0.1" placeholder="—" value={inputs.kpp_house ?? ''} onChange={e => set('kpp_house', e.target.value === '' ? null : parseFloat(e.target.value))} />
                 <p className="text-xs text-muted-foreground">{t.kpp_house_hint}</p>
               </div>
               <div className="space-y-1">
-                <Label>{t.floors_per_house}</Label>
+                <LabelWithTooltip label={t.floors_per_house} tooltip={t.tt_floors_per_house} />
                 <Input type="number" min="1" max="4" value={inputs.floors_per_house ?? 2} onChange={e => set('floors_per_house', parseInt(e.target.value) || 2)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.typology}</Label>
+                <LabelWithTooltip label={t.typology} tooltip={t.tt_typology} />
                 <Select value={inputs.typology ?? 'detached'} onValueChange={v => set('typology', v)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -281,15 +281,15 @@ export default function FeasibilityInputs({ inputs, onChange, language = 'sk' })
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label>{t.parking_per_house}</Label>
+                <LabelWithTooltip label={t.parking_per_house} tooltip={t.tt_parking_per_house} />
                 <Input type="number" min="0" max="10" value={inputs.parking_per_house ?? 2} onChange={e => set('parking_per_house', parseInt(e.target.value) || 2)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.paved_pct_house}</Label>
+                <LabelWithTooltip label={t.paved_pct_house} tooltip={t.tt_paved_pct_house} />
                 <Input type="number" min="0" max="50" value={Math.round((inputs.paved_pct_house ?? 0.10) * 100)} onChange={e => set('paved_pct_house', (parseFloat(e.target.value) || 0) / 100)} />
               </div>
               <div className="space-y-1">
-                <Label>{t.risk_buffer_pct}</Label>
+                <LabelWithTooltip label={t.risk_buffer_pct} tooltip={t.tt_risk_buffer_pct} />
                 <Input type="number" min="0" max="30" value={Math.round((inputs.risk_buffer_pct ?? 0.10) * 100)} onChange={e => set('risk_buffer_pct', (parseFloat(e.target.value) || 0) / 100)} />
               </div>
             </div>
