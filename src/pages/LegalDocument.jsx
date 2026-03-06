@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -8,6 +7,7 @@ import PublicHeader from '@/components/layout/PublicHeader';
 import PublicFooter from '@/components/layout/PublicFooter';
 import { getLandingPageTranslations } from '@/components/lib/translations';
 import 'react-quill/dist/quill.snow.css';
+import { sanitizeHtml } from '@/components/lib/sanitizeHtml';
 
 export default function LegalDocumentPage() {
     const [language, setLanguage] = useState(() => localStorage.getItem('estivo_lang') || 'en');
@@ -43,7 +43,7 @@ export default function LegalDocumentPage() {
                     ) : document ? (
                         <article className="prose lg:prose-xl max-w-none">
                             <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-8">{document.title}</h1>
-                            <div className="ql-editor" style={{padding: 0}} dangerouslySetInnerHTML={{ __html: document.content }} />
+                            <div className="ql-editor" style={{padding: 0}} dangerouslySetInnerHTML={{ __html: sanitizeHtml(document.content) }} />
                         </article>
                     ) : (
                         <div className="text-center">

@@ -11,6 +11,7 @@ import PublicHeader from '@/components/layout/PublicHeader';
 import PublicFooter from '@/components/layout/PublicFooter';
 import { getLandingPageTranslations } from '@/components/lib/translations';
 import SocialShareButtons from '@/components/blog/SocialShareButtons';
+import { sanitizeHtml } from '@/components/lib/sanitizeHtml';
 
 export default function BlogPostPage() {
     const [language, setLanguage] = useState(() => localStorage.getItem('estivo_lang') || 'en');
@@ -117,7 +118,7 @@ export default function BlogPostPage() {
                             <SocialShareButtons url={currentUrl} title={localizedContent?.title || post.title} />
                         </div>
                         {/* The content is rendered from the rich text editor */}
-                        <div className="ql-editor" style={{padding: 0}} dangerouslySetInnerHTML={{ __html: localizedContent?.content || post.content }} />
+                        <div className="ql-editor" style={{padding: 0}} dangerouslySetInnerHTML={{ __html: sanitizeHtml(localizedContent?.content || post.content) }} />
                     </article>
                 </div>
             </main>
