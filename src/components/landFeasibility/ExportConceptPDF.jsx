@@ -10,7 +10,7 @@ const LABELS = {
   en: {
     concept: "Land Feasibility Concept",
     generated: "Generated",
-    mode_block: "Block / Mixed-use",
+    mode_block: "Building Development",
     mode_sub: "Subdivision",
     disclaimer: "Concept-level estimation – no architectural study",
     land_area: "Total Land Area",
@@ -67,7 +67,7 @@ const LABELS = {
   sk: {
     concept: "Analýza uskutočniteľnosti – Koncept",
     generated: "Vygenerované",
-    mode_block: "Block / Bytová zástavba",
+    mode_block: "Bytová výstavba",
     mode_sub: "Parcelácia",
     disclaimer: "Predbežný odhad – bez architektonickej štúdie",
     land_area: "Výmera pozemku",
