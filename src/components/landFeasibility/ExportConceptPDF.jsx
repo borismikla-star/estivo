@@ -214,6 +214,55 @@ const ROW_STYLE = (bold) => `
   font-weight:${bold ? '600' : '400'};
 `;
 
+function buildParcelBreakdownHTML(pb, t) {
+  if (!pb || pb.number_of_parcels < 1) return '';
+  const greenOk = pb.green_pct_achieved >= pb.green_pct_required - 0.001;
+  const greenPctAchieved = Math.round((pb.green_pct_achieved ?? 0) * 100);
+  const greenPctRequired = Math.round((pb.green_pct_required ?? 0) * 100);
+
+  const ROW = (label, value, unit, bold = false) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #e5e7eb;font-weight:${bold ? '600' : '400'};">
+      <span style="font-size:11px;color:#4b5563;">${label}</span>
+      <span style="font-size:11px;color:#111827;font-weight:${bold ? '700' : '500'};">${value} <span style="font-size:9px;color:#9ca3af;">${unit}</span></span>
+    </div>`;
+
+  const sectionTitle = (title) => `<h2 style="font-size:13px;font-weight:700;color:#1f2937;border-bottom:2px solid #1f2937;padding-bottom:4px;margin:0 0 10px 0;">${title}</h2>`;
+  const subTitle = (title) => `<p style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin:10px 0 4px;">${title}</p>`;
+
+  const greenBg = greenOk ? '#f0fdf4' : '#fffbeb';
+  const greenBorder = greenOk ? '#86efac' : '#fcd34d';
+  const greenColor = greenOk ? '#15803d' : '#92400e';
+
+  return `
+    <div style="margin-bottom:24px;">
+      ${sectionTitle(t.parcel_breakdown)}
+      ${subTitle(t.pb_parcel_summary)}
+      ${ROW(t.development_area, fmt(pb.development_area), 'm²', true)}
+      ${ROW(t.number_of_parcels, fmt(pb.number_of_parcels), t.pcs, true)}
+      ${ROW(t.pb_avg_parcel_size, fmt(pb.avg_parcel_size), 'm²')}
+
+      ${subTitle(t.pb_typical_parcel)}
+      <div style="border:1px solid #d1fae5;border-radius:6px;overflow:hidden;background:#f0fdf4;padding:4px 10px;">
+        ${ROW(t.pb_avg_parcel_size, fmt(pb.avg_parcel_size), 'm²', true)}
+        ${ROW(t.pb_building_footprint_parcel, fmt(pb.parcel_building_footprint), 'm²')}
+        ${ROW(t.pb_paved_parcel, fmt(pb.parcel_paved_area), 'm²')}
+        ${ROW(t.pb_green_parcel, fmt(pb.parcel_green_area), 'm²')}
+        ${ROW(t.pb_parcel_total, fmt(pb.parcel_total), 'm²', true)}
+      </div>
+
+      ${subTitle(t.pb_green_compliance)}
+      <div style="border:1px solid ${greenBorder};border-radius:6px;padding:8px 10px;background:${greenBg};">
+        ${ROW(t.pb_required_green, `${fmt(pb.required_green_total)} (${greenPctRequired}%)`, 'm²')}
+        ${ROW(`${t.pb_parcel_green_total} (${pb.number_of_parcels}×)`, fmt(pb.total_parcel_green), 'm²')}
+        ${ROW(t.pb_public_green, fmt(pb.public_green_area), 'm²')}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-top:1px solid ${greenBorder};margin-top:4px;">
+          <span style="font-size:11px;font-weight:700;color:#1f2937;">${t.pb_green_total}</span>
+          <span style="font-size:11px;font-weight:700;color:${greenColor};">${fmt((pb.total_parcel_green ?? 0) + (pb.public_green_area ?? 0))} m² (${greenPctAchieved}%) ${greenOk ? '✓' : '⚠'}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
 function createReportHTML(conceptName, results, language, t, wt) {
   const isSubdivision = results?.mode === 'subdivision';
   const rows = buildRows(results, t, isSubdivision);
