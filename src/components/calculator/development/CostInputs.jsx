@@ -35,7 +35,7 @@ export default function CostInputs({ data, projectData, language, onChange }) {
       other_services: "Ostatné služby",
       legal_services: "Právne služby",
       legal_services_default: "(0,5% z realizácie)",
-      development_fee: "Developerská provízia",
+      development_fee: "Developerský poplatok",
       other_fees: "Ostatné poplatky",
       other_fees_default: "(1% z 2.1-2.6)",
       reserve: "Rezerva",
