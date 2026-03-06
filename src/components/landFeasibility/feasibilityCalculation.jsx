@@ -184,6 +184,7 @@ export function calculateSubdivision(inputs) {
     typology,
     development_area,
     roads_area,
+    public_green_area,
     green_area,
     number_of_parcels,
     avg_parcel_size,
@@ -197,7 +198,6 @@ export function calculateSubdivision(inputs) {
     risk_buffer_applied: risk_buffer_pct > 0,
     risk_buffer_pct,
     parcel_breakdown,
-    // Land balance
     land_balance: {
       land_area,
       building_footprint: total_built_footprint,
