@@ -369,6 +369,10 @@ export default function FeasibilityResults({ results, language = 'sk' }) {
         : <BlockResults results={results} t={t} />
       }
 
+      {isSubdivision && results.parcel_breakdown && (
+        <ParcelBreakdown pb={results.parcel_breakdown} t={t} />
+      )}
+
       {results.land_balance && (
         <LandBalanceBlock balance={results.land_balance} t={t} />
       )}
