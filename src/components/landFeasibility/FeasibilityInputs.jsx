@@ -40,7 +40,7 @@ const translations = {
     detached: "Detached",
     semi: "Semi-detached",
     row: "Row House",
-    risk_buffer_pct: "Regulatory Risk Buffer (%)",
+    risk_buffer_pct: "Design Efficiency Buffer (%)",
     parking_per_house: "Parking per House",
     // Advanced block
     advanced_title: "Advanced Assumptions",
