@@ -1126,17 +1126,16 @@ WICHTIG: Die Antwort muss VOLLSTÄNDIG auf Deutsch sein.`
             
             const clonedResults = JSON.parse(JSON.stringify(calculatedResults));
             setResults(clonedResults);
+            // Reset AI summary on recalculate so Generate button reappears
+            setAiSummary(null);
+            setSensitivityData(null);
+            setAiError(null);
             setProjectData(prev => ({
                 ...prev,
-                results: clonedResults
+                results: clonedResults,
+                ai_summary: null,
+                sensitivity_data: null,
             }));
-            
-            // For development projects, auto-run sensitivity analysis on calculate
-            if (projectData.type === 'development') {
-                setTimeout(() => {
-                    runSensitivityAnalysis(clonedResults, preset);
-                }, 100);
-            }
             
             setIsDirty(true);
             setSaveStatus('unsaved');
