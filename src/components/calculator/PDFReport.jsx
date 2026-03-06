@@ -334,6 +334,171 @@ const SensitivitySection = ({ sensitivityData, language }) => {
     );
 };
 
+const DevInputsSection = ({ projectData, language, currentT }) => {
+    const pi = projectData.project_info_data || {};
+    const cd = projectData.cost_data || {};
+    const rd = projectData.revenue_data || {};
+    const fd = projectData.financing_data || {};
+    const tl = projectData.timeline || {};
+
+    const labels = {
+        sk: {
+            title: "Vstupné údaje kalkulačky",
+            project_info: "Informácie o projekte",
+            entity_type: "Typ subjektu",
+            vat_payer: "Platca DPH",
+            yes: "Áno", no: "Nie",
+            total_land_area: "Výmera pozemku",
+            building_area: "Zastavaná plocha",
+            gfa_above: "HPP nadzemné",
+            gfa_below: "HPP podzemné",
+            nfa_above: "ČPP nadzemné",
+            nfa_below: "ČPP podzemné",
+            sales_area_apartments: "Byty - predajná plocha",
+            sales_area_non_residential: "Nebytové - predajná plocha",
+            sales_area_balconies: "Balkóny - predajná plocha",
+            sales_area_gardens: "Záhradky - predajná plocha",
+            parking_indoor_count: "Kryté parkovacie miesta",
+            parking_outdoor_count: "Vonkajšie parkovacie miesta",
+            basement_area: "Pivnice",
+            costs_title: "Náklady na výstavbu",
+            above_ground_unit_price: "Cena nadzemnej výstavby (€/m²)",
+            below_ground_unit_price: "Cena podzemnej výstavby (€/m²)",
+            outdoor_areas_unit_price: "Spevnené plochy (€/m²)",
+            greenery_terrain_unit_price: "Zeleň na teréne (€/m²)",
+            greenery_structure_unit_price: "Zeleň na konštrukcii (€/m²)",
+            revenue_title: "Predajné ceny",
+            apartments_unit_price: "Byty (€/m²)",
+            non_residential_unit_price: "Nebytové priestory (€/m²)",
+            parking_indoor_unit_price: "Kryté parkovanie (€/ks)",
+            parking_outdoor_unit_price: "Vonkajšie parkovanie (€/ks)",
+            balconies_unit_price: "Balkóny (€/m²)",
+            gardens_unit_price: "Záhradky (€/m²)",
+            basements_unit_price: "Pivnice (€/ks)",
+            financing_title: "Financovanie",
+            own_resources_pct: "Vlastné zdroje (%)",
+            bank_interest_percent: "Úroková sadzba banky (%)",
+            interest_only_months: "Obdobie čerpania (mes.)",
+            timeline_title: "Harmonogram",
+            preparation_months: "Prípravná fáza (mes.)",
+            construction_months: "Výstavba (mes.)",
+            sales_months: "Predaj (mes.)",
+            total_months: "Celková doba projektu (mes.)",
+            m2: "m²", pcs: "ks",
+        },
+        en: {
+            title: "Calculator Input Data",
+            project_info: "Project Information",
+            entity_type: "Entity Type",
+            vat_payer: "VAT Payer",
+            yes: "Yes", no: "No",
+            total_land_area: "Land Area",
+            building_area: "Building Footprint",
+            gfa_above: "GFA Above Ground",
+            gfa_below: "GFA Below Ground",
+            nfa_above: "NFA Above Ground",
+            nfa_below: "NFA Below Ground",
+            sales_area_apartments: "Apartments - sales area",
+            sales_area_non_residential: "Non-residential - sales area",
+            sales_area_balconies: "Balconies - sales area",
+            sales_area_gardens: "Gardens - sales area",
+            parking_indoor_count: "Indoor parking spaces",
+            parking_outdoor_count: "Outdoor parking spaces",
+            basement_area: "Basements",
+            costs_title: "Construction Costs",
+            above_ground_unit_price: "Above-ground unit price (€/m²)",
+            below_ground_unit_price: "Below-ground unit price (€/m²)",
+            outdoor_areas_unit_price: "Paved areas (€/m²)",
+            greenery_terrain_unit_price: "Greenery on terrain (€/m²)",
+            greenery_structure_unit_price: "Greenery on structure (€/m²)",
+            revenue_title: "Sales Prices",
+            apartments_unit_price: "Apartments (€/m²)",
+            non_residential_unit_price: "Non-residential (€/m²)",
+            parking_indoor_unit_price: "Indoor parking (€/pc)",
+            parking_outdoor_unit_price: "Outdoor parking (€/pc)",
+            balconies_unit_price: "Balconies (€/m²)",
+            gardens_unit_price: "Gardens (€/m²)",
+            basements_unit_price: "Basements (€/pc)",
+            financing_title: "Financing",
+            own_resources_pct: "Own resources (%)",
+            bank_interest_percent: "Bank interest rate (%)",
+            interest_only_months: "Interest-only period (mo.)",
+            timeline_title: "Timeline",
+            preparation_months: "Preparation phase (mo.)",
+            construction_months: "Construction (mo.)",
+            sales_months: "Sales phase (mo.)",
+            total_months: "Total project duration (mo.)",
+            m2: "m²", pcs: "pcs",
+        },
+    };
+
+    // Use sk or en, fallback to en for other languages
+    const l = labels[language] || labels.en;
+    const fmt = (v, unit = '') => v != null && v !== '' ? `${Number(v).toLocaleString()} ${unit}`.trim() : '—';
+    const fmtCurr = (v) => v != null && v !== '' ? currencyFormatter(Number(v)) : '—';
+
+    const Row = ({ label, value }) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #f1f5f9', fontSize: '11px' }}>
+            <span style={{ color: '#6b7280' }}>{label}</span>
+            <span style={{ color: '#111827', fontWeight: '500' }}>{value}</span>
+        </div>
+    );
+
+    const SubTitle = ({ title }) => (
+        <div style={{ fontSize: '11px', fontWeight: '700', color: '#003E7E', marginTop: '10px', marginBottom: '4px', paddingBottom: '2px', borderBottom: '1px solid #c7d2fe' }}>{title}</div>
+    );
+
+    return (
+        <Section title={l.title}>
+            <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px' }}>
+                <SubTitle title={l.project_info} />
+                {pi.entity_type && <Row label={l.entity_type} value={pi.entity_type} />}
+                <Row label={l.vat_payer} value={pi.vat_payer ? l.yes : l.no} />
+                {pi.total_land_area && <Row label={l.total_land_area} value={fmt(pi.total_land_area, l.m2)} />}
+                {pi.building_area && <Row label={l.building_area} value={fmt(pi.building_area, l.m2)} />}
+                {pi.gfa_above && <Row label={l.gfa_above} value={fmt(pi.gfa_above, l.m2)} />}
+                {pi.gfa_below && <Row label={l.gfa_below} value={fmt(pi.gfa_below, l.m2)} />}
+                {pi.nfa_above && <Row label={l.nfa_above} value={fmt(pi.nfa_above, l.m2)} />}
+                {pi.nfa_below && <Row label={l.nfa_below} value={fmt(pi.nfa_below, l.m2)} />}
+                {pi.sales_area_apartments && <Row label={l.sales_area_apartments} value={fmt(pi.sales_area_apartments, l.m2)} />}
+                {pi.sales_area_non_residential && <Row label={l.sales_area_non_residential} value={fmt(pi.sales_area_non_residential, l.m2)} />}
+                {pi.sales_area_balconies && <Row label={l.sales_area_balconies} value={fmt(pi.sales_area_balconies, l.m2)} />}
+                {pi.sales_area_gardens && <Row label={l.sales_area_gardens} value={fmt(pi.sales_area_gardens, l.m2)} />}
+                {pi.parking_indoor_count && <Row label={l.parking_indoor_count} value={fmt(pi.parking_indoor_count, l.pcs)} />}
+                {pi.parking_outdoor_count && <Row label={l.parking_outdoor_count} value={fmt(pi.parking_outdoor_count, l.pcs)} />}
+                {pi.basement_area && <Row label={l.basement_area} value={fmt(pi.basement_area, l.m2)} />}
+
+                <SubTitle title={l.costs_title} />
+                {cd.above_ground_unit_price && <Row label={l.above_ground_unit_price} value={fmtCurr(cd.above_ground_unit_price)} />}
+                {cd.below_ground_unit_price && <Row label={l.below_ground_unit_price} value={fmtCurr(cd.below_ground_unit_price)} />}
+                {cd.outdoor_areas_unit_price && <Row label={l.outdoor_areas_unit_price} value={fmtCurr(cd.outdoor_areas_unit_price)} />}
+                {cd.greenery_terrain_unit_price && <Row label={l.greenery_terrain_unit_price} value={fmtCurr(cd.greenery_terrain_unit_price)} />}
+                {cd.greenery_structure_unit_price && <Row label={l.greenery_structure_unit_price} value={fmtCurr(cd.greenery_structure_unit_price)} />}
+
+                <SubTitle title={l.revenue_title} />
+                {rd.apartments_unit_price && <Row label={l.apartments_unit_price} value={fmtCurr(rd.apartments_unit_price)} />}
+                {rd.non_residential_unit_price && <Row label={l.non_residential_unit_price} value={fmtCurr(rd.non_residential_unit_price)} />}
+                {rd.parking_indoor_unit_price && <Row label={l.parking_indoor_unit_price} value={fmtCurr(rd.parking_indoor_unit_price)} />}
+                {rd.parking_outdoor_unit_price && <Row label={l.parking_outdoor_unit_price} value={fmtCurr(rd.parking_outdoor_unit_price)} />}
+                {rd.balconies_unit_price && <Row label={l.balconies_unit_price} value={fmtCurr(rd.balconies_unit_price)} />}
+                {rd.gardens_unit_price && <Row label={l.gardens_unit_price} value={fmtCurr(rd.gardens_unit_price)} />}
+                {rd.basements_unit_price && <Row label={l.basements_unit_price} value={fmtCurr(rd.basements_unit_price)} />}
+
+                <SubTitle title={l.financing_title} />
+                {fd.own_resources_pct != null && <Row label={l.own_resources_pct} value={`${fd.own_resources_pct}%`} />}
+                {fd.bank_interest_percent != null && <Row label={l.bank_interest_percent} value={`${fd.bank_interest_percent}%`} />}
+                {fd.interest_only_months != null && <Row label={l.interest_only_months} value={fmt(fd.interest_only_months)} />}
+
+                <SubTitle title={l.timeline_title} />
+                {tl.preparation_months != null && <Row label={l.preparation_months} value={fmt(tl.preparation_months)} />}
+                {tl.construction_months != null && <Row label={l.construction_months} value={fmt(tl.construction_months)} />}
+                {tl.sales_months != null && <Row label={l.sales_months} value={fmt(tl.sales_months)} />}
+                {tl.total_months != null && <Row label={l.total_months} value={fmt(tl.total_months)} />}
+            </div>
+        </Section>
+    );
+};
+
 export default function PDFReport({ projectData, results, language, user }) {
     if (!projectData || !results) return null;
 
