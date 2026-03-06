@@ -138,9 +138,38 @@ const translations = {
       green_negative_clamped: "Zeleň na teréne vyšla záporná (IZ + spevnené plochy > 100 %) – zaokrúhlená na 0. Znížte IZ alebo % spevnených plôch.",
       land_balance_exceeded: (v) => `Bilancia pozemku je prekročená o ${v?.excess_m2 ?? '?'} m² (${v?.excess_pct ?? '?'}%). Znížte spevnené plochy / komunikácie alebo zastavanú plochu.`,
       land_unallocated: "Nealokovaná plocha – celková alokácia je menšia ako výmera pozemku.",
-    }
+      parcel_balance_mismatch: "Nesúlad parcelovej bilancie – súčet položiek parcely nezodpovedá priemernej veľkosti parcely.",
+    },
+    // Parcel breakdown translations
+    parcel_breakdown_title: "Parcelový prehľad",
+    parcel_summary_title: "Súhrn parcelácie",
+    typical_parcel_title: "Typická parcela",
+    pb_development_area: "Rozvojová plocha",
+    pb_number_of_parcels: "Počet parciel",
+    pb_avg_parcel_size: "Priemerná veľkosť parcely",
+    pb_parcel_area: "Plocha parcely",
+    pb_building_footprint: "Zastavaná plocha domu",
+    pb_paved_area: "Spevnené plochy",
+    pb_green_area: "Zeleň parcely",
+    pb_total: "Celkom",
+    m2: "m²",
+    pcs: "ks",
   },
 };
+
+// Parcel breakdown translations for EN (add outside sk block)
+translations.en.parcel_breakdown_title = "Parcel Breakdown";
+translations.en.parcel_summary_title = "Parcel Summary";
+translations.en.typical_parcel_title = "Typical Parcel";
+translations.en.pb_development_area = "Development Area";
+translations.en.pb_number_of_parcels = "Number of Parcels";
+translations.en.pb_avg_parcel_size = "Average Parcel Size";
+translations.en.pb_parcel_area = "Parcel Area";
+translations.en.pb_building_footprint = "Building Footprint";
+translations.en.pb_paved_area = "Paved Area";
+translations.en.pb_green_area = "Green Area";
+translations.en.pb_total = "Total";
+translations.en.warnings.parcel_balance_mismatch = "Parcel balance mismatch – parcel components do not sum to average parcel size.";
 
 const ResultRow = ({ label, value, unit, highlight }) => (
   <div className={`flex justify-between items-center py-2 border-b border-border ${highlight ? 'bg-accent/10 px-2 rounded' : ''}`}>
