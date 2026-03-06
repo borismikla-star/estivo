@@ -249,15 +249,16 @@ const AISummary = ({ summary, sensitivityData, isLoading, error, onGenerate, can
     const hasSummary = summary && Object.keys(summary).length > 0;
     const hasSensitivity = sensitivityData && sensitivityData.length > 0;
 
+    // Always show the card with Generate button if results exist (even before sensitivity loads)
     if (!hasSummary && !hasSensitivity) return (
-        <Card className="shadow-premium h-full">
+        <Card className="shadow-premium">
             <CardHeader>
                  <CardTitle className="flex items-center text-lg font-semibold text-primary">
                     <Gem className="w-5 h-5 mr-3" />
                     {t.title}
                 </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center text-center text-muted-foreground h-full pb-12 space-y-4">
+            <CardContent className="flex flex-col items-center justify-center text-center text-muted-foreground pb-8 space-y-4 min-h-[120px] justify-center">
                  <p>{t.get_insights}</p>
                  {onGenerate && (
                     <Button onClick={onGenerate} disabled={!canGenerate} className="bg-accent-gradient text-white">
