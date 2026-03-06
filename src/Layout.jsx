@@ -27,6 +27,7 @@ import {
   LifeBuoy,
   Layers,
 } from "lucide-react";
+import { initializeUser } from "@/functions/initializeUser";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import CookieConsentBanner from "./components/cookies/CookieConsentBanner";
