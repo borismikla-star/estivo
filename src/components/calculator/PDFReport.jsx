@@ -360,6 +360,7 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
             entity_type: "Typ subjektu",
             vat_payer: "Platca DPH",
             yes: "Áno", no: "Nie",
+            land_and_project: "Pozemok a projekt",
             total_land_area: "Výmera pozemku",
             building_area: "Zastavaná plocha",
             gfa_above: "HPP nadzemné",
@@ -405,6 +406,7 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
             entity_type: "Entity Type",
             vat_payer: "VAT Payer",
             yes: "Yes", no: "No",
+            land_and_project: "Land and Project",
             total_land_area: "Land Area",
             building_area: "Building Footprint",
             gfa_above: "GFA Above Ground",
@@ -468,6 +470,8 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
                 {countryName && <Row label={l.country} value={countryName} />}
                 {pi.entity_type && <Row label={l.entity_type} value={pi.entity_type} />}
                 <Row label={l.vat_payer} value={pi.vat_payer ? l.yes : l.no} />
+                
+                <SubTitle title={l.land_and_project} />
                 {pi.total_land_area && <Row label={l.total_land_area} value={fmt(pi.total_land_area, l.m2)} />}
                 {pi.building_area && <Row label={l.building_area} value={fmt(pi.building_area, l.m2)} />}
                 {pi.gfa_above && <Row label={l.gfa_above} value={fmt(pi.gfa_above, l.m2)} />}
