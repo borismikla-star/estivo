@@ -294,6 +294,31 @@ function ParcelBreakdown({ pb, t }) {
             <span className="flex items-center gap-1 text-xs text-muted-foreground"><span className="inline-block w-3 h-3 rounded-sm bg-green-400"></span>{t.pb_green_area} ({Math.round((pb.parcel_green_area / pb.avg_parcel_size) * 100)}%)</span>
           </div>
         </div>
+
+        {/* Green compliance summary */}
+        <div className={`rounded-lg border p-3 ${greenOk ? 'border-green-300 bg-green-50/60' : 'border-amber-300 bg-amber-50/60'}`}>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-2 text-muted-foreground">{t.pb_green_compliance_title}</p>
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t.pb_required_green_total}</span>
+              <span className="font-semibold">{fmt(pb.required_green_total)} m² ({greenPctRequired}%)</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t.pb_total_parcel_green} ({pb.number_of_parcels}×)</span>
+              <span className="font-semibold">{fmt(pb.total_parcel_green)} m²</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t.pb_public_green}</span>
+              <span className="font-semibold">{fmt(pb.public_green_area)} m²</span>
+            </div>
+            <div className={`flex justify-between border-t pt-1 mt-1 ${greenOk ? 'border-green-200' : 'border-amber-200'}`}>
+              <span className="font-semibold">{t.pb_total_green}</span>
+              <span className={`font-bold ${greenOk ? 'text-green-700' : 'text-amber-700'}`}>
+                {fmt((pb.total_parcel_green ?? 0) + (pb.public_green_area ?? 0))} m² ({greenPctAchieved}%) {greenOk ? '✓' : '⚠'}
+              </span>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
