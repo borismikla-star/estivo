@@ -16,6 +16,7 @@ const translations = {
     lb_ok: "Balance OK",
     lb_exceeded: "Balance EXCEEDED",
     lb_unallocated: "Unallocated land",
+    lb_infra_note: "Roads and technical infrastructure are not assessed in detail within the Land Feasibility module. The tool is intended primarily for land capacity and site allocation assessment. Infrastructure costs, utility connections and related site works are evaluated in the Development Calculator. The actual scope of roads and infrastructure may affect the final project capacity.",
     title: "Feasibility Output",
     sub_title: "Subdivision Output",
     disclaimer: "Concept-level estimation – no architectural study",
