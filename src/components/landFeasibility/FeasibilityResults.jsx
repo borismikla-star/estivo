@@ -70,6 +70,7 @@ const translations = {
       green_negative_clamped: "Green area on ground is negative given current IZ and paved % – clamped to 0. Reduce paved area or IZ.",
       land_balance_exceeded: (v) => `Land balance exceeded by ${v?.excess_m2 ?? '?'} m² (${v?.excess_pct ?? '?'}%). Reduce paved/roads or building footprint.`,
       land_unallocated: "Unallocated land area detected – total allocation is less than land area.",
+      parcel_balance_mismatch: "Parcel balance mismatch – parcel components do not sum to average parcel size.",
     }
   },
   sk: {
