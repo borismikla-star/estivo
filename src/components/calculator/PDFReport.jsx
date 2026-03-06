@@ -337,6 +337,17 @@ const SensitivitySection = ({ sensitivityData, language }) => {
 const DevInputsSection = ({ projectData, language, currentT }) => {
     const pi = projectData.project_info_data || {};
     const cd = projectData.cost_data || {};
+    
+    const countryNames = {
+        SK: { sk: 'Slovensko', en: 'Slovakia', pl: 'Słowacja', hu: 'Szlovákia', de: 'Slowakei' },
+        CZ: { sk: 'Česko', en: 'Czech Republic', pl: 'Czechy', hu: 'Csehország', de: 'Tschechien' },
+        PL: { sk: 'Poľsko', en: 'Poland', pl: 'Polska', hu: 'Lengyelország', de: 'Polen' },
+        HU: { sk: 'Maďarsko', en: 'Hungary', pl: 'Węgry', hu: 'Magyarország', de: 'Ungarn' },
+        AT: { sk: 'Rakúsko', en: 'Austria', pl: 'Austria', hu: 'Ausztria', de: 'Österreich' },
+        DE: { sk: 'Nemecko', en: 'Germany', pl: 'Niemcy', hu: 'Németország', de: 'Deutschland' },
+    };
+    const countryCode = projectData.country;
+    const countryName = countryNames[countryCode]?.[language] || countryCode || '—';
     const rd = projectData.revenue_data || {};
     const fd = projectData.financing_data || {};
     const tl = projectData.timeline || {};
