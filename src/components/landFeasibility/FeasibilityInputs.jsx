@@ -83,7 +83,7 @@ const translations = {
     detached: "Samostatne stojaci",
     semi: "Dvojdom",
     row: "Radový dom",
-    risk_buffer_pct: "Regulatívna rezerva (%)",
+    risk_buffer_pct: "Efektivita návrhu stavby (%)",
     parking_per_house: "Parkovanie / dom",
     // Advanced block
     advanced_title: "Pokročilé predpoklady",
