@@ -346,7 +346,7 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
         AT: { sk: 'Rakúsko', en: 'Austria', pl: 'Austria', hu: 'Ausztria', de: 'Österreich' },
         DE: { sk: 'Nemecko', en: 'Germany', pl: 'Niemcy', hu: 'Németország', de: 'Deutschland' },
     };
-    const countryCode = projectData.country;
+    const countryCode = projectData.country || projectData.project_info_data?.country;
     const countryName = countryNames[countryCode]?.[language] || countryCode || '—';
     const rd = projectData.revenue_data || {};
     const fd = projectData.financing_data || {};
@@ -532,7 +532,7 @@ export default function PDFReport({ projectData, results, language, user }) {
         NL: { sk: 'Holandsko', en: 'Netherlands', pl: 'Holandia', hu: 'Hollandia', de: 'Niederlande' },
         SI: { sk: 'Slovinsko', en: 'Slovenia', pl: 'Słowenia', hu: 'Szlovénia', de: 'Slowenien' },
     };
-    const resolvedCountry = country || property_data?.country;
+    const resolvedCountry = country || property_data?.country || projectData.project_info_data?.country;
     const countryName = countryNames[resolvedCountry]?.[language] || resolvedCountry || 'N/A';
 
     const t = {
