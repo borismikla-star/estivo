@@ -345,6 +345,7 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
         sk: {
             title: "Vstupné údaje kalkulačky",
             project_info: "Informácie o projekte",
+            country: "Krajina",
             entity_type: "Typ subjektu",
             vat_payer: "Platca DPH",
             yes: "Áno", no: "Nie",
