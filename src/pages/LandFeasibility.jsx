@@ -34,7 +34,7 @@ const DEFAULT_INPUTS = {
   floors_per_house: 2,
   kpp_house: null,
   typology: 'detached',
-  risk_buffer_pct: 0.10,
+  risk_buffer_pct: 0.15,
   parking_per_house: 2,
 };
 
