@@ -146,6 +146,15 @@ const translations = {
   },
 };
 
+function LabelWithTooltip({ label, tooltip }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <Label>{label}</Label>
+      {tooltip && <InfoTooltip content={tooltip} />}
+    </div>
+  );
+}
+
 export default function FeasibilityInputs({ inputs, onChange, language = 'sk' }) {
   const t = translations[language] || translations.sk;
   const set = (key, value) => onChange({ ...inputs, [key]: value });
