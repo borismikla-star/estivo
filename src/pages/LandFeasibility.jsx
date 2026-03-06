@@ -27,7 +27,7 @@ const DEFAULT_INPUTS = {
   green_on_structure: false,
   // Subdivision defaults
   public_roads_pct: 0.20,
-  green_pct: 0.10,
+  green_pct: 0.40,
   paved_pct_house: 0.10,
   min_parcel_size: 600,
   max_plot_coverage: 0.30,
