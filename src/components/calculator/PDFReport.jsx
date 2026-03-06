@@ -465,6 +465,7 @@ const DevInputsSection = ({ projectData, language, currentT }) => {
         <Section title={l.title}>
             <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px' }}>
                 <SubTitle title={l.project_info} />
+                {countryName && <Row label={l.country} value={countryName} />}
                 {pi.entity_type && <Row label={l.entity_type} value={pi.entity_type} />}
                 <Row label={l.vat_payer} value={pi.vat_payer ? l.yes : l.no} />
                 {pi.total_land_area && <Row label={l.total_land_area} value={fmt(pi.total_land_area, l.m2)} />}
