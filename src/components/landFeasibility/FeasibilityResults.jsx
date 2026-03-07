@@ -441,9 +441,23 @@ translations.en.pb_public_green = "Public / common green";
 translations.en.pb_total_green = "Total green";
 translations.en.warnings.parcel_balance_mismatch = "Parcel balance mismatch – parcel components do not sum to average parcel size.";
 
-const ResultRow = ({ label, value, unit, highlight }) => (
+const ResultRow = ({ label, value, unit, highlight, tooltip }) => (
   <div className={`flex justify-between items-center py-2 border-b border-border ${highlight ? 'bg-accent/10 px-2 rounded' : ''}`}>
-    <span className="text-sm text-muted-foreground">{label}</span>
+    <span className="text-sm text-muted-foreground flex items-center gap-1">
+      {label}
+      {tooltip && (
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="h-3 w-3 text-muted-foreground/60 cursor-help shrink-0" />
+            </TooltipTrigger>
+            <TooltipContent side="right" className="max-w-xs text-xs leading-relaxed">
+              {tooltip}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+    </span>
     <span className="font-semibold text-foreground">{value} <span className="text-xs text-muted-foreground">{unit}</span></span>
   </div>
 );
