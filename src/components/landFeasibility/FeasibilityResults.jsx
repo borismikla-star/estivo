@@ -520,7 +520,7 @@ function BlockResults({ results, t }) {
     { key: 'parking_outdoor', unit: t.pcs },
     { key: 'paved_area', unit: t.m2 },
     { key: 'green_terrain', unit: t.m2, highlight: true },
-    ...(results.green_on_structure_area > 0 ? [{ key: 'green_on_structure_area', unit: t.m2, labelOverride: t.green_on_structure }] : []),
+    ...(results.green_on_structure_area > 0 ? [{ key: 'green_on_structure_area', unit: t.m2, labelOverride: t.green_on_structure, tooltipKey: 'green_on_structure' }] : []),
     { key: 'cellars_area', unit: t.m2 },
     { key: 'apartment_count', unit: t.pcs, highlight: true },
   ];
@@ -544,6 +544,7 @@ function BlockResults({ results, t }) {
             value={fmt(results[row.key] ?? 0)}
             unit={row.unit}
             highlight={row.highlight}
+            tooltip={t.tooltips?.[row.tooltipKey || row.key]}
           />
         ))}
       </CardContent>
