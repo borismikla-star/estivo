@@ -269,7 +269,18 @@ export function calculateFeasibility(inputs) {
   }
 
   // 5.3 HPP podzemné (underground — not in land balance)
-  const hpp_below = built_area * 1.0;
+  // = parking_covered × 25 m²/miesto + kobky (3 m²/byt) + technické priestory (5% z parking) + obslužné komunikácie (20% z parking)
+  // Počítame predbežne z odhadu bytov (npp_above_est) a parking_ratio
+  const npp_above_est = hpp_above_raw * (EFFICIENCY[mode] || EFFICIENCY.realistic);
+  const non_res_est = Math.min(non_residential_pct, 0.9);
+  const apartments_area_est = npp_above_est * (1 - non_res_est - 0.10);
+  const apartment_count_est = avg_apartment_size > 0 ? Math.floor(Math.max(0, apartments_area_est) / avg_apartment_size) : 0;
+  const parking_covered_est = Math.ceil(apartment_count_est * parking_ratio);
+  const parking_net_area = parking_covered_est * PARKING_SPACE_AREA;        // čisté parkovacie miesta
+  const cellars_below = apartment_count_est * 3;                             // kobky 3 m²/byt
+  const technical_area = parking_net_area * 0.05;                            // technické priestory 5%
+  const circulation_area = parking_net_area * 0.20;                          // obslužné komunikácie 20%
+  const hpp_below = parking_net_area + cellars_below + technical_area + circulation_area;
 
   // 5.4 Urban Risk Buffer
   const risk_buffer_applied = urban_risk_buffer > 0 && hpp_above_raw > 0;
