@@ -648,6 +648,21 @@ function createReportHTML(conceptName, results, language, t, wt) {
 
       ${validationHTML}
 
+      <!-- Methodology / Legend -->
+      ${t.tooltips && t.tooltips.length > 0 ? `
+      <div style="margin-bottom:20px;">
+        <h2 style="font-size:14px;font-weight:700;color:#1f2937;border-bottom:2px solid #1f2937;padding-bottom:4px;margin:0 0 10px 0;">${t.methodology_title}</h2>
+        <div style="background:#f0f4ff;border:1px solid #c7d2fe;border-radius:6px;padding:10px 12px;">
+          ${t.tooltips.map(item => `
+            <div style="display:flex;gap:6px;padding:3px 0;border-bottom:1px solid #e0e7ff;font-size:10px;line-height:1.5;">
+              <span style="font-weight:700;color:#3730a3;min-width:180px;flex-shrink:0;">${item.label}:</span>
+              <span style="color:#4338ca;">${item.desc}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+
       <!-- Footer -->
       <div style="margin-top:20px;padding-top:10px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
         <div style="font-size:9px;color:#9ca3af;">Estivo.app – Smarter Property Investing.</div>
