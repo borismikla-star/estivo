@@ -938,11 +938,11 @@ function createReportHTML(conceptName, results, inputs, language, t, wt) {
   `;
 }
 
-export async function exportConceptToPDF(conceptName, results, language = 'sk') {
+export async function exportConceptToPDF(conceptName, results, language = 'sk', inputs = {}) {
   const t = LABELS[language] || LABELS.sk;
   const wt = WARNING_TEXTS[language] || WARNING_TEXTS.sk;
 
-  const html = createReportHTML(conceptName, results, language, t, wt);
+  const html = createReportHTML(conceptName, results, inputs, language, t, wt);
 
   const container = document.createElement('div');
   container.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;';
