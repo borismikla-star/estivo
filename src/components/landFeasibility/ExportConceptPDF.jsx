@@ -952,7 +952,7 @@ export async function exportConceptToPDF(conceptName, results, language = 'sk', 
   await document.fonts.ready;
 
   const canvas = await html2canvas(container.firstElementChild, {
-    scale: 2,
+    scale: 1.5,
     useCORS: true,
     backgroundColor: '#ffffff',
     logging: false,
@@ -960,7 +960,7 @@ export async function exportConceptToPDF(conceptName, results, language = 'sk', 
 
   document.body.removeChild(container);
 
-  const imgData = canvas.toDataURL('image/png');
+  const imgData = canvas.toDataURL('image/jpeg', 0.82);
 
   const pdfW = 210;
   const pdfH = (canvas.height / canvas.width) * pdfW;
@@ -971,7 +971,7 @@ export async function exportConceptToPDF(conceptName, results, language = 'sk', 
     orientation: 'portrait',
   });
 
-  doc.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+  doc.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
 
   const safeName = (conceptName || 'concept').replace(/[^a-z0-9_\-]/gi, '_').substring(0, 40);
   doc.save(`${safeName}_feasibility.pdf`);
