@@ -892,6 +892,9 @@ function createReportHTML(conceptName, results, inputs, language, t, wt) {
         </div>
       </div>
 
+      <!-- Input Parameters section -->
+      ${buildInputsHTML(inputs || {}, t, isSubdivision)}
+
       <!-- Main results section -->
       <div style="margin-bottom:24px;">
         ${sectionTitle(isSubdivision ? t.mode_sub : t.mode_block)}
