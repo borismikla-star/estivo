@@ -662,6 +662,74 @@ const WARNING_TEXTS = {
   },
 };
 
+function buildInputsHTML(inputs, t, isSubdivision) {
+  const fmtPct = (v, def = 0) => v != null ? `${Math.round(v * 100)} %` : `${Math.round(def * 100)} %`;
+  const fmtNum = (v, def = '') => v != null && v !== '' && v !== null ? String(v) : (def !== '' ? String(def) : t.inp_not_set);
+  const fmtM2 = (v) => v != null ? `${Math.round(v).toLocaleString('sk-SK')} m²` : t.inp_not_set;
+
+  const modeLabel = { conservative: t.inp_mode_conservative, realistic: t.inp_mode_realistic, efficient: t.inp_mode_efficient };
+  const typologyLabel = { detached: t.inp_typology_detached, semi: t.inp_typology_semi, row: t.inp_typology_row };
+
+  const ROW = (label, value) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #e0e7ff;font-size:11px;">
+      <span style="color:#4b5563;">${label}</span>
+      <span style="color:#111827;font-weight:600;">${value}</span>
+    </div>`;
+
+  const subTitle = (title) => `<p style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin:8px 0 3px;">${title}</p>`;
+
+  const landRows = `
+    ${ROW(t.inp_land_area, fmtM2(inputs.land_area))}
+    ${ROW(t.inp_project_type, isSubdivision ? t.inp_project_type_subdivision : t.inp_project_type_building)}
+  `;
+
+  const blockRows = !isSubdivision ? `
+    ${ROW(t.inp_iz, fmtNum(inputs.iz, 0.40))}
+    ${inputs.kpp != null ? ROW(t.inp_kpp, fmtNum(inputs.kpp)) : ''}
+    ${inputs.floors != null ? ROW(t.inp_floors, fmtNum(inputs.floors)) : ''}
+    ${ROW(t.inp_non_res_pct, fmtPct(inputs.non_residential_pct, 0))}
+    ${ROW(t.inp_min_green_pct, fmtPct(inputs.min_green_pct, 0.20))}
+    ${ROW(t.inp_avg_apt, fmtNum(inputs.avg_apartment_size, 60) + ' m²')}
+    ${ROW(t.inp_mode, modeLabel[inputs.mode || 'realistic'] || inputs.mode)}
+    ${ROW(t.inp_green_on_structure, inputs.green_on_structure ? t.inp_yes : t.inp_no)}
+  ` : '';
+
+  const advancedRows = !isSubdivision ? `
+    ${subTitle(t.inputs_advanced)}
+    <div style="background:#f0f4ff;border:1px solid #c7d2fe;border-radius:4px;padding:6px 10px;">
+      ${ROW(t.inp_parking_ratio, fmtNum(inputs.parking_ratio, 1.2))}
+      ${ROW(t.inp_outdoor_ratio, fmtNum(inputs.outdoor_ratio, 0.1))}
+      ${ROW(t.inp_paved_pct, fmtPct(inputs.paved_pct, 0.15))}
+      ${ROW(t.inp_urban_risk_buffer, fmtPct(inputs.urban_risk_buffer, 0.10))}
+    </div>
+  ` : '';
+
+  const subdivRows = isSubdivision ? `
+    ${ROW(t.inp_public_roads_pct, fmtPct(inputs.public_roads_pct, 0.20))}
+    ${ROW(t.inp_green_pct, fmtPct(inputs.green_pct, 0.10))}
+    ${ROW(t.inp_min_parcel_size, fmtM2(inputs.min_parcel_size ?? 600))}
+    ${ROW(t.inp_max_plot_coverage, fmtPct(inputs.max_plot_coverage, 0.30))}
+    ${inputs.kpp_house != null ? ROW(t.inp_kpp_house, fmtNum(inputs.kpp_house)) : ''}
+    ${ROW(t.inp_floors_per_house, fmtNum(inputs.floors_per_house, 2))}
+    ${ROW(t.inp_typology, typologyLabel[inputs.typology || 'detached'] || inputs.typology)}
+    ${ROW(t.inp_parking_per_house, fmtNum(inputs.parking_per_house, 2))}
+    ${ROW(t.inp_paved_pct_house, fmtPct(inputs.paved_pct_house, 0.10))}
+    ${ROW(t.inp_risk_buffer_pct, fmtPct(inputs.risk_buffer_pct, 0.10))}
+  ` : '';
+
+  return `
+    <div style="margin-bottom:24px;">
+      <h2 style="font-size:14px;font-weight:700;color:#1f2937;border-bottom:2px solid #1f2937;padding-bottom:4px;margin:0 0 10px 0;">${t.inputs_title}</h2>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;">
+        ${subTitle(isSubdivision ? t.inputs_subdivision : t.inputs_land)}
+        ${landRows}
+        ${blockRows}
+        ${subdivRows}
+        ${advancedRows}
+      </div>
+    </div>`;
+}
+
 function buildRows(results, t, isSubdivision) {
   if (isSubdivision) {
     return [
