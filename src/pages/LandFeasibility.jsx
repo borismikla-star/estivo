@@ -314,7 +314,7 @@ export default function LandFeasibility() {
                     {t.unsaved}
                   </Badge>
                 )}
-                <Button size="sm" variant="outline" onClick={() => exportConceptToPDF(conceptName, results, language)} className="gap-1.5">
+                <Button size="sm" variant="outline" onClick={() => exportConceptToPDF(conceptName, results, language, inputs)} className="gap-1.5">
                   <Download className="h-4 w-4" />{t.export_pdf}
                 </Button>
                 <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending} className="bg-primary hover:bg-primary/90 gap-1.5">
