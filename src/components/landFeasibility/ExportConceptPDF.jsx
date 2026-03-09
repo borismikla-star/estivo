@@ -837,7 +837,7 @@ function buildParcelBreakdownHTML(pb, t) {
     </div>`;
 }
 
-function createReportHTML(conceptName, results, language, t, wt) {
+function createReportHTML(conceptName, results, inputs, language, t, wt) {
   const isSubdivision = results?.mode === 'subdivision';
   const rows = buildRows(results, t, isSubdivision);
   const balanceRows = results.land_balance ? buildBalanceRows(results.land_balance, t) : [];
