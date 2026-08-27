@@ -1,0 +1,56 @@
+{
+  "name": "LegalDocument",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the legal document (e.g., 'Terms of Service')."
+    },
+    "slug": {
+      "type": "string",
+      "description": "The unique, URL-friendly slug (e.g., 'terms-of-service')."
+    },
+    "content": {
+      "type": "string",
+      "description": "The full HTML content of the document."
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "content"
+  ],
+  "permissions": {
+    "admin": {
+      "create": "own",
+      "read": "all",
+      "update": "all",
+      "delete": "all"
+    },
+    "user": {
+      "read": "all"
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

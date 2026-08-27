@@ -1,0 +1,98 @@
+{
+  "name": "BlogPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the blog post in primary language."
+    },
+    "slug": {
+      "type": "string",
+      "description": "The URL-friendly slug. Should be unique."
+    },
+    "content": {
+      "type": "string",
+      "description": "The full HTML content of the post in primary language."
+    },
+    "author": {
+      "type": "string",
+      "description": "The name of the post's author."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published"
+      ],
+      "default": "draft"
+    },
+    "publication_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date the post was published."
+    },
+    "excerpt": {
+      "type": "string",
+      "description": "A short summary of the post for list views in primary language."
+    },
+    "featured_image_url": {
+      "type": "string",
+      "description": "URL for a cover image (optional)."
+    },
+    "primary_language": {
+      "type": "string",
+      "enum": [
+        "sk",
+        "en",
+        "pl",
+        "hu",
+        "de"
+      ],
+      "default": "sk",
+      "description": "The primary language the article was written in."
+    },
+    "translations": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Translations of the post. Structure: { 'en': { title, excerpt, content }, 'pl': {...}, ... }"
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "content"
+  ],
+  "permissions": {
+    "admin": {
+      "create": "own",
+      "read": "all",
+      "update": "all",
+      "delete": "all"
+    },
+    "user": {
+      "read": "all"
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

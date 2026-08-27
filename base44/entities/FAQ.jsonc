@@ -1,0 +1,85 @@
+{
+  "name": "FAQ",
+  "type": "object",
+  "properties": {
+    "question_sk": {
+      "type": "string",
+      "description": "Ot\u00e1zka v sloven\u010dine"
+    },
+    "answer_sk": {
+      "type": "string",
+      "description": "Odpove\u010f v sloven\u010dine"
+    },
+    "question_en": {
+      "type": "string",
+      "description": "Question in English"
+    },
+    "answer_en": {
+      "type": "string",
+      "description": "Answer in English"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "general",
+        "billing",
+        "technical",
+        "legal"
+      ],
+      "default": "general",
+      "description": "Category of the FAQ item"
+    },
+    "order": {
+      "type": "number",
+      "default": 0,
+      "description": "Display order (lower numbers appear first)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this FAQ is visible on the website"
+    }
+  },
+  "required": [
+    "question_sk",
+    "answer_sk",
+    "question_en",
+    "answer_en"
+  ],
+  "permissions": {
+    "admin": {
+      "create": "own",
+      "read": "all",
+      "update": "all",
+      "delete": "all"
+    },
+    "user": {
+      "read": "all"
+    },
+    "public": {
+      "read": "all"
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

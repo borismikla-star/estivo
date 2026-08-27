@@ -1,0 +1,214 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the project"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "long_term_lease",
+        "commercial",
+        "airbnb",
+        "development"
+      ],
+      "description": "Type of investment"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "completed",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "country": {
+      "type": "string",
+      "enum": [
+        "SK",
+        "CZ",
+        "PL",
+        "HU"
+      ]
+    },
+    "currency": {
+      "type": "string",
+      "default": "EUR",
+      "description": "Currency code for the project"
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "FO",
+        "PO"
+      ]
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    },
+    "notes": {
+      "type": "string",
+      "description": "User notes for the project"
+    },
+    "property_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "financing_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "initial_costs_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "operating_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "income_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "opex_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "assumptions_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "project_info_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "cost_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Development project cost data"
+    },
+    "revenue_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Development project revenue data"
+    },
+    "land_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "engineering_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "construction_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sales_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "other_dev_costs_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "timeline": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Calculated results and KPIs"
+    },
+    "ai_summary": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "AI-generated analysis summary"
+    },
+    "sensitivity_data": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Sensitivity analysis scenarios"
+    }
+  },
+  "required": [
+    "name",
+    "type"
+  ],
+  "permissions": {
+    "admin": {
+      "create": "own",
+      "read": "all",
+      "update": "all",
+      "delete": "all"
+    },
+    "user": {
+      "create": "own",
+      "read": "own",
+      "update": "own",
+      "delete": "own"
+    }
+  },
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "AppSettings",
+  "type": "object",
+  "properties": {
+    "beta_mode": {
+      "type": "boolean",
+      "default": true,
+      "description": "When enabled, all new users get Pro plan for free (beta testers)"
+    },
+    "trial_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable automatic pro plan trial for new users"
+    },
+    "trial_duration_days": {
+      "type": "number",
+      "default": 30,
+      "description": "Duration of the pro plan trial in days"
+    }
+  },
+  "permissions": {
+    "admin": {
+      "read": "all",
+      "update": "all",
+      "create": "all",
+      "delete": "all"
+    },
+    "user": {
+      "read": "all"
+    },
+    "public": {
+      "read": "all"
+    }
+  },
+  "required": [],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

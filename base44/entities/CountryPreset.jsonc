@@ -1,0 +1,120 @@
+{
+  "name": "CountryPreset",
+  "type": "object",
+  "properties": {
+    "country_code": {
+      "type": "string",
+      "enum": [
+        "SK",
+        "CZ",
+        "PL",
+        "HU",
+        "AT",
+        "DE",
+        "NL",
+        "SI",
+        "FR",
+        "ES",
+        "IT",
+        "GB"
+      ],
+      "description": "Country ISO code"
+    },
+    "country_name_sk": {
+      "type": "string",
+      "description": "Country name in Slovak"
+    },
+    "country_name_en": {
+      "type": "string",
+      "description": "Country name in English"
+    },
+    "currency_code": {
+      "type": "string",
+      "description": "ISO 4217 currency code (e.g., EUR, PLN, CZK)"
+    },
+    "currency_symbol": {
+      "type": "string",
+      "description": "Local currency symbol (e.g., \u20ac, z\u0142, K\u010d)"
+    },
+    "vat_rate": {
+      "type": "number",
+      "description": "Standard VAT rate (%)"
+    },
+    "property_tax_rate": {
+      "type": "number",
+      "description": "Average property tax rate (%)"
+    },
+    "income_tax_rate_fo": {
+      "type": "number",
+      "description": "Top income tax rate for individuals (%)"
+    },
+    "corporate_tax_rate": {
+      "type": "number",
+      "description": "Standard corporate tax rate (%)"
+    },
+    "depreciation_rate": {
+      "type": "number",
+      "description": "Standard annual depreciation rate for buildings (%)"
+    },
+    "social_contributions": {
+      "type": "number",
+      "description": "Typical social and health contributions for passive rental income FO (%)"
+    },
+    "fo_business_levy_rate": {
+      "type": "number",
+      "description": "Estimated total levy rate (social + health) for FO - business (SZCO) on taxable profit (%). Used only for SK FO-business entity type."
+    },
+    "npv_discount_rate": {
+      "type": "number",
+      "description": "Default discount rate for NPV calculations (%)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "legislative_notes_sk": {
+      "type": "string",
+      "description": "Basic legislative notes in Slovak"
+    },
+    "legislative_notes_en": {
+      "type": "string",
+      "description": "Basic legislative notes in English"
+    }
+  },
+  "required": [
+    "country_code",
+    "country_name_en",
+    "currency_code",
+    "currency_symbol",
+    "corporate_tax_rate"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "$or": [
+          {
+            "role": "admin"
+          },
+          {
+            "role": "user"
+          }
+        ]
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

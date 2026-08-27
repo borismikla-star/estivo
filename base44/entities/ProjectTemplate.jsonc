@@ -1,0 +1,84 @@
+{
+  "name": "ProjectTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the template"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "long_term_lease",
+        "commercial",
+        "airbnb",
+        "development"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "project_data": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "project_data"
+  ],
+  "permissions": {
+    "admin": {
+      "read": "all",
+      "update": "all",
+      "delete": "all",
+      "create": "own"
+    },
+    "user": {
+      "read": "own",
+      "update": "own",
+      "delete": "own",
+      "create": "own"
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

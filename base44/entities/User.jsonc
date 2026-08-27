@@ -1,0 +1,96 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pro",
+        "business"
+      ],
+      "default": "free",
+      "description": "User subscription plan"
+    },
+    "preferred_language": {
+      "type": "string",
+      "enum": [
+        "sk",
+        "en",
+        "pl",
+        "hu",
+        "de",
+        "it",
+        "es",
+        "fr"
+      ],
+      "default": "en",
+      "description": "User's preferred language"
+    },
+    "country": {
+      "type": "string",
+      "enum": [
+        "SK",
+        "CZ",
+        "PL",
+        "HU"
+      ],
+      "description": "User's primary country"
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "FO",
+        "PO"
+      ],
+      "default": "FO",
+      "description": "Individual (FO) or Company (PO)"
+    },
+    "projects_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of saved projects"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date when the pro plan trial ends"
+    },
+    "is_beta_tester": {
+      "type": "boolean",
+      "default": false,
+      "description": "User joined during beta mode and got free Pro access"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company Name"
+    },
+    "company_reg_number": {
+      "type": "string",
+      "description": "Company Registration Number (I\u010cO)"
+    },
+    "company_tax_id": {
+      "type": "string",
+      "description": "Company Tax ID (DI\u010c / I\u010c DPH)"
+    },
+    "company_address": {
+      "type": "string",
+      "description": "Company Street Address"
+    },
+    "company_city": {
+      "type": "string",
+      "description": "Company City"
+    },
+    "company_postal_code": {
+      "type": "string",
+      "description": "Company Postal Code"
+    },
+    "company_logo_url": {
+      "type": "string",
+      "description": "URL of the company's logo for white-labeling"
+    }
+  },
+  "required": [
+    "country"
+  ]
+}
